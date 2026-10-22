@@ -1,0 +1,155 @@
+{
+  "id": "stock-reconciliation",
+  "version": "0.1.0",
+  "taskFamily": "stock-reconciliation",
+  "ir": {
+    "schemaVersion": "pocketforge.ir/1",
+    "runtimeLimits": {
+      "maxRows": 5000,
+      "maxRuntimeMs": 5000
+    },
+    "operations": [
+      {
+        "id": "read_orders",
+        "kind": "source_read",
+        "source": "orders"
+      },
+      {
+        "id": "filter_orders",
+        "kind": "filter",
+        "input": "read_orders",
+        "predicates": [
+          { "field": "status", "operator": "eq", "value": { "kind": "literal", "value": "open" } },
+          { "field": "warehouseId", "operator": "eq", "value": { "kind": "parameter", "name": "warehouseId" } },
+          { "field": "orderDate", "operator": "gte", "value": { "kind": "parameter", "name": "fromDate" } },
+          { "field": "orderDate", "operator": "lte", "value": { "kind": "parameter", "name": "throughDate" } }
+        ]
+      },
+      {
+        "id": "read_aliases",
+        "kind": "source_read",
+        "source": "aliases"
+      },
+      {
+        "id": "normalize_sku",
+        "kind": "lookup",
+        "input": "filter_orders",
+        "table": "read_aliases",
+        "keyField": "sku",
+        "tableKeyField": "alias",
+        "valueField": "canonicalSku",
+        "outputField": "canonicalSku",
+        "missingCode": "UNKNOWN_SKU_ALIAS"
+      },
+      {
+        "id": "read_unit_rules",
+        "kind": "source_read",
+        "source": "unitConversions"
+      },
+      {
+        "id": "lookup_unit_factor",
+        "kind": "lookup",
+        "input": "normalize_sku",
+        "table": "read_unit_rules",
+        "keyField": "unit",
+        "tableKeyField": "unit",
+        "valueField": "eachPerUnit",
+        "outputField": "eachPerUnit",
+        "missingCode": "UNKNOWN_UNIT"
+      },
+      {
+        "id": "convert_to_each",
+        "kind": "unit_convert",
+        "input": "lookup_unit_factor",
+        "quantityField": "quantity",
+        "factorField": "eachPerUnit",
+        "outputField": "demandEach"
+      },
+      {
+        "id": "aggregate_demand",
+        "kind": "aggregate",
+        "input": "convert_to_each",
+        "groupBy": ["warehouseId", "canonicalSku"],
+        "sumField": "demandEach",
+        "outputField": "demandEach"
+      },
+      {
+        "id": "project_demand",
+        "kind": "project",
+        "input": "aggregate_demand",
+        "fields": [
+          { "from": "warehouseId", "to": "warehouseId" },
+          { "from": "canonicalSku", "to": "sku" },
+          { "from": "demandEach", "to": "demandEach" }
+        ]
+      },
+      {
+        "id": "read_inventory",
+        "kind": "source_read",
+        "source": "inventory"
+      },
+      {
+        "id": "filter_inventory",
+        "kind": "filter",
+        "input": "read_inventory",
+        "predicates": [
+          { "field": "warehouseId", "operator": "eq", "value": { "kind": "parameter", "name": "warehouseId" } },
+          { "field": "snapshotDate", "operator": "lte", "value": { "kind": "parameter", "name": "throughDate" } }
+        ]
+      },
+      {
+        "id": "join_inventory",
+        "kind": "join",
+        "left": "project_demand",
+        "right": "filter_inventory",
+        "on": [
+          { "leftField": "warehouseId", "rightField": "warehouseId" },
+          { "leftField": "sku", "rightField": "sku" }
+        ],
+        "how": "required",
+        "cardinality": "many_to_one",
+        "missingCode": "INVENTORY_NOT_FOUND",
+        "rightFields": ["onHandEach"]
+      },
+      {
+        "id": "calculate_shortage",
+        "kind": "compute",
+        "input": "join_inventory",
+        "formula": "subtract_floor_zero",
+        "leftField": "demandEach",
+        "rightField": "onHandEach",
+        "outputField": "shortageEach"
+      },
+      {
+        "id": "project_result",
+        "kind": "project",
+        "input": "calculate_shortage",
+        "fields": [
+          { "from": "sku", "to": "sku" },
+          { "from": "demandEach", "to": "demandEach" },
+          { "from": "onHandEach", "to": "onHandEach" },
+          { "from": "shortageEach", "to": "shortageEach" }
+        ]
+      },
+      {
+        "id": "validate_result",
+        "kind": "validate",
+        "input": "project_result",
+        "assertions": [
+          { "check": "required_field", "field": "sku" },
+          { "check": "nonnegative", "field": "demandEach" },
+          { "check": "nonnegative", "field": "onHandEach" },
+          { "check": "nonnegative", "field": "shortageEach" },
+          { "check": "unique_by", "fields": ["sku"] }
+        ]
+      },
+      {
+        "id": "emit_result",
+        "kind": "emit",
+        "input": "validate_result"
+      }
+    ],
+    "outputStep": "emit_result"
+  }
+}
+

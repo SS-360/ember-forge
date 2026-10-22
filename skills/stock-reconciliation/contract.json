@@ -1,0 +1,31 @@
+{
+  "skillId": "stock-reconciliation",
+  "skillVersion": "0.1.0",
+  "contractVersion": "pocketforge.contract/1",
+  "taskFamily": "stock-reconciliation",
+  "policyVersion": "stock-v1",
+  "sourceSchemaVersions": {
+    "orders": "orders/v1",
+    "inventory": "inventory/v1",
+    "productRules": "product-rules/v1"
+  },
+  "supportedSourceModes": ["fixture"],
+  "maxRows": 5000,
+  "maxRuntimeMs": 5000,
+  "postconditions": [
+    "nonnegative-stock-fields",
+    "shortage-equals-demand-gap",
+    "unique-sku-output"
+  ],
+  "assumptions": [
+    "Only open orders are included; cancelled orders are ignored.",
+    "Order dates are inclusive within the requested date range.",
+    "Product aliases and unit conversions must be present and unique in the supplied policy table.",
+    "Quantities and conversion factors are whole numbers and are represented as safe integers.",
+    "Each demanded product must have one inventory row for the requested warehouse.",
+    "The inventory snapshot must not be later than the requested end date.",
+    "Shortage is max(demand in each minus on-hand quantity, zero).",
+    "This seed program was authored for development and has not been generated from live Nemotron trajectories."
+  ]
+}
+

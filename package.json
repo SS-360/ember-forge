@@ -1,0 +1,31 @@
+{
+  "name": "pocket-forge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=24.13.0 <25"
+  },
+  "scripts": {
+    "doctor": "tsx scripts/doctor.ts",
+    "dev": "pnpm eval:export && pnpm --parallel --filter @pocketforge/api --filter @pocketforge/web dev",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "eval": "tsx scripts/run-fixture-baseline.ts",
+    "eval:skill": "tsx scripts/evaluate-seed-skill.ts",
+    "eval:export": "tsx scripts/export-skill.ts",
+    "eval:freeze": "tsx scripts/freeze-evaluation.ts",
+    "eval:frozen": "tsx scripts/evaluate-frozen-split.ts",
+    "memory:demo": "tsx scripts/run-memory-demo.ts",
+    "hmem:conformance": "tsx vendor/meterless/hmem/conformance/runner.ts",
+    "demo:reset": "tsx scripts/reset-demo.ts"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "esbuild": "0.28.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vitest": "5.0.5"
+  }
+}

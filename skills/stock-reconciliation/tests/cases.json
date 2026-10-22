@@ -1,0 +1,39 @@
+{
+  "suite": "stock-reconciliation development verification",
+  "scope": "finite development fixtures; not held-out evaluation",
+  "cases": [
+    {
+      "caseId": "dev-supported-baseline",
+      "expectedOutcome": "supported"
+    },
+    {
+      "caseId": "dev-supported-new-order-id-and-row-order",
+      "expectedOutcome": "supported"
+    },
+    {
+      "caseId": "dev-unknown-unit",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "UNKNOWN_UNIT"
+    },
+    {
+      "caseId": "dev-changed-policy",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "POLICY_VERSION_MISMATCH"
+    },
+    {
+      "caseId": "dev-changed-schema",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "SCHEMA_VERSION_MISMATCH"
+    },
+    {
+      "caseId": "dev-future-inventory-snapshot",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "INVENTORY_SNAPSHOT_AFTER_RANGE"
+    },
+    {
+      "caseId": "dev-missing-inventory",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "INVENTORY_NOT_FOUND"
+    }
+  ]
+}

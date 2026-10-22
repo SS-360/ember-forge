@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "pocketforge.evaluation-labels/1",
+  "labels": {
+    "frozen-adjusted-quantities-and-identities": {
+      "expectedOutcome": "supported",
+      "expectedResultHash": "d34cb558cf0046c5d4eceee79bcc71d8efbdfc2069ad36a98f7ecb8818bafcc8"
+    },
+    "frozen-secondary-warehouse": {
+      "expectedOutcome": "supported",
+      "expectedResultHash": "8d88924f3c6286bcfac5eaea4e533155e9e24cc5c661ea44223370a3a2f5b91a"
+    },
+    "frozen-date-boundary-and-snapshot": {
+      "expectedOutcome": "supported",
+      "expectedResultHash": "bdc1473c86d1ebb57d7f0c6981cdf361d6db8622c5cb48f3cabae8e266498306"
+    },
+    "frozen-historic-date-range": {
+      "expectedOutcome": "supported",
+      "expectedResultHash": "81c8de249ba984b6d5074788cc9715e0a0509efd286f19a0c25d80c316920b89"
+    },
+    "frozen-policy-version-change": {
+      "expectedOutcome": "unsupported",
+      "expectedReason": "POLICY_VERSION_MISMATCH"
+    },
+    "frozen-order-schema-change": {
+      "expectedOutcome": "unsupported",
+      "expectedReason": "SCHEMA_VERSION_MISMATCH"
+    },
+    "frozen-future-snapshot": {
+      "expectedOutcome": "unsupported",
+      "expectedReason": "INVENTORY_SNAPSHOT_AFTER_RANGE"
+    },
+    "frozen-unknown-unit-on-blue-mug": {
+      "expectedOutcome": "unsupported",
+      "expectedReason": "UNKNOWN_UNIT"
+    },
+    "frozen-missing-blue-inventory": {
+      "expectedOutcome": "unsupported",
+      "expectedReason": "INVENTORY_NOT_FOUND"
+    },
+    "frozen-unknown-product-alias": {
+      "expectedOutcome": "unsupported",
+      "expectedReason": "UNKNOWN_SKU_ALIAS"
+    }
+  }
+}

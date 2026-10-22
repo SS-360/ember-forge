@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "pocketforge.frozen-evaluation-report/1",
+  "split": "frozen-smoke-v1",
+  "scope": "Small synthetic smoke split; not held-out or representative evaluation. One procedure family only.",
+  "candidateHash": "7c13dadaa80140a068836503d1e2c0dfd17eeb55a1ea59579bca9906f079dc98",
+  "passed": 10,
+  "total": 10,
+  "correctSupported": 4,
+  "supportedTotal": 4,
+  "correctRejections": 6,
+  "unsupportedTotal": 6,
+  "falseAcceptances": 0,
+  "cases": [
+    {
+      "caseId": "frozen-adjusted-quantities-and-identities",
+      "expectedOutcome": "supported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "reason": "d34cb558cf0046c5d4eceee79bcc71d8efbdfc2069ad36a98f7ecb8818bafcc8",
+      "durationMs": 146.849
+    },
+    {
+      "caseId": "frozen-secondary-warehouse",
+      "expectedOutcome": "supported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "reason": "8d88924f3c6286bcfac5eaea4e533155e9e24cc5c661ea44223370a3a2f5b91a",
+      "durationMs": 137.6773
+    },
+    {
+      "caseId": "frozen-date-boundary-and-snapshot",
+      "expectedOutcome": "supported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "reason": "bdc1473c86d1ebb57d7f0c6981cdf361d6db8622c5cb48f3cabae8e266498306",
+      "durationMs": 145.49820000000005
+    },
+    {
+      "caseId": "frozen-historic-date-range",
+      "expectedOutcome": "supported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "reason": "81c8de249ba984b6d5074788cc9715e0a0509efd286f19a0c25d80c316920b89",
+      "durationMs": 143.46579999999994
+    },
+    {
+      "caseId": "frozen-policy-version-change",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "rejected_correctly",
+      "passed": true,
+      "reason": "POLICY_VERSION_MISMATCH",
+      "durationMs": 134.01060000000007
+    },
+    {
+      "caseId": "frozen-order-schema-change",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "rejected_correctly",
+      "passed": true,
+      "reason": "SCHEMA_VERSION_MISMATCH",
+      "durationMs": 133.0806
+    },
+    {
+      "caseId": "frozen-future-snapshot",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "rejected_correctly",
+      "passed": true,
+      "reason": "INVENTORY_SNAPSHOT_AFTER_RANGE",
+      "durationMs": 132.09749999999985
+    },
+    {
+      "caseId": "frozen-unknown-unit-on-blue-mug",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "rejected_correctly",
+      "passed": true,
+      "reason": "UNKNOWN_UNIT",
+      "durationMs": 135.31039999999985
+    },
+    {
+      "caseId": "frozen-missing-blue-inventory",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "rejected_correctly",
+      "passed": true,
+      "reason": "INVENTORY_NOT_FOUND",
+      "durationMs": 143.04999999999995
+    },
+    {
+      "caseId": "frozen-unknown-product-alias",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "rejected_correctly",
+      "passed": true,
+      "reason": "UNKNOWN_SKU_ALIAS",
+      "durationMs": 134.02319999999986
+    }
+  ],
+  "generatedAt": "2026-10-22T20:10:16.465Z"
+}

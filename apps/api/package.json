@@ -1,0 +1,17 @@
+{
+  "name": "@pocketforge/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@pocketforge/compiler": "workspace:*",
+    "@pocketforge/contracts": "workspace:*",
+    "@pocketforge/evaluator": "workspace:*",
+    "@pocketforge/runtime": "workspace:*",
+    "fastify": "5.12.7",
+    "zod": "4.6.7"
+  }
+}

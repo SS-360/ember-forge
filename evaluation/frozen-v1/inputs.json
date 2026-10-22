@@ -1,0 +1,1235 @@
+{
+  "schemaVersion": "pocketforge.evaluation-inputs/1",
+  "cases": [
+    {
+      "caseId": "frozen-adjusted-quantities-and-identities",
+      "parameters": {
+        "warehouseId": "WH-01",
+        "fromDate": "2026-10-20",
+        "throughDate": "2026-10-23",
+        "policyVersion": "stock-v1"
+      },
+      "dataset": {
+        "sourceMode": "fixture",
+        "sourceVersions": {
+          "orders": "fixture-orders-v1",
+          "inventory": "fixture-inventory-v1",
+          "productRules": "fixture-product-rules-v1"
+        },
+        "sourceSchemaVersions": {
+          "orders": "orders/v1",
+          "inventory": "inventory/v1",
+          "productRules": "product-rules/v1"
+        },
+        "orders": [
+          {
+            "orderId": "ORD-1006",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-19",
+            "sku": "CUP-RED",
+            "quantity": 100,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1005",
+            "warehouseId": "WH-02",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 30,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1004",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 99,
+            "unit": "EA",
+            "status": "cancelled"
+          },
+          {
+            "orderId": "HELD-003",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "blue-mug",
+            "quantity": 3,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "HELD-002",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-21",
+            "sku": "CUP-RED",
+            "quantity": 2,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "HELD-001",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-20",
+            "sku": "red-cup",
+            "quantity": 3,
+            "unit": "BOX",
+            "status": "open"
+          }
+        ],
+        "inventory": [
+          {
+            "warehouseId": "WH-01",
+            "sku": "CUP-RED",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 15
+          },
+          {
+            "warehouseId": "WH-01",
+            "sku": "MUG-BLUE",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 8
+          }
+        ],
+        "productRules": {
+          "version": "stock-v1",
+          "aliases": [
+            {
+              "alias": "red-cup",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "CUP-RED",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "blue-mug",
+              "canonicalSku": "MUG-BLUE"
+            },
+            {
+              "alias": "MUG-BLUE",
+              "canonicalSku": "MUG-BLUE"
+            }
+          ],
+          "unitConversions": [
+            {
+              "unit": "EA",
+              "eachPerUnit": 1
+            },
+            {
+              "unit": "BOX",
+              "eachPerUnit": 12
+            }
+          ]
+        }
+      }
+    },
+    {
+      "caseId": "frozen-secondary-warehouse",
+      "parameters": {
+        "warehouseId": "WH-02",
+        "fromDate": "2026-10-20",
+        "throughDate": "2026-10-23",
+        "policyVersion": "stock-v1"
+      },
+      "dataset": {
+        "sourceMode": "fixture",
+        "sourceVersions": {
+          "orders": "fixture-orders-v1",
+          "inventory": "fixture-inventory-v1",
+          "productRules": "fixture-product-rules-v1"
+        },
+        "sourceSchemaVersions": {
+          "orders": "orders/v1",
+          "inventory": "inventory/v1",
+          "productRules": "product-rules/v1"
+        },
+        "orders": [
+          {
+            "orderId": "ORD-1001",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-20",
+            "sku": "red-cup",
+            "quantity": 2,
+            "unit": "BOX",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1002",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-21",
+            "sku": "CUP-RED",
+            "quantity": 1,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1003",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "blue-mug",
+            "quantity": 5,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1004",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 99,
+            "unit": "EA",
+            "status": "cancelled"
+          },
+          {
+            "orderId": "ORD-1005",
+            "warehouseId": "WH-02",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 30,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1006",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-19",
+            "sku": "CUP-RED",
+            "quantity": 100,
+            "unit": "EA",
+            "status": "open"
+          }
+        ],
+        "inventory": [
+          {
+            "warehouseId": "WH-01",
+            "sku": "CUP-RED",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 15
+          },
+          {
+            "warehouseId": "WH-01",
+            "sku": "MUG-BLUE",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 8
+          },
+          {
+            "warehouseId": "WH-02",
+            "sku": "CUP-RED",
+            "snapshotDate": "2026-10-22",
+            "onHandEach": 12
+          }
+        ],
+        "productRules": {
+          "version": "stock-v1",
+          "aliases": [
+            {
+              "alias": "red-cup",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "CUP-RED",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "blue-mug",
+              "canonicalSku": "MUG-BLUE"
+            },
+            {
+              "alias": "MUG-BLUE",
+              "canonicalSku": "MUG-BLUE"
+            }
+          ],
+          "unitConversions": [
+            {
+              "unit": "EA",
+              "eachPerUnit": 1
+            },
+            {
+              "unit": "BOX",
+              "eachPerUnit": 12
+            }
+          ]
+        }
+      }
+    },
+    {
+      "caseId": "frozen-date-boundary-and-snapshot",
+      "parameters": {
+        "warehouseId": "WH-01",
+        "fromDate": "2026-10-20",
+        "throughDate": "2026-10-22",
+        "policyVersion": "stock-v1"
+      },
+      "dataset": {
+        "sourceMode": "fixture",
+        "sourceVersions": {
+          "orders": "fixture-orders-v1",
+          "inventory": "fixture-inventory-v1",
+          "productRules": "fixture-product-rules-v1"
+        },
+        "sourceSchemaVersions": {
+          "orders": "orders/v1",
+          "inventory": "inventory/v1",
+          "productRules": "product-rules/v1"
+        },
+        "orders": [
+          {
+            "orderId": "ORD-1001",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-20",
+            "sku": "red-cup",
+            "quantity": 2,
+            "unit": "BOX",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1002",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-21",
+            "sku": "CUP-RED",
+            "quantity": 1,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1003",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "blue-mug",
+            "quantity": 5,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1004",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 99,
+            "unit": "EA",
+            "status": "cancelled"
+          },
+          {
+            "orderId": "ORD-1005",
+            "warehouseId": "WH-02",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 30,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1006",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-19",
+            "sku": "CUP-RED",
+            "quantity": 100,
+            "unit": "EA",
+            "status": "open"
+          }
+        ],
+        "inventory": [
+          {
+            "warehouseId": "WH-01",
+            "sku": "CUP-RED",
+            "snapshotDate": "2026-10-22",
+            "onHandEach": 15
+          },
+          {
+            "warehouseId": "WH-01",
+            "sku": "MUG-BLUE",
+            "snapshotDate": "2026-10-22",
+            "onHandEach": 8
+          }
+        ],
+        "productRules": {
+          "version": "stock-v1",
+          "aliases": [
+            {
+              "alias": "red-cup",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "CUP-RED",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "blue-mug",
+              "canonicalSku": "MUG-BLUE"
+            },
+            {
+              "alias": "MUG-BLUE",
+              "canonicalSku": "MUG-BLUE"
+            }
+          ],
+          "unitConversions": [
+            {
+              "unit": "EA",
+              "eachPerUnit": 1
+            },
+            {
+              "unit": "BOX",
+              "eachPerUnit": 12
+            }
+          ]
+        }
+      }
+    },
+    {
+      "caseId": "frozen-historic-date-range",
+      "parameters": {
+        "warehouseId": "WH-01",
+        "fromDate": "2026-10-19",
+        "throughDate": "2026-10-19",
+        "policyVersion": "stock-v1"
+      },
+      "dataset": {
+        "sourceMode": "fixture",
+        "sourceVersions": {
+          "orders": "fixture-orders-v1",
+          "inventory": "fixture-inventory-v1",
+          "productRules": "fixture-product-rules-v1"
+        },
+        "sourceSchemaVersions": {
+          "orders": "orders/v1",
+          "inventory": "inventory/v1",
+          "productRules": "product-rules/v1"
+        },
+        "orders": [
+          {
+            "orderId": "ORD-1001",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-20",
+            "sku": "red-cup",
+            "quantity": 2,
+            "unit": "BOX",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1002",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-21",
+            "sku": "CUP-RED",
+            "quantity": 1,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1003",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "blue-mug",
+            "quantity": 5,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1004",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 99,
+            "unit": "EA",
+            "status": "cancelled"
+          },
+          {
+            "orderId": "ORD-1005",
+            "warehouseId": "WH-02",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 30,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1006",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-19",
+            "sku": "CUP-RED",
+            "quantity": 100,
+            "unit": "EA",
+            "status": "open"
+          }
+        ],
+        "inventory": [
+          {
+            "warehouseId": "WH-01",
+            "sku": "CUP-RED",
+            "snapshotDate": "2026-10-19",
+            "onHandEach": 15
+          },
+          {
+            "warehouseId": "WH-01",
+            "sku": "MUG-BLUE",
+            "snapshotDate": "2026-10-19",
+            "onHandEach": 8
+          }
+        ],
+        "productRules": {
+          "version": "stock-v1",
+          "aliases": [
+            {
+              "alias": "red-cup",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "CUP-RED",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "blue-mug",
+              "canonicalSku": "MUG-BLUE"
+            },
+            {
+              "alias": "MUG-BLUE",
+              "canonicalSku": "MUG-BLUE"
+            }
+          ],
+          "unitConversions": [
+            {
+              "unit": "EA",
+              "eachPerUnit": 1
+            },
+            {
+              "unit": "BOX",
+              "eachPerUnit": 12
+            }
+          ]
+        }
+      }
+    },
+    {
+      "caseId": "frozen-policy-version-change",
+      "parameters": {
+        "warehouseId": "WH-01",
+        "fromDate": "2026-10-20",
+        "throughDate": "2026-10-23",
+        "policyVersion": "stock-v9"
+      },
+      "dataset": {
+        "sourceMode": "fixture",
+        "sourceVersions": {
+          "orders": "fixture-orders-v1",
+          "inventory": "fixture-inventory-v1",
+          "productRules": "fixture-product-rules-v1"
+        },
+        "sourceSchemaVersions": {
+          "orders": "orders/v1",
+          "inventory": "inventory/v1",
+          "productRules": "product-rules/v1"
+        },
+        "orders": [
+          {
+            "orderId": "ORD-1001",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-20",
+            "sku": "red-cup",
+            "quantity": 2,
+            "unit": "BOX",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1002",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-21",
+            "sku": "CUP-RED",
+            "quantity": 1,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1003",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "blue-mug",
+            "quantity": 5,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1004",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 99,
+            "unit": "EA",
+            "status": "cancelled"
+          },
+          {
+            "orderId": "ORD-1005",
+            "warehouseId": "WH-02",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 30,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1006",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-19",
+            "sku": "CUP-RED",
+            "quantity": 100,
+            "unit": "EA",
+            "status": "open"
+          }
+        ],
+        "inventory": [
+          {
+            "warehouseId": "WH-01",
+            "sku": "CUP-RED",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 15
+          },
+          {
+            "warehouseId": "WH-01",
+            "sku": "MUG-BLUE",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 8
+          }
+        ],
+        "productRules": {
+          "version": "stock-v1",
+          "aliases": [
+            {
+              "alias": "red-cup",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "CUP-RED",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "blue-mug",
+              "canonicalSku": "MUG-BLUE"
+            },
+            {
+              "alias": "MUG-BLUE",
+              "canonicalSku": "MUG-BLUE"
+            }
+          ],
+          "unitConversions": [
+            {
+              "unit": "EA",
+              "eachPerUnit": 1
+            },
+            {
+              "unit": "BOX",
+              "eachPerUnit": 12
+            }
+          ]
+        }
+      }
+    },
+    {
+      "caseId": "frozen-order-schema-change",
+      "parameters": {
+        "warehouseId": "WH-01",
+        "fromDate": "2026-10-20",
+        "throughDate": "2026-10-23",
+        "policyVersion": "stock-v1"
+      },
+      "dataset": {
+        "sourceMode": "fixture",
+        "sourceVersions": {
+          "orders": "fixture-orders-v1",
+          "inventory": "fixture-inventory-v1",
+          "productRules": "fixture-product-rules-v1"
+        },
+        "sourceSchemaVersions": {
+          "orders": "orders/v3",
+          "inventory": "inventory/v1",
+          "productRules": "product-rules/v1"
+        },
+        "orders": [
+          {
+            "orderId": "ORD-1001",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-20",
+            "sku": "red-cup",
+            "quantity": 2,
+            "unit": "BOX",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1002",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-21",
+            "sku": "CUP-RED",
+            "quantity": 1,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1003",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "blue-mug",
+            "quantity": 5,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1004",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 99,
+            "unit": "EA",
+            "status": "cancelled"
+          },
+          {
+            "orderId": "ORD-1005",
+            "warehouseId": "WH-02",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 30,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1006",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-19",
+            "sku": "CUP-RED",
+            "quantity": 100,
+            "unit": "EA",
+            "status": "open"
+          }
+        ],
+        "inventory": [
+          {
+            "warehouseId": "WH-01",
+            "sku": "CUP-RED",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 15
+          },
+          {
+            "warehouseId": "WH-01",
+            "sku": "MUG-BLUE",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 8
+          }
+        ],
+        "productRules": {
+          "version": "stock-v1",
+          "aliases": [
+            {
+              "alias": "red-cup",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "CUP-RED",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "blue-mug",
+              "canonicalSku": "MUG-BLUE"
+            },
+            {
+              "alias": "MUG-BLUE",
+              "canonicalSku": "MUG-BLUE"
+            }
+          ],
+          "unitConversions": [
+            {
+              "unit": "EA",
+              "eachPerUnit": 1
+            },
+            {
+              "unit": "BOX",
+              "eachPerUnit": 12
+            }
+          ]
+        }
+      }
+    },
+    {
+      "caseId": "frozen-future-snapshot",
+      "parameters": {
+        "warehouseId": "WH-01",
+        "fromDate": "2026-10-20",
+        "throughDate": "2026-10-23",
+        "policyVersion": "stock-v1"
+      },
+      "dataset": {
+        "sourceMode": "fixture",
+        "sourceVersions": {
+          "orders": "fixture-orders-v1",
+          "inventory": "fixture-inventory-v1",
+          "productRules": "fixture-product-rules-v1"
+        },
+        "sourceSchemaVersions": {
+          "orders": "orders/v1",
+          "inventory": "inventory/v1",
+          "productRules": "product-rules/v1"
+        },
+        "orders": [
+          {
+            "orderId": "ORD-1001",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-20",
+            "sku": "red-cup",
+            "quantity": 2,
+            "unit": "BOX",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1002",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-21",
+            "sku": "CUP-RED",
+            "quantity": 1,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1003",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "blue-mug",
+            "quantity": 5,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1004",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 99,
+            "unit": "EA",
+            "status": "cancelled"
+          },
+          {
+            "orderId": "ORD-1005",
+            "warehouseId": "WH-02",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 30,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1006",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-19",
+            "sku": "CUP-RED",
+            "quantity": 100,
+            "unit": "EA",
+            "status": "open"
+          }
+        ],
+        "inventory": [
+          {
+            "warehouseId": "WH-01",
+            "sku": "CUP-RED",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 15
+          },
+          {
+            "warehouseId": "WH-01",
+            "sku": "MUG-BLUE",
+            "snapshotDate": "2026-10-24",
+            "onHandEach": 8
+          }
+        ],
+        "productRules": {
+          "version": "stock-v1",
+          "aliases": [
+            {
+              "alias": "red-cup",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "CUP-RED",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "blue-mug",
+              "canonicalSku": "MUG-BLUE"
+            },
+            {
+              "alias": "MUG-BLUE",
+              "canonicalSku": "MUG-BLUE"
+            }
+          ],
+          "unitConversions": [
+            {
+              "unit": "EA",
+              "eachPerUnit": 1
+            },
+            {
+              "unit": "BOX",
+              "eachPerUnit": 12
+            }
+          ]
+        }
+      }
+    },
+    {
+      "caseId": "frozen-unknown-unit-on-blue-mug",
+      "parameters": {
+        "warehouseId": "WH-01",
+        "fromDate": "2026-10-20",
+        "throughDate": "2026-10-23",
+        "policyVersion": "stock-v1"
+      },
+      "dataset": {
+        "sourceMode": "fixture",
+        "sourceVersions": {
+          "orders": "fixture-orders-v1",
+          "inventory": "fixture-inventory-v1",
+          "productRules": "fixture-product-rules-v1"
+        },
+        "sourceSchemaVersions": {
+          "orders": "orders/v1",
+          "inventory": "inventory/v1",
+          "productRules": "product-rules/v1"
+        },
+        "orders": [
+          {
+            "orderId": "ORD-1001",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-20",
+            "sku": "red-cup",
+            "quantity": 2,
+            "unit": "BOX",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1002",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-21",
+            "sku": "CUP-RED",
+            "quantity": 1,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1003",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "blue-mug",
+            "quantity": 5,
+            "unit": "PALLET",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1004",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 99,
+            "unit": "EA",
+            "status": "cancelled"
+          },
+          {
+            "orderId": "ORD-1005",
+            "warehouseId": "WH-02",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 30,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1006",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-19",
+            "sku": "CUP-RED",
+            "quantity": 100,
+            "unit": "EA",
+            "status": "open"
+          }
+        ],
+        "inventory": [
+          {
+            "warehouseId": "WH-01",
+            "sku": "CUP-RED",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 15
+          },
+          {
+            "warehouseId": "WH-01",
+            "sku": "MUG-BLUE",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 8
+          }
+        ],
+        "productRules": {
+          "version": "stock-v1",
+          "aliases": [
+            {
+              "alias": "red-cup",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "CUP-RED",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "blue-mug",
+              "canonicalSku": "MUG-BLUE"
+            },
+            {
+              "alias": "MUG-BLUE",
+              "canonicalSku": "MUG-BLUE"
+            }
+          ],
+          "unitConversions": [
+            {
+              "unit": "EA",
+              "eachPerUnit": 1
+            },
+            {
+              "unit": "BOX",
+              "eachPerUnit": 12
+            }
+          ]
+        }
+      }
+    },
+    {
+      "caseId": "frozen-missing-blue-inventory",
+      "parameters": {
+        "warehouseId": "WH-01",
+        "fromDate": "2026-10-20",
+        "throughDate": "2026-10-23",
+        "policyVersion": "stock-v1"
+      },
+      "dataset": {
+        "sourceMode": "fixture",
+        "sourceVersions": {
+          "orders": "fixture-orders-v1",
+          "inventory": "fixture-inventory-v1",
+          "productRules": "fixture-product-rules-v1"
+        },
+        "sourceSchemaVersions": {
+          "orders": "orders/v1",
+          "inventory": "inventory/v1",
+          "productRules": "product-rules/v1"
+        },
+        "orders": [
+          {
+            "orderId": "ORD-1001",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-20",
+            "sku": "red-cup",
+            "quantity": 2,
+            "unit": "BOX",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1002",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-21",
+            "sku": "CUP-RED",
+            "quantity": 1,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1003",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "blue-mug",
+            "quantity": 5,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1004",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 99,
+            "unit": "EA",
+            "status": "cancelled"
+          },
+          {
+            "orderId": "ORD-1005",
+            "warehouseId": "WH-02",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 30,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1006",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-19",
+            "sku": "CUP-RED",
+            "quantity": 100,
+            "unit": "EA",
+            "status": "open"
+          }
+        ],
+        "inventory": [
+          {
+            "warehouseId": "WH-01",
+            "sku": "CUP-RED",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 15
+          }
+        ],
+        "productRules": {
+          "version": "stock-v1",
+          "aliases": [
+            {
+              "alias": "red-cup",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "CUP-RED",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "blue-mug",
+              "canonicalSku": "MUG-BLUE"
+            },
+            {
+              "alias": "MUG-BLUE",
+              "canonicalSku": "MUG-BLUE"
+            }
+          ],
+          "unitConversions": [
+            {
+              "unit": "EA",
+              "eachPerUnit": 1
+            },
+            {
+              "unit": "BOX",
+              "eachPerUnit": 12
+            }
+          ]
+        }
+      }
+    },
+    {
+      "caseId": "frozen-unknown-product-alias",
+      "parameters": {
+        "warehouseId": "WH-01",
+        "fromDate": "2026-10-20",
+        "throughDate": "2026-10-23",
+        "policyVersion": "stock-v1"
+      },
+      "dataset": {
+        "sourceMode": "fixture",
+        "sourceVersions": {
+          "orders": "fixture-orders-v1",
+          "inventory": "fixture-inventory-v1",
+          "productRules": "fixture-product-rules-v1"
+        },
+        "sourceSchemaVersions": {
+          "orders": "orders/v1",
+          "inventory": "inventory/v1",
+          "productRules": "product-rules/v1"
+        },
+        "orders": [
+          {
+            "orderId": "ORD-1001",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-20",
+            "sku": "GREEN-WIDGET",
+            "quantity": 2,
+            "unit": "BOX",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1002",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-21",
+            "sku": "CUP-RED",
+            "quantity": 1,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1003",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "blue-mug",
+            "quantity": 5,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1004",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 99,
+            "unit": "EA",
+            "status": "cancelled"
+          },
+          {
+            "orderId": "ORD-1005",
+            "warehouseId": "WH-02",
+            "orderDate": "2026-10-22",
+            "sku": "CUP-RED",
+            "quantity": 30,
+            "unit": "EA",
+            "status": "open"
+          },
+          {
+            "orderId": "ORD-1006",
+            "warehouseId": "WH-01",
+            "orderDate": "2026-10-19",
+            "sku": "CUP-RED",
+            "quantity": 100,
+            "unit": "EA",
+            "status": "open"
+          }
+        ],
+        "inventory": [
+          {
+            "warehouseId": "WH-01",
+            "sku": "CUP-RED",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 15
+          },
+          {
+            "warehouseId": "WH-01",
+            "sku": "MUG-BLUE",
+            "snapshotDate": "2026-10-23",
+            "onHandEach": 8
+          }
+        ],
+        "productRules": {
+          "version": "stock-v1",
+          "aliases": [
+            {
+              "alias": "red-cup",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "CUP-RED",
+              "canonicalSku": "CUP-RED"
+            },
+            {
+              "alias": "blue-mug",
+              "canonicalSku": "MUG-BLUE"
+            },
+            {
+              "alias": "MUG-BLUE",
+              "canonicalSku": "MUG-BLUE"
+            }
+          ],
+          "unitConversions": [
+            {
+              "unit": "EA",
+              "eachPerUnit": 1
+            },
+            {
+              "unit": "BOX",
+              "eachPerUnit": 12
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

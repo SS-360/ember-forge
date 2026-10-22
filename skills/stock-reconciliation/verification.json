@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "pocketforge.verification/1",
+  "scope": "finite-development-suite",
+  "candidateOrigin": "provided_candidate_draft",
+  "skillId": "stock-reconciliation",
+  "skillVersion": "0.1.0",
+  "candidateHash": "7c13dadaa80140a068836503d1e2c0dfd17eeb55a1ea59579bca9906f079dc98",
+  "status": "validated",
+  "supportedCaseCount": 2,
+  "correctSupportedCount": 2,
+  "unsupportedCaseCount": 5,
+  "rejectedUnsupportedCount": 5,
+  "falseAcceptanceCount": 0,
+  "needlessFallbackCount": 0,
+  "coverage": 1,
+  "cases": [
+    {
+      "caseId": "dev-supported-baseline",
+      "expectedOutcome": "supported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedResultHash": "bdc1473c86d1ebb57d7f0c6981cdf361d6db8622c5cb48f3cabae8e266498306",
+      "actualResultHash": "bdc1473c86d1ebb57d7f0c6981cdf361d6db8622c5cb48f3cabae8e266498306",
+      "durationMs": 3.1797000000078697
+    },
+    {
+      "caseId": "dev-supported-new-order-id-and-row-order",
+      "expectedOutcome": "supported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedResultHash": "304aadd7a0cb296d1c1f622fb37ff3efb9ff1f17a756f215aef4d4d101b4064e",
+      "actualResultHash": "304aadd7a0cb296d1c1f622fb37ff3efb9ff1f17a756f215aef4d4d101b4064e",
+      "durationMs": 1.0877000000036787
+    },
+    {
+      "caseId": "dev-unknown-unit",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "UNKNOWN_UNIT",
+      "actualReason": "UNKNOWN_UNIT",
+      "durationMs": 1.363100000002305
+    },
+    {
+      "caseId": "dev-changed-policy",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "POLICY_VERSION_MISMATCH",
+      "actualReason": "POLICY_VERSION_MISMATCH",
+      "durationMs": 1.2225000000034925
+    },
+    {
+      "caseId": "dev-changed-schema",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "SCHEMA_VERSION_MISMATCH",
+      "actualReason": "SCHEMA_VERSION_MISMATCH",
+      "durationMs": 0.4746000000013737
+    },
+    {
+      "caseId": "dev-future-inventory-snapshot",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "INVENTORY_SNAPSHOT_AFTER_RANGE",
+      "actualReason": "INVENTORY_SNAPSHOT_AFTER_RANGE",
+      "durationMs": 0.3898999999946682
+    },
+    {
+      "caseId": "dev-missing-inventory",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "INVENTORY_NOT_FOUND",
+      "actualReason": "INVENTORY_NOT_FOUND",
+      "durationMs": 0.8086000000039348
+    }
+  ],
+  "startedAt": "2026-10-22T20:05:50.521Z",
+  "endedAt": "2026-10-22T20:05:50.531Z",
+  "durationMs": 10.3295999999973
+}
