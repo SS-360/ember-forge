@@ -35,6 +35,9 @@ importers:
       '@pocketforge/evaluator':
         specifier: workspace:*
         version: link:../../packages/evaluator
+      '@pocketforge/memory':
+        specifier: workspace:*
+        version: link:../../packages/memory
       '@pocketforge/runtime':
         specifier: workspace:*
         version: link:../../packages/runtime

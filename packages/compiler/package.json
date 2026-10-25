@@ -5,7 +5,12 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./development-suite": "./src/development-suite.ts"
+    "./development-suite": "./src/development-suite.ts",
+    "./trace-compiler": "./src/trace-compiler.ts",
+    "./trace-fixtures": "./src/trace-fixtures.ts",
+    "./synthesis-controller": "./src/synthesis-controller.ts",
+    "./nemotron-adapter": "./src/nemotron-adapter.ts",
+    "./trace-replay": "./src/trace-replay.ts"
   },
   "dependencies": {
     "@pocketforge/contracts": "workspace:*",

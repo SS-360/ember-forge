@@ -63,6 +63,9 @@ export function reconcileStock(parametersInput: StockParameters, datasetInput: S
       );
     }
   }
+  if (dataset.orders.length + dataset.inventory.length + rules.aliases.length + rules.unitConversions.length > 5000) {
+    throw new UnsupportedInputError("ROW_LIMIT_EXCEEDED", "The stock-reconciliation task permits at most 5000 source rows.");
+  }
   if (dataset.inventory.some((record) => record.snapshotDate > parameters.throughDate)) {
     throw new UnsupportedInputError(
       "INVENTORY_SNAPSHOT_AFTER_RANGE",

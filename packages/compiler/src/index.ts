@@ -40,7 +40,7 @@ export interface VerificationCaseResult {
 export interface VerificationReport {
   schemaVersion: "pocketforge.verification/1";
   scope: "finite-development-suite";
-  candidateOrigin: "provided_candidate_draft";
+  candidateOrigin: "provided_candidate_draft" | "deterministic_trace_assembly" | "nemotron_synthesis" | "test_synthesis";
   skillId: string;
   skillVersion: string;
   candidateHash: string;
@@ -113,8 +113,18 @@ export function verifyCandidate(
     if (caseIds.has(testCase.caseId)) throw new Error("Duplicate verification case id " + testCase.caseId);
     caseIds.add(testCase.caseId);
     const caseStart = performance.now();
-    const parameters = StockParametersSchema.parse(testCase.parameters);
-    const dataset = StockDatasetSchema.parse(testCase.dataset);
+    const parametersResult = StockParametersSchema.safeParse(testCase.parameters);
+    const datasetResult = StockDatasetSchema.safeParse(testCase.dataset);
+    if (!parametersResult.success || !datasetResult.success) {
+      let actualReason = "FALSE_ACCEPTANCE";
+      try { executeSkill(skill, contract, testCase.parameters, testCase.dataset); }
+      catch (error) { actualReason = error instanceof Error && error.name === "ZodError" ? "INPUT_CONTRACT_INVALID" : "EXECUTION_ERROR"; }
+      const passed = testCase.expectedOutcome === "unsupported" && testCase.expectedReason === "INPUT_CONTRACT_INVALID" && actualReason === "INPUT_CONTRACT_INVALID";
+      results.push(makeResult({ caseId: testCase.caseId, expectedOutcome: testCase.expectedOutcome, actualOutcome: passed ? "correct" : testCase.expectedOutcome === "supported" ? "reference_mismatch" : "incorrect", passed, ...(testCase.expectedOutcome === "unsupported" ? { expectedReason: testCase.expectedReason } : {}), actualReason }, performance.now() - caseStart));
+      continue;
+    }
+    const parameters = parametersResult.data;
+    const dataset = datasetResult.data;
 
     if (testCase.expectedOutcome === "supported") {
       let expected: ReturnType<typeof reconcileStock>;

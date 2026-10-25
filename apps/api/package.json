@@ -10,6 +10,7 @@
     "@pocketforge/compiler": "workspace:*",
     "@pocketforge/contracts": "workspace:*",
     "@pocketforge/evaluator": "workspace:*",
+    "@pocketforge/memory": "workspace:*",
     "@pocketforge/runtime": "workspace:*",
     "fastify": "5.12.7",
     "zod": "4.6.7"

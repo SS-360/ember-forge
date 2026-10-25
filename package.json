@@ -9,7 +9,8 @@
   },
   "scripts": {
     "doctor": "tsx scripts/doctor.ts",
-    "dev": "pnpm eval:export && pnpm --parallel --filter @pocketforge/api --filter @pocketforge/web dev",
+    "dev": "pnpm --parallel --filter @pocketforge/api --filter @pocketforge/web dev",
+    "source:state": "tsx scripts/capture-source-state.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "eval": "tsx scripts/run-fixture-baseline.ts",
@@ -19,6 +20,7 @@
     "eval:frozen": "tsx scripts/evaluate-frozen-split.ts",
     "memory:demo": "tsx scripts/run-memory-demo.ts",
     "hmem:conformance": "tsx vendor/meterless/hmem/conformance/runner.ts",
+    "harness:codex": "tsx scripts/check-codex-discovery.ts",
     "demo:reset": "tsx scripts/reset-demo.ts"
   },
   "devDependencies": {

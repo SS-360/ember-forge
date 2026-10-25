@@ -1,4 +1,5 @@
 import { performance } from "node:perf_hooks";
+import { createHash } from "node:crypto";
 import {
   SkillContractSchema,
   SkillDefinitionSchema,
@@ -33,6 +34,22 @@ export interface SkillExecutionResult {
     rowsByOperation: Record<string, number>;
     durationMs: number;
   };
+}
+
+export interface OperationObservation {
+  operation: SkillOperation;
+  inputHash: string;
+  outputHash?: string;
+  outcome: "succeeded" | "failed";
+  errorCode?: string;
+}
+
+function observationHash(value: unknown): string {
+  const normalize = (item: unknown): unknown => Array.isArray(item) ? item.map(normalize) :
+    item !== null && typeof item === "object"
+      ? Object.fromEntries(Object.keys(item).sort().map((key) => [key, normalize((item as Row)[key])]))
+      : item;
+  return createHash("sha256").update(JSON.stringify(normalize(value))).digest("hex");
 }
 
 export type ApplicabilityVerdict =
@@ -191,9 +208,17 @@ function assertApplicable(
   if (rowCount > contract.maxRows) {
     fail("ROW_LIMIT_EXCEEDED", "Input exceeds the skill contract row limit");
   }
+  const requireUnique = <T>(rows: T[], identity: (row: T) => string, code: string) => {
+    const seen = new Set<string>();
+    for (const row of rows) { const id = identity(row); if (seen.has(id)) fail(code, "Source identities must be unique."); seen.add(id); }
+  };
   if (dataset.inventory.some((record) => record.snapshotDate > parameters.throughDate)) {
     fail("INVENTORY_SNAPSHOT_AFTER_RANGE", "Inventory snapshot is later than the requested end date");
   }
+  requireUnique(dataset.productRules.aliases, (row) => row.alias, "DUPLICATE_SKU_ALIAS");
+  requireUnique(dataset.productRules.unitConversions, (row) => row.unit, "DUPLICATE_UNIT_RULE");
+  requireUnique(dataset.orders, (row) => row.orderId, "DUPLICATE_ORDER_ID");
+  requireUnique(dataset.inventory, (row) => JSON.stringify([row.warehouseId, row.sku]), "DUPLICATE_INVENTORY_KEY");
 }
 
 export function assessApplicability(
@@ -446,7 +471,8 @@ export function executeSkill(
   skillInput: unknown,
   contractInput: unknown,
   parametersInput: unknown,
-  datasetInput: unknown
+  datasetInput: unknown,
+  observe?: (event: OperationObservation) => void
 ): SkillExecutionResult {
   const skill: SkillDefinition = SkillDefinitionSchema.parse(skillInput);
   const contract = SkillContractSchema.parse(contractInput);
@@ -473,10 +499,22 @@ export function executeSkill(
 
   for (const operation of ir.operations) {
     checkDeadline();
-    const output = executeOperation(operation, values, sourceTables, parameters, checkDeadline);
-    if (output.length > Math.min(ir.runtimeLimits.maxRows, contract.maxRows)) {
-      fail("ROW_LIMIT_EXCEEDED", "Operation " + operation.id + " exceeded the row limit");
+    const dependencies = operation.kind === "source_read" ? sourceTables[operation.source] :
+      operation.kind === "join" ? [values.get(operation.left), values.get(operation.right)] :
+      operation.kind === "lookup" ? [values.get(operation.input), values.get(operation.table)] : values.get(operation.input);
+    const inputHash = observe ? observationHash({ operation, parameters, dependencies }) : "";
+    let output: Row[];
+    try {
+      output = executeOperation(operation, values, sourceTables, parameters, checkDeadline);
+      if (output.length > Math.min(ir.runtimeLimits.maxRows, contract.maxRows)) {
+        fail("ROW_LIMIT_EXCEEDED", "Operation " + operation.id + " exceeded the row limit");
+      }
+      checkDeadline();
+    } catch (error) {
+      observe?.({ operation: structuredClone(operation), inputHash, outcome: "failed", errorCode: error instanceof SkillExecutionError ? error.code : "EXECUTION_ERROR" });
+      throw error;
     }
+    observe?.({ operation: structuredClone(operation), inputHash, outputHash: observationHash(output), outcome: "succeeded" });
     values.set(operation.id, output);
     rowsByOperation[operation.id] = output.length;
     checkDeadline();

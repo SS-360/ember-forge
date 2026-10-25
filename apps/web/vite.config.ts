@@ -7,6 +7,7 @@ export default defineConfig({
     host: "127.0.0.1",
     port: 5174,
     strictPort: true,
+    fs: { deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "**/.local/**", "**/artifacts/**"] },
     proxy: { "/api": "http://127.0.0.1:3001" }
   }
 });

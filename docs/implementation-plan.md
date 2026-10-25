@@ -1,12 +1,12 @@
 # Pocket Forge — Codex Implementation Plan
 
 Prepared: 23 October 2026, Asia/Calcutta.
-Status: implementation proposal, not a record of completed work.
+Status: active implementation plan; completed work and current gaps are recorded in [progress](progress.md), [readiness](readiness.md), and [implementation follow-up](implementation-follow-up.md).
 Product explanation: [Pocket Forge Description](product-description.md).
 
 ## 1. Project contract
 
-Build an independent Track 3 product that learns reusable procedures from agent trajectories, compiles them into portable executable skills, and verifies their applicability on new inputs.
+Build an independent Track 3 product that learns reusable procedures from agent trajectories, compiles them into portable Agent Skills, and verifies their applicability on new inputs. The primary deliverable is a standards-based skill folder that compatible harnesses can discover and invoke. The standalone Pocket Forge CLI remains a secondary interface to the same trusted runtime.
 
 Do not merge this with VRAM Rescue. Do not import NeuroDBG source, its environment, or research results. These planning files are stored in the current workspace only for handoff. The actual project should live in a separate Codex project folder, suggested name `PocketForge`.
 
@@ -14,7 +14,7 @@ The first supported domain is read-only structured-data reconciliation. A skill 
 
 ### Proposed user journey
 
-Connect approved data → run tasks with Nemotron → inspect observed trajectories → compile candidate → inspect validation → register skill → execute new inputs → export.
+Connect approved data → run tasks with Nemotron → inspect observed trajectories → compile candidate → inspect validation → register skill → export an installable Agent Skill → install it in a separate harness → execute new inputs. Direct CLI execution remains available for workflows that do not need agent orchestration.
 
 ## 2. Event and operational constraints
 
@@ -36,8 +36,9 @@ Connect approved data → run tasks with Nemotron → inspect observed trajector
 4. Input applicability checks, postconditions, and version invalidation.
 5. Meterless H-MEM retrieval of validated skills and relevant experience.
 6. Real Zetaris queries spanning at least two distinct sources.
-7. Portable export that runs supported inputs with model access disabled.
-8. Independent evaluation and a polished local interface.
+7. Candidate-specific Agent Skills exports that run supported inputs with reasoning access disabled.
+8. Verified discovery, invocation, and correct execution in at least two real harnesses before claiming cross-harness transfer. Target Codex, Claude Code, OpenClaw, and Hermes; mark any untested harness unverified.
+9. Independent evaluation and a polished local interface.
 
 ### Non-goals
 
@@ -67,6 +68,7 @@ packages/contracts/        input, tool, trace, IR and export schemas
 packages/agent/            Nemotron client and bounded orchestration
 packages/compiler/         trace analysis, IR generation, revision loop
 packages/runtime/          trusted IR interpreter and export entrypoint
+packages/skill-export/     standards-based Agent Skills bundle and optional host adapters
 packages/memory/           H-MEM adapter and product memory mapping
 packages/connectors/       Zetaris and explicit fixture connectors
 packages/evaluator/        independent checks and metrics
@@ -122,6 +124,16 @@ Use a small typed IR: source read, filter, project, typed join, lookup, unit con
 The compiler generates operation graphs and parameters, not arbitrary code. A trusted interpreter executes them. Export the generated IR plus the interpreter as an executable package. Call this bounded workflow compilation; do not imply unrestricted program synthesis.
 
 Require stable ordering, explicit null semantics, decimal-safe quantities where necessary, and declared timezones. Never infer a new conversion factor during skill execution.
+
+## 6.1 Portable Agent Skills and harness compatibility
+
+Use the open Agent Skills folder format as the standards-only core. Every export has a `SKILL.md` with valid YAML frontmatter (`name`, `description`) and concise procedural instructions. The folder name matches the skill name. The description explains both the task handled and when the harness should invoke it. Include accurate activation and non-activation conditions, supported inputs, outputs, runtime dependencies, permissions/data access, failure behavior, and relative links to the bundled contract, tests, verification/provenance, and trusted runner.
+
+Keep platform-specific metadata separate and versioned. Add Codex plugin files, Claude Code plugin packaging, or other harness metadata only where the relevant official documentation requires it. A host skill wrapper must invoke the packaged runtime on the user-provided inputs; it must not reproduce the algorithm as a prompt, silently broaden its contract, or fall back to a model without an explicit caller decision. The standalone CLI uses the same contract and procedure.
+
+Track compatibility in a matrix with distinct statuses for: (1) format validation, (2) installation/discovery, (3) invocation, and (4) correct execution on a new supported input plus an actionable unsupported-input rejection. Target Codex, Claude Code, OpenClaw, and Hermes. Do not mark a harness supported based only on matching file layout; require real end-to-end evidence in at least two harnesses before claiming cross-harness transfer.
+
+Resolve skill assets relative to the package/module location. Resolve the caller's input/output paths from the caller's current working directory. The package must contain no credentials, machine-specific absolute paths, hidden service requirements, or undeclared dependencies. Record runtime and host requirements, model/tool-call counts, and data/network access separately. Installation of executable skills grants the harness the execution permissions it already has, so make permission needs explicit and keep the interpreter allowlisted.
 
 ## 7. Compiler and fallback workflow
 
@@ -184,7 +196,7 @@ Enforce the no-reasoning claim through a disabled provider and an instrumented c
 | P1: truthful baseline | One task end to end, trace schemas, deterministic oracle, fixed fixtures | Correct baseline and retained failed example |
 | P2: core compiler | Typed IR, generated candidate, static validator, executable interpreter | Candidate handles unseen development inputs; no answer hardcoding |
 | P3: memory and boundaries | H-MEM retrieval, contract checks, invalidation, explicit fallback | Cold/warm and stale-skill tests |
-| P4: package and evaluation | Portable export, isolated evaluator, baselines | Fresh-directory export succeeds with model endpoint disabled |
+| P4: package and evaluation | Candidate-specific portable Agent Skill export, isolated evaluator, baselines, harness matrix | Candidate-bound artifact passes format checks, runs from an unrelated working directory, and completes supported plus unsupported cases; at least two real harnesses discover and execute it before transfer is claimed |
 | P5: product finish | UI, cancellation/recovery, onboarding, accessibility basics | Complete browser walkthrough and readable errors |
 | P6: submission | Reproduction instructions, video, deck, results, licenses | Fresh-clone rehearsal and final checklist |
 

@@ -158,6 +158,7 @@ export class SkillMemoryService {
     skill: unknown;
     contract: unknown;
     verification: unknown;
+    artifactPaths?: { skillPath: string; contractPath: string };
   }): SkillMemoryEntry {
     const skill = SkillDefinitionSchema.parse(input.skill);
     const contract = SkillContractSchema.parse(input.contract);
@@ -183,10 +184,11 @@ export class SkillMemoryService {
       throw new Error("A skill version is immutable; create a new version to replace it");
     }
 
-    const skillPath = "skills/" + skill.id + "/skill.json";
-    const contractPath = "skills/" + skill.id + "/contract.json";
-    safePath(this.projectRoot, skillPath);
-    safePath(this.projectRoot, contractPath);
+    const skillPath = input.artifactPaths?.skillPath ?? "skills/" + skill.id + "/skill.json";
+    const contractPath = input.artifactPaths?.contractPath ?? "skills/" + skill.id + "/contract.json";
+    const storedSkill = SkillDefinitionSchema.parse(JSON.parse(fs.readFileSync(safePath(this.projectRoot, skillPath), "utf8")));
+    const storedContract = SkillContractSchema.parse(JSON.parse(fs.readFileSync(safePath(this.projectRoot, contractPath), "utf8")));
+    if (candidateHashForSkill(storedSkill, storedContract) !== candidateHash) throw new Error("Stored artifacts do not match the verified candidate.");
     const caseIds = Array.isArray(input.verification.cases)
       ? input.verification.cases
         .map((item) => isRecord(item) && typeof item.caseId === "string" ? item.caseId : undefined)
@@ -338,6 +340,12 @@ export class SkillMemoryService {
           memoryId: entry.memoryId,
           reason: "SKILL_ARTIFACT_UNAVAILABLE"
         });
+        continue;
+      }
+
+      if (candidateHashForSkill(skill, contract) !== entry.candidateHash) {
+        this.deprecate(entry, "SKILL_ARTIFACT_HASH_MISMATCH");
+        rejections.push({ skillId: entry.skillId, skillVersion: entry.skillVersion, memoryId: entry.memoryId, reason: "SKILL_ARTIFACT_HASH_MISMATCH" });
         continue;
       }
 

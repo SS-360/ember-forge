@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./traces": "./src/traces.ts",
+    "./synthesis": "./src/synthesis.ts",
+    "./provider-authorization": "./src/provider-authorization.ts"
   },
   "dependencies": {
     "zod": "4.6.7"

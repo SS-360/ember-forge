@@ -1,20 +1,25 @@
 import { createHash, randomUUID } from "node:crypto";
 import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
-import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import Fastify from "fastify";
 import { z } from "zod";
-import { StockParametersSchema } from "@pocketforge/contracts";
+import { SkillContractSchema, SkillDefinitionSchema, StockDatasetSchema, StockParametersSchema } from "@pocketforge/contracts";
 import { compileCandidate } from "@pocketforge/compiler";
 import { buildDevelopmentSuite } from "@pocketforge/compiler/development-suite";
 import { reconcileStock, UnsupportedInputError } from "@pocketforge/evaluator";
+import { candidateDirectory as resolveCandidateDirectory, readCandidate, readDevelopmentCases, registerCompilationRoutes, writeVerificationFiles } from "./compilation.js";
+import { exportVerifiedCandidate } from "../../../scripts/export-skill.js";
+import { exportFilesMatchManifest } from "./export-integrity.js";
+import { registerLibraryRoutes } from "./library.js";
+import { registerEvaluationRoutes } from "./evaluation.js";
+import { composeSynthesisProvider } from "./provider-composition.js";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const artifactsRoot = path.join(projectRoot, "artifacts");
 const runsRoot = path.join(artifactsRoot, "runs");
-const skillsRoot = path.join(projectRoot, "skills", "stock-reconciliation");
 const fixturePath = path.join(projectRoot, "fixtures", "dev", "stock-reconciliation.json");
 try { process.loadEnvFile(path.join(projectRoot, ".env")); } catch (error) {
   if (!(error instanceof Error) || !("code" in error) || error.code !== "ENOENT") throw error;
@@ -54,6 +59,11 @@ interface RunRecord {
   modelCallCount: number;
   createdAt: string;
   result?: unknown;
+  parameters?: { warehouseId: string; fromDate: string; throughDate: string; policyVersion: string };
+  trace?: {
+    outcome: "succeeded" | "unsupported" | "failed";
+    steps: Array<{ id: string; kind: string; source?: string; outcome: "succeeded" | "failed"; durationMs?: number; errorCode?: string }>;
+  };
   artifactPath?: string;
   limitation: string;
   origin?: "imported_artifact" | "local_api";
@@ -99,7 +109,10 @@ async function seedRecordedRuns(): Promise<void> {
         : typeof artifact.trace?.errorCode === "string" ? artifact.trace.errorCode
           : typeof artifact.unsupportedReason === "string" ? artifact.unsupportedReason : undefined;
       const isLocalApiRun = typeof artifact.taskDescription === "string";
-      const parameters = artifact.parameters as { warehouseId?: string; fromDate?: string; throughDate?: string } | undefined;
+      const parameterResult = StockParametersSchema.safeParse(artifact.parameters ?? (
+        result && typeof result === "object" ? (result as Record<string, unknown>).parameters : undefined
+      ));
+      const parameters = parameterResult.success ? parameterResult.data : undefined;
       const record: RunRecord = {
         id: artifact.runId,
         taskName: isLocalApiRun && typeof artifact.taskName === "string"
@@ -111,7 +124,7 @@ async function seedRecordedRuns(): Promise<void> {
         executor: typeof artifact.executor === "string" ? artifact.executor : "fixture_reference",
         inputSummary: typeof artifact.inputSummary === "string"
           ? artifact.inputSummary
-          : parameters
+            : parameters
             ? `6 synthetic order rows · ${parameters.warehouseId} · ${parameters.fromDate} to ${parameters.throughDate}`
             : `${artifact.trace?.steps?.some((step: any) => step.source === "fixture.orders") ? 6 : "Synthetic"} order rows · WH-01 · 20–23 Oct 2026`,
         outcomeSummary: succeeded ? `${result?.lines?.length ?? 0} SKU results · artifact ${artifact.runId.slice(0, 8)}` : `${reason ?? "Unsupported input"} · artifact ${artifact.runId.slice(0, 8)}`,
@@ -119,6 +132,18 @@ async function seedRecordedRuns(): Promise<void> {
         modelCallCount: 0,
         createdAt: artifact.trace?.startedAt ?? new Date(0).toISOString(),
         ...(result ? { result } : {}),
+        ...(parameters ? { parameters } : {}),
+        ...(artifact.trace && Array.isArray(artifact.trace.steps) ? { trace: {
+          outcome: artifact.trace.outcome,
+          steps: artifact.trace.steps.map((step: Record<string, unknown>) => ({
+            id: String(step.id ?? "unknown_step"),
+            kind: String(step.kind ?? "unknown"),
+            ...(typeof step.source === "string" ? { source: step.source } : {}),
+            outcome: step.outcome === "succeeded" ? "succeeded" : "failed",
+            ...(typeof step.durationMs === "number" ? { durationMs: step.durationMs } : {}),
+            ...(typeof step.errorCode === "string" ? { errorCode: step.errorCode } : {})
+          }))
+        } } : {}),
         artifactPath: path.join("artifacts", "runs", file),
         limitation: typeof artifact.limitation === "string" ? artifact.limitation : "Synthetic fixture evidence only.",
         origin: isLocalApiRun ? "local_api" : "imported_artifact"
@@ -133,6 +158,11 @@ async function seedRecordedRuns(): Promise<void> {
 await seedRecordedRuns();
 
 const app = Fastify({ logger: true, bodyLimit: 1_000_000 });
+// The human's current authorization is $0; configuration cannot raise that ceiling.
+const synthesisProvider = await composeSynthesisProvider(projectRoot, { approvedSpendingLimitUsd: 0 });
+await registerCompilationRoutes(app, projectRoot, { synthesis: synthesisProvider.dependencies });
+await registerLibraryRoutes(app, projectRoot);
+await registerEvaluationRoutes(app, projectRoot);
 const TaskRunRequestSchema = z.object({
   taskName: z.string().trim().min(1).max(120),
   taskDescription: z.string().trim().min(1).max(2000),
@@ -232,6 +262,18 @@ app.post("/api/tasks/run", async (request, reply) => {
     };
   }
 
+  const trace: NonNullable<RunRecord["trace"]> = {
+    outcome: traceOutcome,
+    steps: [{
+      id: "reconcile_fixture",
+      kind: "aggregate",
+      outcome: traceOutcome === "succeeded" ? "succeeded" : "failed",
+      ...(reason ? { errorCode: reason } : {})
+    }]
+  };
+  record.parameters = parameterResult.data;
+  record.trace = trace;
+
   const artifact = {
     evidenceLabel: traceOutcome === "succeeded" ? "SYNTHETIC DEVELOPMENT DATA — NOT LIVE SPONSOR EVIDENCE" : "SYNTHETIC UNSUPPORTED FIXTURE",
     runId: id,
@@ -251,7 +293,7 @@ app.post("/api/tasks/run", async (request, reply) => {
       startedAt: createdAt,
       endedAt: new Date().toISOString(),
       modelCallCount: 0,
-      steps: [{ id: "reconcile_fixture", kind: "aggregate", inputHash, ...(result ? { outputHash: createHash("sha256").update(JSON.stringify(result)).digest("hex") } : {}), outcome: traceOutcome, ...(reason ? { errorCode: reason } : {}) }],
+      steps: [{ id: "reconcile_fixture", kind: "aggregate", inputHash, ...(result ? { outputHash: createHash("sha256").update(JSON.stringify(result)).digest("hex") } : {}), outcome: traceOutcome === "succeeded" ? "succeeded" : "failed", ...(reason ? { errorCode: reason } : {}) }],
       outcome: traceOutcome,
       ...(reason ? { unsupportedReason: reason } : {})
     },
@@ -265,58 +307,183 @@ app.post("/api/tasks/run", async (request, reply) => {
   return reply.code(201).send(record);
 });
 
-app.get("/api/skills/stock-reconciliation", async (_request, reply) => {
-  const [skill, contract, verification] = await Promise.all([
-    readFile(path.join(skillsRoot, "skill.json"), "utf8"),
-    readFile(path.join(skillsRoot, "contract.json"), "utf8"),
-    readFile(path.join(skillsRoot, "verification.json"), "utf8")
-  ]);
-  return reply.send({ skill: JSON.parse(skill), contract: JSON.parse(contract), verification: JSON.parse(verification) });
+app.get("/api/skills/:skillId", async (request, reply) => {
+  const { skillId } = request.params as { skillId: string };
+  try { return reply.send(await readCandidate(projectRoot, skillId)); }
+  catch { return reply.code(404).send({ error: "SKILL_NOT_FOUND", message: "No local skill exists with this ID." }); }
 });
 
-app.post("/api/skills/stock-reconciliation/verify", async (_request, reply) => {
-  const [fixtureText, skillText, contractText] = await Promise.all([
-    readFile(fixturePath, "utf8"),
-    readFile(path.join(skillsRoot, "skill.json"), "utf8"),
-    readFile(path.join(skillsRoot, "contract.json"), "utf8")
-  ]);
-  const fixture = JSON.parse(fixtureText);
-  const result = compileCandidate(JSON.parse(skillText), JSON.parse(contractText), buildDevelopmentSuite(fixture));
-  await writeFile(path.join(skillsRoot, "verification.json"), JSON.stringify(result.verification, null, 2) + "\n", "utf8");
-  const testManifest = {
-    suite: "stock-reconciliation development verification",
-    scope: "finite development fixtures; not held-out evaluation",
-    cases: result.verification.cases.map((testCase) => ({
+app.get("/api/skills/:skillId/verification-cases", async (request, reply) => {
+  const { skillId } = request.params as { skillId: string };
+  let directory: string;
+  try { directory = await resolveCandidateDirectory(projectRoot, skillId); }
+  catch { return reply.code(404).send({ error: "SKILL_NOT_FOUND", message: "No local skill exists with this ID." }); }
+  return (await readDevelopmentCases(projectRoot, directory)).map((testCase) => {
+    // Invalid input cases are intentional evaluator evidence, not a broken response.
+    const parameters = testCase.parameters as { warehouseId?: unknown; fromDate?: unknown; throughDate?: unknown; policyVersion?: unknown };
+    const datasetResult = StockDatasetSchema.safeParse(testCase.dataset);
+    const dataset = datasetResult.success ? datasetResult.data : undefined;
+    const inputExcerpt: Record<string, unknown> = {
+      warehouseId: parameters.warehouseId,
+      fromDate: parameters.fromDate,
+      throughDate: parameters.throughDate,
+      policyVersion: parameters.policyVersion,
+      sourceSchemaVersions: dataset?.sourceSchemaVersions,
+      ...(dataset ? {} : { inputSchemaValid: false })
+    };
+    if (dataset && testCase.caseId.includes("unknown-unit")) {
+      const order = dataset.orders.find((candidate) => !dataset.productRules.unitConversions.some((rule) => rule.unit === candidate.unit));
+      if (order) inputExcerpt.order = { orderId: order.orderId, sku: order.sku, unit: order.unit, quantity: order.quantity };
+    }
+    if (dataset && testCase.caseId.includes("missing-inventory")) {
+      const demandedSkus = new Set(dataset.orders.map((order) =>
+        dataset.productRules.aliases.find((alias) => alias.alias === order.sku)?.canonicalSku ?? order.sku
+      ));
+      const missingSkus = [...demandedSkus].filter((sku) => !dataset.inventory.some((row) => row.sku === sku));
+      inputExcerpt.inventoryRowCount = dataset.inventory.length;
+      inputExcerpt.missingCanonicalSkus = missingSkus;
+    }
+    return {
       caseId: testCase.caseId,
       expectedOutcome: testCase.expectedOutcome,
-      ...(testCase.expectedReason ? { expectedReason: testCase.expectedReason } : {})
-    }))
-  };
-  await writeFile(path.join(skillsRoot, "tests", "cases.json"), JSON.stringify(testManifest, null, 2) + "\n", "utf8");
+      ...(testCase.expectedOutcome === "unsupported" ? { expectedReason: testCase.expectedReason } : {}),
+      parameters,
+      inputExcerpt,
+      runLinkage: null
+    };
+  });
+});
+
+app.post("/api/skills/:skillId/verify", async (request, reply) => {
+  const { skillId } = request.params as { skillId: string };
+  let directory: string;
+  try { directory = await resolveCandidateDirectory(projectRoot, skillId); }
+  catch { return reply.code(404).send({ error: "SKILL_NOT_FOUND", message: "No local skill exists with this ID." }); }
+  const [cases, candidate] = await Promise.all([readDevelopmentCases(projectRoot, directory), readCandidate(projectRoot, skillId)]);
+  const result = compileCandidate(candidate.skill, candidate.contract, cases);
+  if (candidate.lineage) result.verification.candidateOrigin = candidate.lineage.method;
+  await writeVerificationFiles(directory, result.verification);
+  if (result.exportable) await exportVerifiedCandidate({ candidateDirectory: directory });
   return reply.send(result.verification);
 });
 
-app.get("/api/skills/stock-reconciliation/export", async (_request, reply) => {
-  const exportRoot = path.join(artifactsRoot, "exports", "stock-reconciliation", "0.1.0");
-  let directories: Array<{ name: string; modified: number }> = [];
-  try {
-    directories = await Promise.all((await readdir(exportRoot, { withFileTypes: true }))
-      .filter((entry) => entry.isDirectory())
-      .map(async (entry) => ({ name: entry.name, modified: (await stat(path.join(exportRoot, entry.name))).mtimeMs })));
-  } catch {
-    return reply.code(409).send({ error: "EXPORT_NOT_READY", message: "Run pnpm eval:export to build and verify a fresh standalone package." });
+app.get("/api/skills/:skillId/export", async (request, reply) => {
+  const { skillId } = request.params as { skillId: string };
+  const query = z.object({ candidateHash: z.string().regex(/^[a-f0-9]{64}$/) }).safeParse(request.query);
+  if (!/^[a-z0-9][a-z0-9-]{1,63}$/.test(skillId) || !query.success) {
+    return reply.code(400).send({ error: "EXPORT_REFERENCE_INVALID", message: "A valid skill ID and candidate hash are required." });
   }
-  const newest = directories.sort((left, right) => right.modified - left.modified)[0];
-  if (!newest) return reply.code(409).send({ error: "EXPORT_NOT_READY", message: "Run pnpm eval:export to build and verify a fresh standalone package." });
-  const directory = path.join(exportRoot, newest.name);
-  const files = await collectFiles(directory);
+  let candidateDirectory: string;
+  try { candidateDirectory = await resolveCandidateDirectory(projectRoot, skillId); }
+  catch { return reply.code(404).send({ error: "SKILL_NOT_FOUND", message: "No local skill exists with this ID." }); }
+  let skill: unknown;
+  let contract: unknown;
+  let verification: unknown;
+  try {
+    [skill, contract, verification] = await Promise.all([
+      readFile(path.join(candidateDirectory, "skill.json"), "utf8").then((value) => JSON.parse(value) as unknown),
+      readFile(path.join(candidateDirectory, "contract.json"), "utf8").then((value) => JSON.parse(value) as unknown),
+      readFile(path.join(candidateDirectory, "verification.json"), "utf8").then((value) => JSON.parse(value) as unknown)
+    ]);
+  } catch {
+    return reply.code(404).send({ error: "SKILL_NOT_FOUND", message: "No local skill exists with this ID." });
+  }
+  const skillResult = SkillDefinitionSchema.safeParse(skill);
+  const contractResult = SkillContractSchema.safeParse(contract);
+  const verificationResult = z.object({
+    status: z.literal("validated"),
+    candidateHash: z.string().regex(/^[a-f0-9]{64}$/),
+    skillId: z.string(),
+    skillVersion: z.string()
+  }).passthrough().safeParse(verification);
+  const normalize = (value: unknown): unknown => Array.isArray(value) ? value.map(normalize) :
+    value !== null && typeof value === "object" ? Object.fromEntries(Object.keys(value).sort().map((key) => [key, normalize((value as Record<string, unknown>)[key])])) : value;
+  const currentHash = skillResult.success && contractResult.success
+    ? createHash("sha256").update(JSON.stringify(normalize({ skill: skillResult.data, contract: contractResult.data }))).digest("hex")
+    : "";
+  if (!skillResult.success || !contractResult.success || skillResult.data.id !== skillId ||
+    contractResult.data.skillId !== skillId || contractResult.data.skillVersion !== skillResult.data.version ||
+    !verificationResult.success || verificationResult.data.skillId !== skillId ||
+    verificationResult.data.skillVersion !== skillResult.data.version || verificationResult.data.candidateHash !== currentHash ||
+    query.data.candidateHash !== currentHash) {
+    return reply.code(409).send({ error: "VERIFICATION_STALE", message: "The requested verification no longer matches this skill. Verify the current candidate and export it again." });
+  }
+
+  const reportHash = createHash("sha256").update(await readFile(path.join(candidateDirectory, "verification.json"))).digest("hex");
+  const directory = await findExportDirectory(skillId, skillResult.data.version, currentHash, reportHash);
+  if (!directory) return reply.code(409).send({ error: "EXPORT_NOT_READY", message: "Verify this candidate to prepare its current package." });
+  const files = await collectFiles(directory, skillId);
   const tar = createTar(files);
   const archive = gzipSync(tar, { level: 9 });
   reply.header("Content-Type", "application/gzip");
-  reply.header("Content-Disposition", 'attachment; filename="stock-reconciliation-0.1.0.tar.gz"');
+  reply.header("Content-Disposition", `attachment; filename="${skillId}-${skillResult.data.version}-agent-skill.tar.gz"`);
   reply.header("Cache-Control", "no-store");
   return reply.send(archive);
 });
+
+app.get("/api/skills/:skillId/preview", async (request, reply) => {
+  const { skillId } = request.params as { skillId: string };
+  const query = z.object({ candidateHash: z.string().regex(/^[a-f0-9]{64}$/) }).safeParse(request.query);
+  if (!/^[a-z0-9][a-z0-9-]{1,63}$/.test(skillId) || !query.success) {
+    return reply.code(400).send({ error: "PREVIEW_REFERENCE_INVALID", message: "A valid skill ID and candidate hash are required." });
+  }
+  let candidateDirectory: string;
+  try { candidateDirectory = await resolveCandidateDirectory(projectRoot, skillId); }
+  catch { return reply.code(404).send({ error: "SKILL_NOT_FOUND", message: "No local skill exists with this ID." }); }
+  let skill: unknown;
+  let contract: unknown;
+  let verification: unknown;
+  try {
+    [skill, contract, verification] = await Promise.all([
+      readFile(path.join(candidateDirectory, "skill.json"), "utf8").then(JSON.parse),
+      readFile(path.join(candidateDirectory, "contract.json"), "utf8").then(JSON.parse),
+      readFile(path.join(candidateDirectory, "verification.json"), "utf8").then(JSON.parse)
+    ]);
+  } catch {
+    return reply.code(404).send({ error: "SKILL_NOT_FOUND", message: "No local skill exists with this ID." });
+  }
+  const skillResult = SkillDefinitionSchema.safeParse(skill);
+  const contractResult = SkillContractSchema.safeParse(contract);
+  const verificationResult = z.object({
+    status: z.literal("validated"), candidateHash: z.string().regex(/^[a-f0-9]{64}$/), skillId: z.string(), skillVersion: z.string()
+  }).passthrough().safeParse(verification);
+  const normalize = (value: unknown): unknown => Array.isArray(value) ? value.map(normalize) :
+    value !== null && typeof value === "object" ? Object.fromEntries(Object.keys(value).sort().map((key) => [key, normalize((value as Record<string, unknown>)[key])])) : value;
+  const currentHash = skillResult.success && contractResult.success
+    ? createHash("sha256").update(JSON.stringify(normalize({ skill: skillResult.data, contract: contractResult.data }))).digest("hex") : "";
+  if (!skillResult.success || !contractResult.success || skillResult.data.id !== skillId ||
+    contractResult.data.skillId !== skillId || contractResult.data.skillVersion !== skillResult.data.version ||
+    !verificationResult.success || verificationResult.data.skillId !== skillId ||
+    verificationResult.data.skillVersion !== skillResult.data.version || verificationResult.data.candidateHash !== currentHash ||
+    query.data.candidateHash !== currentHash) {
+    return reply.code(409).send({ error: "VERIFICATION_STALE", message: "The requested verification no longer matches this skill." });
+  }
+
+  const reportHash = createHash("sha256").update(await readFile(path.join(candidateDirectory, "verification.json"))).digest("hex");
+  const directory = await findExportDirectory(skillId, skillResult.data.version, currentHash, reportHash);
+  if (!directory) return reply.code(409).send({ error: "EXPORT_NOT_READY", message: "The current verified package is not ready for preview." });
+  const files = (await collectFiles(directory)).map((file) => file.name).sort();
+  const skillDocument = await readFile(path.join(directory, "SKILL.md"), "utf8");
+  return reply.send({ skillId, skillVersion: skillResult.data.version, candidateHash: currentHash, files, skillDocument });
+});
+
+async function findExportDirectory(skillId: string, skillVersion: string, candidateHash: string, reportHash: string): Promise<string | undefined> {
+  const exportRoot = path.join(artifactsRoot, "exports", skillId, skillVersion);
+  let directories: string[];
+  try {
+    directories = (await readdir(exportRoot, { withFileTypes: true })).filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+  } catch {
+    return undefined;
+  }
+  for (const name of directories) {
+    const candidate = path.join(exportRoot, name);
+    try {
+      const provenance = JSON.parse(await readFile(path.join(candidate, "provenance.json"), "utf8")) as { skillId?: string; skillVersion?: string; candidateHash?: string; files?: Record<string, string>; packageCheck?: { status?: string; candidateHash?: string; verificationHash?: string } };
+      if (provenance.skillId === skillId && provenance.skillVersion === skillVersion && provenance.candidateHash === candidateHash && provenance.files?.["verification.json"] === reportHash && provenance.packageCheck?.status === "passed" && provenance.packageCheck.candidateHash === candidateHash && provenance.packageCheck.verificationHash === reportHash && await exportFilesMatchManifest(candidate, provenance.files)) return candidate;
+    } catch { /* Ignore incomplete export directories. */ }
+  }
+  return undefined;
+}
 
 interface ArchiveFile { name: string; data: Buffer }
 async function collectFiles(directory: string, prefix = ""): Promise<ArchiveFile[]> {
@@ -357,6 +524,10 @@ function createTar(files: ArchiveFile[]): Buffer {
 }
 
 app.setErrorHandler((error, _request, reply) => {
+  const statusCode = error !== null && typeof error === "object" && "statusCode" in error ? error.statusCode : undefined;
+  if (statusCode === 400 || statusCode === 413) {
+    return reply.code(statusCode).send({ error: statusCode === 413 ? "REQUEST_TOO_LARGE" : "REQUEST_INVALID", message: statusCode === 413 ? "The JSON payload exceeds the local 1 MB request limit." : "Send a valid JSON request." });
+  }
   app.log.error(error);
   return reply.code(500).send({ error: "INTERNAL_ERROR", message: "The local operation failed. Review the API log for details." });
 });

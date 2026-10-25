@@ -23,8 +23,11 @@ const report = {
       apiKeyConfigured: Boolean(values.get("ZETARIS_API_KEY"))
     }
   },
-  liveNemotronReady: Boolean(values.get("NVIDIA_BASE_URL") && values.get("NVIDIA_MODEL") && values.get("NVIDIA_API_KEY") && values.get("NVIDIA_SESSION_BUDGET_USD")),
-  liveZetarisReady: Boolean(values.get("ZETARIS_BASE_URL") && values.get("ZETARIS_API_KEY"))
+  liveNemotronReady: false,
+  liveZetarisReady: false,
+  executionReadiness: "The server supplies no live provider or tenant transport. Configuration is not execution evidence or spending authorization.",
+  authorizedSessionBudgetUsd: 0,
+  freeProviderAccessVerified: false
 };
 
 console.log(JSON.stringify(report, null, 2));
