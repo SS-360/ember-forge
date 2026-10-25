@@ -1,56 +1,236 @@
-# Pocket Forge
+<p align="center">
+  <img src="apps/web/public/pocket-forge.svg" alt="Pocket Forge pocket-and-flame logo" width="76" height="76">
+</p>
 
-Pocket Forge turns repeated agent workflows into portable, executable Agent Skills: a standard skill folder carries the instructions, bounded runner, supported-input contract, tests, verification, and provenance. A standalone CLI is a secondary way to run the same verified procedure. The current vertical slice focuses on stock reconciliation across orders, inventory, and product/unit rules.
+<h1 align="center">Pocket Forge</h1>
 
-## Current state
+<p align="center"><strong>Turn repeated agent work into a skill you can inspect, verify, and carry with you.</strong></p>
 
-The local application has a compilation workbench, verification/export, and Skill Library. It records synthetic reference runs, imports sanitized operation traces, assembles matching operation graphs into new candidates, verifies them on a separate 21-case development split, and exports portable Agent Skills. A later action freezes new synthetic evaluation inputs and retains the first result for that candidate hash. The library uses local H-MEM retrieval, checks verified artifact hashes and applicability, and executes supported inputs without provider calls. Candidate selection preserves earlier evidence. Codex repository discovery is verified for one older candidate; invocation and execution in two hosts remain unverified.
+<p align="center">
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#your-first-skill">First skill</a> ·
+  <a href="#what-you-download">The export</a> ·
+  <a href="#technology">Tech stack</a> ·
+  <a href="#documentation">Documentation</a>
+</p>
 
-The user set the session budget to **$0**. No free provider entitlement or live credentials have been confirmed, so production model synthesis stays disabled. A bounded synthesis/repair controller, Nemotron transport adapter, and cancellable persisted API jobs are implemented; injected fake transports are explicitly test-only. The available compiler remains deterministic assembly from seed-runtime replay, which does not establish learning. All current execution/evaluation evidence is synthetic and finite. See [progress](docs/progress.md), [trace compilation](docs/trace-compilation.md), [integration readiness](docs/integrations.md), and [claims](docs/claims.md).
+Pocket Forge is a local web application for turning recorded workflows into portable, executable Agent Skills. Collect examples, compile a bounded procedure, inspect its supported inputs and verification evidence, then download it or reuse it through the local Skill Library.
 
-## Requirements and setup
+The current domain is **stock reconciliation**: reconcile open orders against inventory using product aliases and unit-conversion rules, then report demand, stock, and shortages.
 
-- Node.js 24.13.0
-- pnpm 11.25.0
+> **Status: local prototype.** The available compiler assembles matching operation graphs from synthetic seed-runtime replays. Live Nemotron synthesis is disabled, and live Zetaris access is unfinished. General workflow learning, cross-host execution, and cost savings have not been established.
 
-Install dependencies and inspect readiness:
+<details>
+<summary><strong>Preview the workbench</strong> — pocket/flame identity and amber-red interface</summary>
 
-```powershell
+<p align="center">
+  <img src="docs/design/amber-red-workspace.jpg" alt="Pocket Forge workbench showing trace compilation, reference runs, execution evidence, and amber-red controls" width="760">
+</p>
+
+Actual local UI capture from 24 October 2026 using synthetic data. It illustrates the interface; it is not a fresh verification of later backend changes. See the [interface notes](docs/design/apple-interface.md) and [brand assets](docs/design/brand.md).
+
+</details>
+
+## Why Pocket Forge?
+
+A recurring task often repeats the same reads, filters, lookups, calculations, and checks. Pocket Forge makes that procedure explicit and packages it with the conditions under which it can run. For supported JSON inputs, the exported runner executes without Pocket Forge or a model API call. Unsupported inputs return a structured reason.
+
+- **Inspect the procedure.** Review bounded operations, parameters, branches, and source-trace lineage.
+- **Keep counterexamples.** Record failures alongside successful runs to make boundaries visible.
+- **Verify before exporting.** Compare results with an independent reference on finite development cases.
+- **Preserve evaluation history.** Freeze a separate synthetic split and retain the first result for a candidate hash.
+- **Reuse from memory.** Register verified candidates in local H-MEM, then check hashes and applicability before execution.
+- **Take the skill with you.** Export instructions, a bundled Node.js runner, contracts, examples, and evidence together.
+
+## Quick start
+
+### Requirements
+
+| Tool | Version |
+| --- | --- |
+| Node.js | `24.13.0` or newer within Node 24 (`<25`) |
+| pnpm | `11.25.0` |
+| Git | Required to clone the repository |
+
+```sh
+git clone https://github.com/SS-360/pocket-forge.git
+cd pocket-forge
 pnpm install --frozen-lockfile
-pnpm run doctor
+pnpm doctor
+pnpm dev
 ```
 
-Copy `.env.example` to `.env` only when provider configuration is available. Keep keys server-side. Provider composition now requires server-owned approval records, exact scope binding, persistent quotas and—for zero-cost mode—human-reviewed external entitlement evidence. No enabled authorization was created; the server still enforces the user's $0 ceiling. See [provider authorization](docs/provider-authorization.md). Configuration alone is not free access or spending permission.
+Open **[http://127.0.0.1:5174](http://127.0.0.1:5174)**. The Fastify API listens on `127.0.0.1:3001`; Vite proxies `/api` requests to it.
 
-## Run the local app
+**No provider keys are required for the synthetic local workflow.** Dependency installation needs registry access or a populated pnpm cache. Starting the app does not automatically run tests or package checks.
 
-```powershell
-pnpm run dev
+## Your first skill
+
+1. **Load examples.** In **Workbench → Compile a skill**, choose **Load replay examples**. These are synthetic traces recorded from the supplied interpreter.
+2. **Choose evidence.** Select at least two successful traces with distinct input hashes and one counterexample. Custom imports must follow the [sanitized trace format](docs/trace-compilation.md).
+3. **Compile a candidate.** Use an unused name such as `stock-reconciliation-demo`. Keep **Trace assembly** selected. Compilation runs development verification and prepares an export when checks pass.
+4. **Review and download.** Open **Verification** to inspect supported cases, explicit rejections, the contract, and package contents. Optionally choose **Freeze and evaluate** to retain a separate synthetic evaluation result.
+5. **Reuse it.** Download the Agent Skill, or open **Skill library → Register current candidate**. Load synthetic input, edit compatible data, then choose **Retrieve and execute**.
+
+Candidate names preserve separate artifacts. The header selector reopens saved candidates. Policy or schema drift can deprecate an incompatible library entry; this path has no automatic model fallback.
+
+## What you download
+
+An Agent Skill folder contains both host instructions and the executable procedure:
+
+```text
+<skill-name>/
+├── SKILL.md                       # Agent-facing instructions and metadata
+├── skill.json                     # Bounded operations and parameters
+├── contract.json                  # Supported inputs and assumptions
+├── runtime/
+│   └── pocketforge-runtime.mjs     # Bundled standalone Node.js runner
+├── tests/
+│   ├── cases.json                 # Finite development cases
+│   ├── verify-export.mjs          # Package execution checks
+│   └── network-guard.mjs          # Node networking instrumentation
+├── examples/
+│   └── unsupported-unknown-unit.json
+├── input.example.json
+├── bindings.example.json
+├── verification.json              # Development results and limitations
+├── provenance.json                # Artifact hashes and completion receipt
+├── lineage.json                   # Included when trace lineage is available
+├── package.json
+├── THIRD_PARTY_NOTICES.md
+└── README.md
 ```
 
-The development command starts the Fastify API on `127.0.0.1:3001` and Vite UI on `127.0.0.1:5174` without automatically running tests or export checks. Run records and generated packages live under ignored `artifacts/`. Downloads now require a completed, candidate-bound package-check receipt; older exports remain on disk but require an explicit re-export before the app serves them.
+### Run an exported skill
 
-Open **Workbench → Compile a skill → Load replay examples**, enter an unused name, and compile. The three selected compilation traces have replayable local snapshots and do not overlap the development inputs. Inspect verification, optionally **Freeze and evaluate**, and download the Agent Skill. In **Skill library**, register a passing candidate, load or edit input JSON, and retrieve/execute it. Changed policies or schemas deprecate incompatible memory entries. Custom trace imports use the format in the [trace guide](docs/trace-compilation.md).
+Extract the download and enter its directory. Copy `input.example.json` to `input.json`, then replace the parameters and dataset with data matching `contract.json`.
 
-## Verification commands
-
-```powershell
-pnpm typecheck
-pnpm test
-pnpm eval
-pnpm eval:skill
-pnpm memory:demo
-pnpm hmem:conformance
-pnpm eval:export
-pnpm eval:frozen artifacts/exports/stock-reconciliation/0.1.0/<export-id>
+```sh
+node runtime/pocketforge-runtime.mjs --input input.json --output result.json
 ```
 
-The frozen split is a small synthetic smoke suite, not a representative held-out benchmark. `pnpm eval:export` checks the package in a fresh directory, instruments Node networking APIs, and verifies supported output plus boundary/error cases. This instrumentation is not an operating-system network sandbox.
+The bundle requires Node 24, with no separate dependency installation or running Pocket Forge server. Input and output paths resolve from your current directory; bundled assets resolve from the installed skill directory. The current runner consumes JSON rather than querying live business systems.
 
-## Scope
+Unsupported inputs return structured reasons such as `UNKNOWN_UNIT`, `POLICY_VERSION_MISMATCH`, or `SCHEMA_VERSION_MISMATCH`. Downloads require a successful package-check receipt bound to the candidate and verification hashes. Older exports without that receipt need an explicit re-export.
 
-The current executable domain is stock reconciliation. It uses bounded typed operations, applicability checks and explicit rejection. General workflow learning, live Nemotron evidence, a verified Zetaris tenant transport, invocation in multiple hosts, and submission materials remain outstanding. The local source-reader contract handles bounded pages, snapshots and cleanup but has no live tenant HTTP implementation. Follow [implementation follow-up](docs/implementation-follow-up.md).
+### Where can the skill be used?
 
-The product and full implementation brief are in [docs/product-description.md](docs/product-description.md) and [docs/implementation-plan.md](docs/implementation-plan.md).
+| Environment | Use | Current evidence |
+| --- | --- | --- |
+| Pocket Forge | Retrieve and execute a registered skill on new compatible inputs | Historical local UI/API execution; later backend changes need fresh verification |
+| Standalone Node.js | Run the exported procedure from a terminal or another application | Historical package checks; latest receipt/cancellation changes need exercise |
+| Codex | Install the Agent Skill folder in a host-supported skill location | Repository discovery verified for an earlier candidate; host invocation and execution unverified |
+| Claude Code and other Agent Skills hosts | Use the exported instructions and bundled runner where supported | Host discovery, invocation, and execution unverified |
 
-Current implementation/evidence gates and a local demo outline are in [release readiness](docs/release-readiness.md). `pnpm source:state` records the actual working-file content manifest without running tests or provider clients. Historical suite counts and candidate results do not verify later uncommitted changes.
+The export is an **Agent Skill folder**. Codex plugin bundles and Claude marketplace packages require additional host-specific packaging. A host may still use model tokens to select and invoke a skill; the supported procedure itself runs without a model call. See the [compatibility matrix](docs/skill-compatibility.md) for the exact evidence boundaries.
+
+## How it works
+
+```mermaid
+flowchart LR
+    T[Sanitized traces] --> A[Graph assembly]
+    A --> C[Typed candidate + contract]
+    C --> V[Independent verification]
+    V --> E[Portable skill export]
+    V --> M[Local H-MEM library]
+    E --> R[Bounded runtime]
+    M --> G[Hash + applicability checks]
+    G --> R
+```
+
+The compiler produces a bounded JSON instruction format. A trusted TypeScript interpreter executes it; arbitrary generated scripts are not accepted as skill programs. Verification cases and source snapshots stay outside the synthesis context. H-MEM nominates candidates, while deterministic checks decide whether execution is allowed.
+
+New assembled candidates use **21 development cases**. A later freeze action creates **21 separate synthetic cases**, rejects input-hash overlap, and retains the first outcome per candidate hash. These finite checks expose known boundaries; they do not establish generalization to real operational data. See [architecture](docs/architecture.md) and [evaluation results](docs/evaluation-results.md).
+
+## Technology
+
+| Layer | Technology | Responsibility |
+| --- | --- | --- |
+| Interface | React 19, TypeScript, Vite 8 | Compilation workbench, verification, export, and Skill Library |
+| API | Node.js 24, TypeScript, Fastify 5 | Local APIs, orchestration, job lifecycle, and exports |
+| Validation | Zod 4 | Input, trace, candidate, contract, and authorization schemas |
+| Execution | Bounded JSON instructions + TypeScript interpreter | Deterministic execution within declared limits |
+| Storage | Built-in Node SQLite + artifact files | Run history, job checkpoints, provider ledger, and versioned artifacts |
+| Memory | Vendored Meterless H-MEM reference | Local verified-skill registration and retrieval |
+| Reasoning integration | NVIDIA Nemotron adapter | Bounded synthesis/repair; disabled in the default server configuration |
+| Data integration | Zetaris tenant transport interface | Bounded read orchestration; live HTTP/auth implementation outstanding |
+| Verification tooling | Vitest, independent evaluator, esbuild | Unit suites, reference comparisons, and portable runtime bundling |
+
+## Repository map
+
+```text
+apps/
+  web/                  React interface and brand assets
+  api/                  Fastify routes, SQLite, jobs, and integrations
+packages/
+  contracts/            Shared Zod schemas
+  compiler/             Assembly, verification, replay, synthesis controller
+  runtime/              Bounded interpreter and export CLI
+  evaluator/            Independent stock-reconciliation reference
+  memory/               Verified registry and H-MEM adapter
+skills/                 Supplied stock-reconciliation seed
+fixtures/               Synthetic development data
+evaluation/             Historical frozen evaluation fixtures
+scripts/                Development, evaluation, and export commands
+config/                 Disabled provider-authorization example
+vendor/meterless/hmem/  Pinned upstream reference and attribution
+docs/                   Product, architecture, design, and evidence
+artifacts/              Generated local state; ignored by Git
+```
+
+## Development and verification
+
+Run the checks appropriate to your change:
+
+| Command | Purpose |
+| --- | --- |
+| `pnpm doctor` | Inspect runtime and configuration readiness without exposing keys |
+| `pnpm typecheck` | Static TypeScript checking |
+| `pnpm test` | Vitest suite |
+| `pnpm eval` | Synthetic reference baseline |
+| `pnpm eval:skill` | Supplied seed-skill evaluation |
+| `pnpm eval:export` | Build and check the supplied skill in an isolated temporary directory |
+| `pnpm memory:demo` | Local memory demonstration |
+| `pnpm hmem:conformance` | Vendored H-MEM conformance suite |
+| `pnpm source:state` | Record a source-content manifest without tests or provider calls |
+
+To export a specific saved candidate, use `pnpm eval:export --candidate artifacts/candidates/<skill-name>`. Export checks instrument common Node networking APIs; they are not an operating-system network sandbox. The [compatibility guide](docs/skill-compatibility.md) covers host-discovery checks separately.
+
+**Latest implementation evidence:** static TypeScript checking passed before source publication. The full suite and isolated API/export checks were not rerun for the latest backend continuation. Historical results and screenshots are recorded with their limits in [release readiness](docs/release-readiness.md).
+
+## Provider configuration and local data
+
+The default server enforces a **$0 spending ceiling** and leaves model calls disabled. A Nemotron adapter, bounded repair controller, persistent request/token/cost ledger, and cancellable job checkpoints are implemented, but their latest integration needs runtime verification. No free provider entitlement has been confirmed.
+
+For provider development, start with `.env.example` and the disabled `config/provider-authorization.example.json`. Credentials alone do not enable calls: server-owned authorization binds the endpoint, model, account, evidence, expiry, and finite quotas. Follow [provider authorization](docs/provider-authorization.md) before activation. Zetaris additionally needs an actual tenant transport and verified source contract.
+
+Run records, local snapshots, candidates, exports, and SQLite databases are stored under ignored `artifacts/`. Approval records belong under ignored `.local/`; credentials belong in ignored `.env`. Compiler inputs exclude raw rows and provider logs, but the trace schema cannot detect every secret concealed in an allowed identifier. Review imported traces before sharing them.
+
+## Roadmap
+
+- Verify the latest authorization, accounting, cancellation, recovery, and export-receipt paths.
+- Capture genuine agent trajectories and establish model-generated candidate lineage.
+- Complete and verify the live Zetaris tenant integration.
+- Demonstrate discovery, invocation, and correct execution in at least two real agent hosts.
+- Measure generalization, compilation overhead, and costs against fair live baselines.
+
+The [implementation follow-up](docs/implementation-follow-up.md) tracks the remaining work; the [claims ledger](docs/claims.md) distinguishes implementation from demonstrated results.
+
+## Documentation
+
+| Guide | Start here when you want to… |
+| --- | --- |
+| [Product description](docs/product-description.md) | Understand the intended product and scope |
+| [Implementation plan](docs/implementation-plan.md) | Follow the build sequence and delivery criteria |
+| [Architecture](docs/architecture.md) | Understand packages, data flow, and trust boundaries |
+| [Trace compilation](docs/trace-compilation.md) | Import traces, replay snapshots, or inspect API routes |
+| [Skill compatibility](docs/skill-compatibility.md) | Understand exports and host verification status |
+| [Provider authorization](docs/provider-authorization.md) | Configure bounded provider access |
+| [Release readiness](docs/release-readiness.md) | Assess current capabilities and unresolved gates |
+| [Progress](docs/progress.md) | Read dated implementation and evidence updates |
+
+## Attribution and licensing
+
+The local memory integration uses the pinned [Meterless H-MEM reference](vendor/meterless/hmem/README.md), whose [Apache 2.0 license](vendor/meterless/hmem/LICENSE) is retained. Exported bundles include their own third-party notices. Pocket Forge's pocket/flame SVG mark is included in [the web assets](apps/web/public).
+
+No top-level license has been added for Pocket Forge's own source. Third-party components retain their respective licenses.
