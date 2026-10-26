@@ -1,0 +1,104 @@
+{
+  "suite": "stock-reconciliation development verification",
+  "scope": "finite synthetic development fixtures; not held-out evaluation",
+  "cases": [
+    {
+      "caseId": "development-warehouse-a-1b0ec09d",
+      "expectedOutcome": "supported"
+    },
+    {
+      "caseId": "development-warehouse-b-1b0ec09d",
+      "expectedOutcome": "supported"
+    },
+    {
+      "caseId": "development-unknown-unit-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "UNKNOWN_UNIT"
+    },
+    {
+      "caseId": "development-inclusive-day-boundary-1b0ec09d",
+      "expectedOutcome": "supported"
+    },
+    {
+      "caseId": "development-row-order-1b0ec09d",
+      "expectedOutcome": "supported"
+    },
+    {
+      "caseId": "development-empty-orders-1b0ec09d",
+      "expectedOutcome": "supported"
+    },
+    {
+      "caseId": "development-changed-rule-table-1b0ec09d",
+      "expectedOutcome": "supported"
+    },
+    {
+      "caseId": "development-large-supported-1b0ec09d",
+      "expectedOutcome": "supported"
+    },
+    {
+      "caseId": "development-unknown-alias-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "UNKNOWN_SKU_ALIAS"
+    },
+    {
+      "caseId": "development-missing-inventory-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "INVENTORY_NOT_FOUND"
+    },
+    {
+      "caseId": "development-future-snapshot-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "INVENTORY_SNAPSHOT_AFTER_RANGE"
+    },
+    {
+      "caseId": "development-policy-change-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "POLICY_VERSION_MISMATCH"
+    },
+    {
+      "caseId": "development-schema-change-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "SCHEMA_VERSION_MISMATCH"
+    },
+    {
+      "caseId": "development-duplicate-order-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "DUPLICATE_ORDER_ID"
+    },
+    {
+      "caseId": "development-duplicate-inventory-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "DUPLICATE_INVENTORY_KEY"
+    },
+    {
+      "caseId": "development-duplicate-alias-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "DUPLICATE_SKU_ALIAS"
+    },
+    {
+      "caseId": "development-duplicate-unit-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "DUPLICATE_UNIT_RULE"
+    },
+    {
+      "caseId": "development-quantity-overflow-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "QUANTITY_OVERFLOW"
+    },
+    {
+      "caseId": "development-row-limit-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "ROW_LIMIT_EXCEEDED"
+    },
+    {
+      "caseId": "development-negative-quantity-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "INPUT_CONTRACT_INVALID"
+    },
+    {
+      "caseId": "development-invalid-calendar-date-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "expectedReason": "INPUT_CONTRACT_INVALID"
+    }
+  ]
+}

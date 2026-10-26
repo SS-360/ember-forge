@@ -4,7 +4,7 @@
 
 The local prototype has two distinct workflow families: a stock-reconciliation skill generated from Nemotron traces and a checked fulfilment-exceptions template with a portable `SKILL.md` package. The stock candidate `zetaris-stock-207ca2ab-retry-3` passed 21 finite synthetic development checks and offline export verification. The fulfilment package uses synthetic snapshots and fixed trusted logic; it does not demonstrate second-domain learning. The local Zetaris read path has synthetic source evidence.
 
-Explicit Codex and Claude Code execution exists for an earlier stock package. An isolated Hermes run automatically selected and executed the newer package on one synthetic input, but the same-package two-host transfer gate is still open. OpenClaw is untested because its CLI is absent. Offline ClawHub staging is implemented; publication is blocked on owner approval of ClawHub's MIT-0 licensing requirement. A clean-checkout rehearsal and protected cloud deployment remain unverified. The project is a local prototype, not production-ready. Report call/token/latency measurements with test scope and failures; no savings or break-even claim is currently supported.
+Explicit Codex and Claude Code execution exists for an earlier stock package. Hermes and OpenClaw automatically selected and executed the same newer package on one supported synthetic input each, providing a limited same-package two-host result. OpenClaw also rejected an unknown unit with `UNKNOWN_UNIT`, but its tool wrapper reported exit 1 while the runner's native refusal code is 2. Broader selection accuracy remains untested. Offline ClawHub staging is implemented; publication is blocked on owner approval of ClawHub's MIT-0 licensing requirement. A clean-checkout rehearsal and protected cloud deployment remain unverified. The project is a local prototype, not production-ready. The hackathon audit also identifies missing Meterless Nightshift-primary integration and that the original agent still uses fixtures rather than the Zetaris read route; see [the resource audit](hackathon-resource-audit.md). Report call/token/latency measurements with test scope and failures; no savings or break-even claim is currently supported.
 
 Historical 25 October checkpoint. The user's later authorization expanded work to free-endpoint rehearsals and testing. The details below should be read with the dated updates in [progress](progress.md) and [host/source verification](host-and-zetaris-verification.md).
 
@@ -20,7 +20,7 @@ Historical 25 October checkpoint. The user's later authorization expanded work t
 | Candidate export completion receipt | Implemented | Downloads require a successful receipt matching candidate and verification hashes; current packages need explicit re-export/checks to acquire that receipt |
 | H-MEM library registration/retrieval/execution/invalidation | Implemented | Historical actual UI/API cold/warm/policy-change evidence; no new product checks in this continuation |
 | Zetaris local stock path | Implemented | Two synthetic PostgreSQL sources registered in local Zetaris; reads, join and controlled freshness check passed; cloud tenant transport remains unverified |
-| Host transfer | Portable format implemented | Codex and Claude explicitly ran the same older package; Hermes automatically selected and ran a newer package once; OpenClaw untested and same-package transfer for the newer artifact remains open |
+| Host transfer | Portable format implemented | Codex and Claude explicitly ran the same older package; Hermes and OpenClaw automatically selected and ran the same newer package on one supported synthetic case each; OpenClaw refused `UNKNOWN_UNIT` but its tool wrapper remapped native exit 2 to 1 |
 | ClawHub package preparation | Offline staging command implemented | Rechecks and stages an exact verified folder; publication has not occurred and MIT-0 rights/owner decision are pending |
 | Cloud deployment | Not deployed | No authenticated hosted environment, persistent operational service or deployment rehearsal |
 | Live savings / generalization | Not established | No live agent/instruction-only baselines, model-generated candidate or representative real data |
@@ -40,9 +40,13 @@ Show repeated reconciliation work → explicit synthetic traces → assembly →
 
 ## Outstanding release gates
 
+- Integrate and verify Meterless Nightshift as the primary runtime.
+- Route the judged stock-agent task through the verified Zetaris source path; retain and label the synthetic fallback.
+- Review the hub's current Rules, Technical Execution Requirements, Submission Requirements, Disqualification Checklist, AI Usage Policy, and required setup/scoring resources.
+- Prepare the demo video, slide deck, sponsor-technology explanation, and final HackOS submission.
 - Rerun the full test suite after the current packaging edits and capture counts/failures against a named source manifest.
 - Confirm free entitlement/credentials, finite request/token authorization and the actual tenant contract before activation.
-- Run OpenClaw install/discovery/invocation/execution, and test the exact same newer export in two hosts before claiming cross-harness transfer.
+- Resolve or document OpenClaw's exit-code remapping and broaden selection tests before making a general cross-harness accuracy claim.
 - Build a protected cloud deployment with authentication, secret handling, persistent storage, and operational checks before calling the service deployable.
 - Resolve MIT-0 rights and owner metadata before considering ClawHub publication.
 - Broaden fair measurements before making any savings claim.

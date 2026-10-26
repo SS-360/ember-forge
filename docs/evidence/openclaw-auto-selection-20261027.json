@@ -1,0 +1,82 @@
+{
+  "recordedDate": "2026-10-27",
+  "host": {
+    "name": "OpenClaw",
+    "version": "2026.10.6",
+    "gateway": "active local Gateway",
+    "model": "openai/gpt-6-luna"
+  },
+  "candidate": {
+    "skillId": "zetaris-stock-207ca2ab-retry-3",
+    "skillVersion": "0.1.0",
+    "candidateSha256": "efdb2a2d6e247fa03f54a984beb32bea6a16c1ce03bb66115b689fe4f41db647"
+  },
+  "installation": {
+    "status": "passed",
+    "registrySource": "openclaw-workspace",
+    "eligible": true,
+    "registryCountAfterInstall": 58,
+    "runId": "7aca6fb5-636d-43fc-acad-7be3426a6988"
+  },
+  "automaticSelection": {
+    "status": "passed",
+    "skillNameProvidedInTaskPrompt": false,
+    "toolsObserved": ["skills_search", "skills_read", "exec", "read"],
+    "runId": "a4baebb6-5926-4a4e-8ec1-40853d467b02"
+  },
+  "unsupportedInputTest": {
+    "status": "rejected-with-correct-reason; host-exit-code-remapped",
+    "skillId": "zetaris-stock-207ca2ab-retry-3",
+    "skillVersion": "0.1.0",
+    "skillNameProvidedInTaskPrompt": false,
+    "syntheticInputSha256": "80da92471f54795ef4b0392f36712b1147a66cf50307eef76e8889420332223b",
+    "reason": "UNKNOWN_UNIT",
+    "message": "Lookup has no match for MYSTERY",
+    "openClawReportedExitCode": 1,
+    "rawRunnerExitCodeOnSameFixture": 2,
+    "rejectionPreserved": true,
+    "outputFileWritten": false,
+    "runId": "6ff2f6a6-76d7-40a3-b4d5-4878eea8e76a"
+  },
+  "execution": {
+    "status": "passed",
+    "runtimeExitCode": 0,
+    "executionMode": "bounded-local-interpreter",
+    "syntheticInputSha256": "35ed2fe706ac334f9d5a0d5c45090798a446002e4f3ca913db71baf513cf80d2",
+    "records": [
+      {"sku": "PRODUCT-1b0ec09d-A", "demandEach": 11, "onHandEach": 4, "shortageEach": 7},
+      {"sku": "PRODUCT-1b0ec09d-B", "demandEach": 4, "onHandEach": 50, "shortageEach": 0}
+    ],
+    "stableCoreSha256": "aa3180842ff26647c26cde25e8ca0cd3b3d23b99db6ff17044f4c94d50dd7e17",
+    "independentRuntimeCoreMatched": true,
+    "fullResultSha256": "6cd635caa7453cb1bdaf193e8267770432882ab14fb80a6b1717f95a30a9b2cd",
+    "referenceFullResultSha256": "e94f2315ed3784460cf4d0df4a0a6ef82cdaaf1104663043fd44328598ec369c",
+    "fullHashesDifferBecauseDurationMetricVaries": true,
+    "bundledExportVerifier": "passed"
+  },
+  "modelUsage": {
+    "provider": "openai",
+    "model": "gpt-6-luna",
+    "installRunInputTokens": 21701,
+    "installRunOutputTokens": 903,
+    "installRunRecordedCostUsd": 0.00391056,
+    "executionRunInputTokens": 18982,
+    "executionRunOutputTokens": 667,
+    "executionRunRecordedCostUsd": 0.00298306,
+    "unsupportedRunInputTokens": 18989,
+    "unsupportedRunOutputTokens": 501,
+    "unsupportedRunRecordedCostUsd": 0.00274716,
+    "combinedRecordedCostUsd": 0.00964078,
+    "combinedInputTokens": 59672,
+    "combinedOutputTokens": 2071,
+    "costNote": "OpenClaw usage metadata; not an invoice"
+  },
+  "scope": {
+    "inputWasSynthetic": true,
+    "liveStockReads": false,
+    "clawHubPublication": false,
+    "unsupportedOpenClawInputTested": true,
+    "openClawNativeExitCodePreserved": false,
+    "selectionAccuracyBeyondThisPromptMeasured": false
+  }
+}

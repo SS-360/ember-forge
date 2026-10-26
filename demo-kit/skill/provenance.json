@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "emberforge.export-provenance/1",
+  "skillId": "zetaris-stock-207ca2ab-retry-3",
+  "skillVersion": "0.1.0",
+  "candidateHash": "efdb2a2d6e247fa03f54a984beb32bea6a16c1ce03bb66115b689fe4f41db647",
+  "candidateOrigin": "nemotron_synthesis",
+  "verificationScope": "finite-development-suite",
+  "files": {
+    "SKILL.md": "92f91a00bfb6f95c6fc52644075d19e3684f2475d16e5e3d65d9a5df341e36d5",
+    "skill.json": "8e35e848114fa650293495f4474042656f995e31614681fcbb13d2adeaaca77f",
+    "contract.json": "dbd728ba46121734b07b2a85f734acfd264a2b6cc2980f53b0dca9766a7e16b9",
+    "tests/cases.json": "3a3a1bf33f2dcf26aca1da726e1cadffe15b6a2c1879d3b0b47f237552dcea7e",
+    "verification.json": "6242b6b3949fb045a7659b0cfd407c5a77e7dd4f77e8c48e3722062b9ad23b00",
+    "input.example.json": "35ed2fe706ac334f9d5a0d5c45090798a446002e4f3ca913db71baf513cf80d2",
+    "examples/unsupported-unknown-unit.json": "bfa742b88916a84c1a379771cf1605444f47d8fc6fa03dea3256f2b2b071e41c",
+    "bindings.example.json": "953b9ab04ce1a64b46cfd57cf289031c705825be4f1bb750f8316cc2a946340c",
+    "package.json": "f08fc55866cb872085727598db61586572ed5a73b7c0d91e89b2763b02538956",
+    "README.md": "6c8cc3c4dccdbc346ead4b03296c3161674d3a9e0bddd95a3a982cf0401d8ffe",
+    "THIRD_PARTY_NOTICES.md": "64fb8b49f5a47af19a560463ffce55aa7f3f7d9b10e47e000fa72d0a129688fe",
+    "runtime/emberforge-runtime.mjs": "6798e6aafe008d1cc6c48f70dd1f04e719c3daf529d25152894b4a323001c536",
+    "tests/network-guard.mjs": "f5209ef334da161eb00998c9a8a826310630cbdfb3cf7d0fffb627841be66a36",
+    "tests/verify-export.mjs": "6ef6d4b65e8fa89219ff025d46ec0da30602c49eefe7d77d66d3e3fa55a416b3",
+    "lineage.json": "f659a63a77d2ef3fb658a6a0479148e49662f41b261b03887894709abffc30b0"
+  },
+  "packageCheck": {
+    "status": "passed",
+    "candidateHash": "efdb2a2d6e247fa03f54a984beb32bea6a16c1ce03bb66115b689fe4f41db647",
+    "verificationHash": "6242b6b3949fb045a7659b0cfd407c5a77e7dd4f77e8c48e3722062b9ad23b00",
+    "completedAt": "2026-10-26T19:26:21.285Z"
+  }
+}

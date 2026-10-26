@@ -1,0 +1,225 @@
+{
+  "id": "zetaris-stock-207ca2ab-retry-3",
+  "version": "0.1.0",
+  "taskFamily": "stock-reconciliation",
+  "ir": {
+    "schemaVersion": "emberforge.ir/1",
+    "operations": [
+      {
+        "id": "orders_read",
+        "kind": "source_read",
+        "source": "orders"
+      },
+      {
+        "id": "inventory_read",
+        "kind": "source_read",
+        "source": "inventory"
+      },
+      {
+        "id": "aliases_read",
+        "kind": "source_read",
+        "source": "aliases"
+      },
+      {
+        "id": "unit_conversions_read",
+        "kind": "source_read",
+        "source": "unitConversions"
+      },
+      {
+        "id": "filter_orders",
+        "kind": "filter",
+        "input": "orders_read",
+        "predicates": [
+          {
+            "field": "warehouseId",
+            "operator": "eq",
+            "value": {
+              "kind": "parameter",
+              "name": "warehouseId"
+            }
+          },
+          {
+            "field": "orderDate",
+            "operator": "gte",
+            "value": {
+              "kind": "parameter",
+              "name": "fromDate"
+            }
+          },
+          {
+            "field": "orderDate",
+            "operator": "lte",
+            "value": {
+              "kind": "parameter",
+              "name": "throughDate"
+            }
+          },
+          {
+            "field": "status",
+            "operator": "eq",
+            "value": {
+              "kind": "literal",
+              "value": "open"
+            }
+          }
+        ]
+      },
+      {
+        "id": "filter_inventory",
+        "kind": "filter",
+        "input": "inventory_read",
+        "predicates": [
+          {
+            "field": "warehouseId",
+            "operator": "eq",
+            "value": {
+              "kind": "parameter",
+              "name": "warehouseId"
+            }
+          }
+        ]
+      },
+      {
+        "id": "lookup_alias",
+        "kind": "lookup",
+        "input": "filter_orders",
+        "table": "aliases_read",
+        "keyField": "sku",
+        "tableKeyField": "alias",
+        "valueField": "canonicalSku",
+        "outputField": "canonicalSku",
+        "missingCode": "UNKNOWN_SKU_ALIAS"
+      },
+      {
+        "id": "lookup_unit",
+        "kind": "lookup",
+        "input": "lookup_alias",
+        "table": "unit_conversions_read",
+        "keyField": "unit",
+        "tableKeyField": "unit",
+        "valueField": "eachPerUnit",
+        "outputField": "eachPerUnit",
+        "missingCode": "UNKNOWN_UNIT"
+      },
+      {
+        "id": "convert_qty",
+        "kind": "unit_convert",
+        "input": "lookup_unit",
+        "quantityField": "quantity",
+        "factorField": "eachPerUnit",
+        "outputField": "demandEach"
+      },
+      {
+        "id": "aggregate_demand",
+        "kind": "aggregate",
+        "input": "convert_qty",
+        "groupBy": [
+          "canonicalSku"
+        ],
+        "sumField": "demandEach",
+        "outputField": "demandEach"
+      },
+      {
+        "id": "join_inventory",
+        "kind": "join",
+        "left": "aggregate_demand",
+        "right": "filter_inventory",
+        "on": [
+          {
+            "leftField": "canonicalSku",
+            "rightField": "sku"
+          }
+        ],
+        "how": "required",
+        "cardinality": "many_to_one",
+        "missingCode": "INVENTORY_NOT_FOUND",
+        "rightFields": [
+          "onHandEach"
+        ]
+      },
+      {
+        "id": "compute_shortage",
+        "kind": "compute",
+        "input": "join_inventory",
+        "formula": "subtract_floor_zero",
+        "leftField": "demandEach",
+        "rightField": "onHandEach",
+        "outputField": "shortageEach"
+      },
+      {
+        "id": "project_output",
+        "kind": "project",
+        "input": "compute_shortage",
+        "fields": [
+          {
+            "from": "canonicalSku",
+            "to": "sku"
+          },
+          {
+            "from": "demandEach",
+            "to": "demandEach"
+          },
+          {
+            "from": "onHandEach",
+            "to": "onHandEach"
+          },
+          {
+            "from": "shortageEach",
+            "to": "shortageEach"
+          }
+        ]
+      },
+      {
+        "id": "validate_output",
+        "kind": "validate",
+        "input": "project_output",
+        "assertions": [
+          {
+            "check": "required_field",
+            "field": "sku"
+          },
+          {
+            "check": "required_field",
+            "field": "demandEach"
+          },
+          {
+            "check": "required_field",
+            "field": "onHandEach"
+          },
+          {
+            "check": "required_field",
+            "field": "shortageEach"
+          },
+          {
+            "check": "nonnegative",
+            "field": "demandEach"
+          },
+          {
+            "check": "nonnegative",
+            "field": "onHandEach"
+          },
+          {
+            "check": "nonnegative",
+            "field": "shortageEach"
+          },
+          {
+            "check": "unique_by",
+            "fields": [
+              "sku"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "emit_result",
+        "kind": "emit",
+        "input": "validate_output"
+      }
+    ],
+    "outputStep": "emit_result",
+    "runtimeLimits": {
+      "maxRows": 5000,
+      "maxRuntimeMs": 5000
+    }
+  }
+}

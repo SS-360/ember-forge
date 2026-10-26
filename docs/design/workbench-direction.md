@@ -34,7 +34,7 @@ Status: concepts approved by the user on 23 October 2026. The accepted reference
 - Successful fixture run `16cefa74-1534-40f9-931c-8a35ab4904c4`: `WH-01`, 20–23 October 2026, `stock-v1`; output `CUP-RED` demand 25 / on hand 15 / shortage 10 and `MUG-BLUE` demand 5 / on hand 8 / shortage 0.
 - Unsupported fixture run `5b6d3eb4-7537-43f0-8105-c98deafaa61d`: `UNKNOWN_UNIT`; the trace ends at the fixture reconciliation step.
 - Candidate `stock-reconciliation` `0.1.0` is a provided hand-authored draft. Current finite verification has 2/2 supported examples correct, 5/5 unsupported examples rejected, 0 false acceptances, and 0 needless fallbacks. This does not establish representative generalization.
-- The Agent Skills folder export and bounded offline runtime are implemented and checked. Codex/Claude Code/OpenClaw/Hermes install, discovery and invocation have not been exercised as real host flows.
+- The Agent Skills folder export and bounded offline runtime are implemented and checked. Since this historical design note, the older export has explicit Codex/Claude Code execution, and the newer export has supported automatic-selection/execution results in Hermes and OpenClaw. OpenClaw also refused an unknown unit, though its wrapper remapped native exit 2 to 1; broader selection accuracy remains unverified. See [host verification](../host-and-zetaris-verification.md).
 
 ## Visual system
 

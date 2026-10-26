@@ -1,0 +1,138 @@
+{
+  "recordType": "sanitized-workbench-agent-trace",
+  "jobId": "970c9270-0643-4e7d-8b92-89eb791eddbc",
+  "traceId": "d6be3fe7-fd27-41bf-85ef-4fe13b9bc5b3",
+  "agentRunId": "3a7cddc9-083d-4975-ab3c-a2b21b62c84c",
+  "recordedAt": "2026-10-26T14:07:53.2710000Z",
+  "taskFamily": "stock-reconciliation",
+  "evidenceClass": "synthetic_fixture",
+  "sourceMode": "fixture",
+  "adapterId": "emberforge.nemotron-agent/1",
+  "agentMode": "nemotron",
+  "outcome": "succeeded",
+  "stepCount": 14,
+  "steps": [
+    {
+      "sequence": 1,
+      "operationId": "orders_raw",
+      "kind": "source_read",
+      "outcome": "succeeded",
+      "inputSha256": "53bc67e91739426c7eb0d3cba3a7c04b40f8ca4b1e48084a07ced93ab4594de4",
+      "outputSha256": "e65a9d417c30b0b3bfa283d7f211a215897a5a1b8c7095533c3311366ad96b2d",
+      "source": "orders"
+    },
+    {
+      "sequence": 2,
+      "operationId": "inventory_raw",
+      "kind": "source_read",
+      "outcome": "succeeded",
+      "inputSha256": "d6adc8d7e3fbf4ab534ec3791c3885607df736cf933d0cb64a5f29100c47982d",
+      "outputSha256": "3387a62fb83eb5494c264da8494fb6c9d3a393c94bfec5574e1676b06f48193a",
+      "source": "inventory"
+    },
+    {
+      "sequence": 3,
+      "operationId": "aliases_raw",
+      "kind": "source_read",
+      "outcome": "succeeded",
+      "inputSha256": "0dea130586aa32c34d25a68c0e7b1b3332ea3a7a478dd46199b3610311e54406",
+      "outputSha256": "2c3a9e8939e6815b3858f83cc620594422ea2d455469fd3c9741ae854ef3b1c0",
+      "source": "aliases"
+    },
+    {
+      "sequence": 4,
+      "operationId": "unit_conversions_raw",
+      "kind": "source_read",
+      "outcome": "succeeded",
+      "inputSha256": "ba2ec8f76b990f8bd4fc984628b440242a7749e12ef590dcc96fdef45c096c67",
+      "outputSha256": "63453bbb10ddfed9fe5d93d3eed6d394d146eb63f9b176da9277310473522f87",
+      "source": "unitConversions"
+    },
+    {
+      "sequence": 5,
+      "operationId": "eligible_orders",
+      "kind": "filter",
+      "outcome": "succeeded",
+      "inputSha256": "8315e16d566c7e741810a4a2e54e0e5bb5c6be8fec72b74ed82217019383b12b",
+      "outputSha256": "dc4e10d25712564f76500d267910a4c990099416b914be180768bad9267a0c42"
+    },
+    {
+      "sequence": 6,
+      "operationId": "orders_with_canonical",
+      "kind": "lookup",
+      "outcome": "succeeded",
+      "inputSha256": "5f2edb775a59c4f4052f6a5b8cef458b94972c9aecbd11b63e0c6eb977f24e02",
+      "outputSha256": "e906249de714e465534cb337046f069b3903c835fceb831582872ef953831eeb"
+    },
+    {
+      "sequence": 7,
+      "operationId": "orders_with_factor",
+      "kind": "lookup",
+      "outcome": "succeeded",
+      "inputSha256": "30c0a24ccdb2abf10668a996cfa4ef0911bfabb8f3eb252bfc88eeb72eeea4a7",
+      "outputSha256": "7d343fcaa349a3f085f6b29f03c43d1e4e3e42955740caeade8cc8bda442c205"
+    },
+    {
+      "sequence": 8,
+      "operationId": "orders_converted",
+      "kind": "unit_convert",
+      "outcome": "succeeded",
+      "inputSha256": "d03be6916e14943f28102b299ba63e09612dee3a325b27df1b46c75450a17b16",
+      "outputSha256": "cbe46a2ff0642f40c4943479160543c9b9e4dd590595c7a5924ff297ef96aa22"
+    },
+    {
+      "sequence": 9,
+      "operationId": "demand_agg",
+      "kind": "aggregate",
+      "outcome": "succeeded",
+      "inputSha256": "ca6c31b634650878f39d767dbeb1eb4a7397efb2afc67f583763b0f28fef8bef",
+      "outputSha256": "60eddff76042a5dc33015205dd9c3dbbf78254183c8eae8e4dbd8e3f5d6a4b47"
+    },
+    {
+      "sequence": 10,
+      "operationId": "inventory_filtered",
+      "kind": "filter",
+      "outcome": "succeeded",
+      "inputSha256": "b538ac921ba188ca9eeff100e8be45fd5bce91ff4dbd1792b27fdeac87c55f60",
+      "outputSha256": "f75468136762117be4cc8175a059e014cb4687482510157c727fe9ade817d491"
+    },
+    {
+      "sequence": 11,
+      "operationId": "demand_with_inventory",
+      "kind": "join",
+      "outcome": "succeeded",
+      "inputSha256": "3aa54b26331af70fd8c544c734c89143f2a381115e18c875021f68841fe41a70",
+      "outputSha256": "2dfeb0cfdd876b3014c23b4f30ea9248567c4af4d80de92c7f03508ca8ee909b"
+    },
+    {
+      "sequence": 12,
+      "operationId": "shortage_calc",
+      "kind": "compute",
+      "outcome": "succeeded",
+      "inputSha256": "ca1069e596abe6530629b9ffdc92d909475721de1625ec45586c1eeabe733d4b",
+      "outputSha256": "04d7388feeba0fac2f6a5c375ae59544fd3fcac4e14de7965b80948218879954"
+    },
+    {
+      "sequence": 13,
+      "operationId": "final_output",
+      "kind": "project",
+      "outcome": "succeeded",
+      "inputSha256": "0d012322d6dcb3d1ecef9561849dfa71238f07f40be13a1b61666d3c6f1b7eef",
+      "outputSha256": "ec560cd509746b02f4b7f010a7eeaacdd4e0501e74254677cc5f1bd7785699b5"
+    },
+    {
+      "sequence": 14,
+      "operationId": "emit_result",
+      "kind": "emit",
+      "outcome": "succeeded",
+      "inputSha256": "3b394ef5abb10c7f8982cb4e30087192ed5409ef6026630d03ef72e294878b76",
+      "outputSha256": "ec560cd509746b02f4b7f010a7eeaacdd4e0501e74254677cc5f1bd7785699b5"
+    }
+  ],
+  "outputArtifactSha256": "ec560cd509746b02f4b7f010a7eeaacdd4e0501e74254677cc5f1bd7785699b5",
+  "redaction": {
+    "rawLogsIncluded": false,
+    "rawInputValuesIncluded": false,
+    "removedFieldCount": 0
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "emberforge-zetaris-stock-207ca2ab-retry-3",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.13.0 <25"
+  },
+  "scripts": {
+    "run": "node runtime/emberforge-runtime.mjs --input input.json",
+    "verify": "node tests/verify-export.mjs"
+  }
+}

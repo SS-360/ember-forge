@@ -1,6 +1,6 @@
 # Demo and submission preparation
 
-26 October 2026. Draft narrative and evidence plan, not a submitted entry or a claim of full readiness.
+27 October 2026. Draft narrative and evidence plan, not a submitted entry or a claim of full readiness. The supplied hub text is audited in [hackathon resource readiness](hackathon-resource-audit.md).
 
 Current update: explicit Codex and Claude Code invocation/execution, with the app stopped, now pass for the exact new export. Claude Code uses the free Nemotron backend. Live local Zetaris stock reads, a cross-source join and a freshness check also pass on synthetic data. See [host/source verification](host-and-zetaris-verification.md); earlier preparation-only statements below describe the previous checkpoint.
 
@@ -26,7 +26,7 @@ After verification and an actual export exist:
 pnpm transfer:prepare artifacts/exports/NEW-SKILL artifacts/comparisons/first-protocol/protocol.private.json '../Ember Forge transfer rehearsal'
 ```
 
-Preparation requires a directory outside the source repository. It copies the exact manifest-matching export into `.agents/skills/` and `.claude/skills/` in separate directories with spaces, adds fresh paired inputs, keeps reviewer labels outside host workspaces and writes unverified evidence templates. It starts no host/model and does not re-export or execute package checks. Do not promote a template to compatibility evidence without actual host logs and independent results. Hermes now has a separate one-prompt synthetic selection/execution rehearsal for a newer export; OpenClaw remains unverified because its CLI is absent. The exact candidate and limitations are in [host/source verification](host-and-zetaris-verification.md).
+Preparation requires a directory outside the source repository. It copies the exact manifest-matching export into `.agents/skills/` and `.claude/skills/` in separate directories with spaces, adds fresh paired inputs, keeps reviewer labels outside host workspaces and writes unverified evidence templates. It starts no host/model and does not re-export or execute package checks. Do not promote a template to compatibility evidence without actual host logs and independent results. Hermes and OpenClaw have separate synthetic selection/execution rehearsals for the same newer export; OpenClaw refused an unknown unit but remapped the native exit status. Broader accuracy remains unverified. The exact candidate and limitations are in [host/source verification](host-and-zetaris-verification.md).
 
 ## Draft submission copy
 
@@ -42,4 +42,4 @@ For a release manifest retain: exact source commit/content manifest; dependency 
 
 ## Official event check
 
-Observed on 26 October: the [official event page](https://hackathon.genai.works/event/open-agent-hackathon-2026) lists **Reasoning Architecture as Track 03**, a 22–27 October build window and submission closure **27 October 2026, 23:45 UTC** (28 October, 05:15 IST). Its wildcard explicitly names both Meterless and Zetaris. The [official academy page](https://academy.genai.works/courses/open-agent-hackathon-2026/details) describes Zetaris data, a Meterless Engine, and Nemotron/Nightshift. Some expanded rules and exact sponsor obligations were not visible in the retrieved public page; eligibility and final submission fields remain unconfirmed until those current rules are reviewed. Do not rely on stale October 15–20 pages or substitute an unrelated Devpost event. No claim of eligibility, sponsor completion or guaranteed placement is made.
+Checked on 27 October: the [official event page](https://hackathon.genai.works/event/open-agent-hackathon-2026) lists **Reasoning Architecture as Track 03**, teams of 1–5, and submission closure **27 October 2026, 23:45 UTC** (28 October, 05:15 IST). The [official Academy page](https://academy.genai.works/courses/open-agent-hackathon-2026/details) describes Zetaris data, a Meterless Engine, and running the product through Meterless Nightshift on NVIDIA Nemotron. The supplied hub capture reports 1/7 onboarding and 0/3 required resources reviewed; it lists rules/submission/technical/AI-policy documents but does not include their text. Current sponsor and submission gaps are explicit in the [resource audit](hackathon-resource-audit.md). No claim of eligibility, sponsor completion, or guaranteed placement is made.

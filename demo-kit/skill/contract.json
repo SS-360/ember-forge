@@ -1,0 +1,31 @@
+{
+  "skillId": "zetaris-stock-207ca2ab-retry-3",
+  "skillVersion": "0.1.0",
+  "contractVersion": "emberforge.contract/1",
+  "taskFamily": "stock-reconciliation",
+  "policyVersion": "stock-v1",
+  "sourceSchemaVersions": {
+    "orders": "orders/v1",
+    "inventory": "inventory/v1",
+    "productRules": "product-rules/v1"
+  },
+  "supportedSourceModes": [
+    "snapshot"
+  ],
+  "maxRows": 5000,
+  "maxRuntimeMs": 5000,
+  "postconditions": [
+    "nonnegative-stock-fields",
+    "shortage-equals-demand-gap",
+    "unique-sku-output"
+  ],
+  "assumptions": [
+    "inventory is filtered by warehouseId before joining with demand",
+    "aliases table maps SKU aliases to canonical SKUs",
+    "unitConversions table provides eachPerUnit for unit conversion",
+    "orders have fields: sku, warehouseId, orderDate, status, quantity, unit",
+    "inventory has fields: sku, warehouseId, onHandEach",
+    "open orders within date range represent demand",
+    "shortage = max(0, demandEach - onHandEach)"
+  ]
+}

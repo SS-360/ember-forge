@@ -1,0 +1,20 @@
+{
+  "status": "succeeded",
+  "skillId": "zetaris-stock-207ca2ab-retry-3",
+  "skillVersion": "0.1.0",
+  "executionMode": "bounded-local-interpreter",
+  "records": [
+    {
+      "sku": "PRODUCT-1b0ec09d-A",
+      "demandEach": 11,
+      "onHandEach": 4,
+      "shortageEach": 7
+    },
+    {
+      "sku": "PRODUCT-1b0ec09d-B",
+      "demandEach": 4,
+      "onHandEach": 50,
+      "shortageEach": 0
+    }
+  ]
+}

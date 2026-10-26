@@ -1,0 +1,5 @@
+{
+  "inputFile": "input.example.json",
+  "sourceMode": "snapshot",
+  "notes": "Replace the example arrays with approved data matching contract.json. The runner does not need Ember Forge, provider credentials, or a source connector."
+}

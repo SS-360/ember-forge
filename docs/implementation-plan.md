@@ -20,8 +20,8 @@ Connect approved data → run tasks with Nemotron → inspect observed trajector
 
 - Intended track: Reasoning Architecture. Verify final submission fields against the current event page before publishing.
 - Event deadline: 27 October 2026, 23:45 UTC / 28 October, 05:15 IST. Target both submissions by 27 October, 20:00 IST to preserve upload buffer.
-- The organizer update supplied by the user makes Cursor optional and requires a working implementation of at least one Meterless Engine, demonstrated by a test or live demo.
-- Retain meaningful Zetaris integration. Use Nemotron as the runtime investigator/compiler to support the separate Nemotron award objective.
+- The pasted APPROACH guide requires Zetaris as the data layer, at least one Meterless Engine in a working feature, Meterless Nightshift as the primary AI provider, NVIDIA where it contributes, and an agent activity trail. The official Academy says “Cursor or any AI coding tool”; Cursor itself is not currently treated as mandatory. See [resource audit](hackathon-resource-audit.md) for the exact source and current gaps.
+- Keep Zetaris on the agent's actual working data path. Route the product through Nightshift and NVIDIA Nemotron where appropriate; direct Nemotron connectivity alone does not meet the Nightshift-primary requirement.
 - The user intends two submissions across different tracks. Confirm the current dashboard allowance and final rules before submission; do not assume an earlier form inspection establishes final eligibility.
 - Keep source, demo, evidence, and attribution independent from the other entry. Disclose any shared utilities and pre-existing third-party components.
 - No paid infrastructure or unbounded API experiments. Establish a user-approved API spend ceiling; technical defaults should bound attempts even when pricing is unavailable.
@@ -30,14 +30,14 @@ Connect approved data → run tasks with Nemotron → inspect observed trajector
 
 ### Must ship
 
-1. Live Nemotron task execution using typed, read-only data tools.
+1. Live task execution through Meterless Nightshift as the primary provider, using NVIDIA Nemotron where it contributes and typed, read-only data tools.
 2. Successful and failed trajectory capture with verifiable task outcomes.
 3. Generation of parameterized skill programs rather than stored answers.
 4. Input applicability checks, postconditions, and version invalidation.
 5. Meterless H-MEM retrieval of validated skills and relevant experience.
-6. Real Zetaris queries spanning at least two distinct sources.
+6. Zetaris-backed task execution spanning at least two distinct sources (local synthetic connectivity is verified; connection to the original-agent and exported-skill data path remains to be completed).
 7. Candidate-specific Agent Skills exports that run supported inputs with reasoning access disabled.
-8. Verified discovery, invocation, and correct execution in at least two real harnesses before claiming cross-harness transfer. Target Codex, Claude Code, OpenClaw, and Hermes; mark any untested harness unverified.
+8. Verified discovery, invocation, and correct execution in at least two real harnesses before claiming cross-harness transfer. **Passed for one supported synthetic case each in Hermes and OpenClaw with the same newer package**. OpenClaw also refused an unknown unit with the correct reason, but its wrapper remapped native exit 2 to 1; broader selection accuracy remains open. Codex and Claude Code evidence applies to an older export. Keep every untested scope unverified.
 9. Independent evaluation and a polished local interface.
 
 ### Non-goals

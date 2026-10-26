@@ -1,43 +1,36 @@
 # Readiness
 
-Updated 24 October 2026, Asia/Calcutta.
+Updated 27 October 2026 (Asia/Calcutta). This replaces the older setup-only snapshot; current dated evidence lives in [progress](progress.md), [release readiness](release-readiness.md), and the [hackathon resource audit](hackathon-resource-audit.md).
 
-## P0 checks
+## Product and sponsor evidence
 
-| Check | Status | Evidence |
+| Check | Status | Evidence and limit |
 | --- | --- | --- |
-| Separate project repository | Complete | Independent Git repository initialized at this folder. |
-| Runtime | Complete | Local Node is v24.13.0; pnpm is v11.25.0. Node 24 is an LTS release in the official release schedule. |
-| Credential configuration | Partial | .env.example defines server-only provider settings. No matching NVIDIA or Zetaris environment variables or .env file were present in the handoff folder. |
-| Live Nemotron typed tool call | Blocked | No NVIDIA_API_KEY is configured. No request has been made. |
-| Live Zetaris query across two sources | Blocked | No Zetaris endpoint or credential is configured. Tenant-specific endpoints have not been guessed. |
-| H-MEM source and instructions | Complete | Meterless/engines/hmem copied from commit 1742dec56a66e58eef9dda2d2b865823758ca8cd. Its AGENTS.md, docs, reference, conformance vectors/runner, and Apache-2.0 license are retained. |
-| H-MEM integration | Integrated into the app | Actual Skill Library registration, cold lookup, warm new-input execution and policy invalidation have retained local API artifacts. Hash/applicability checks remain deterministic. This is the pinned minimal reference. |
-| API budget | Explicitly $0 | User requested free operation. No free provider entitlement has been confirmed and no live request has been made. Configuration alone cannot enable calls. |
+| Local application workflow | **Implemented** | Workbench, original-agent runs, trace-based skill compilation, verification/export, frozen evaluation, and Skill Library. |
+| Current source quality gates | **Passed** | 85 tests across 19 files; TypeScript check and Vite production build pass. The isolated package verifier also passes for the OpenClaw-tested export. |
+| Nemotron | **Connected and exercised** | Original-agent runs and synthesis on synthetic stock data under the user's $0 NVIDIA ceiling. No real-world accuracy or savings result. |
+| Zetaris local source path | **Connected and exercised** | Read-only reads from two local synthetic PostgreSQL sources, reconciliation join, and controlled freshness check. This is a separate workbench path; the original agent/export still use fixture/JSON data. SaaS/cloud tenant transport is unverified. |
+| Meterless H-MEM | **Integrated and exercised** | Verified-skill registration/retrieval/execution and invalidation are in the actual application; pinned conformance is 13/13. This is a local reference engine. |
+| Meterless Nightshift primary runtime | **Not integrated** | The user-provided APPROACH guide and official Academy describe Nightshift as the primary AI provider/runtime layer. This is the largest sponsor integration gap. |
+| Agent activity evidence | **Available** | Original-agent runs save tool steps and outcomes. The tracked demo kit has a sanitized 14-step trace and OpenClaw activity record. Neither contains hidden/private model reasoning. |
+| Host compatibility | **Narrowly demonstrated** | Codex/Claude explicitly ran an earlier export. Hermes/OpenClaw auto-selected the same newer export once each on a supported synthetic input; OpenClaw's refusal exit code is remapped by its wrapper. |
+| Demo sample package | **Prepared** | Synthetic stock input, deterministic output, and host/workbench activity records in `demo-kit/`. |
+| Hackathon resource review | **Partial** | The supplied hub snapshot says onboarding 1/7 and required resources 0/3. Several actual rule/submission documents are listed but their text was not included; see the audit. |
+| HackOS submission readiness | **Incomplete** | Team eligibility/account status, full rule review, video, slide deck, sponsor explanation, and final submission are not verified or complete. Official deadline is 27 October 2026, 23:45 UTC. |
+| Cloud deployment / production | **Not established** | No protected hosted deployment, real-data security review, or production operations evidence. |
+| Savings / generalization | **Not established** | Small synthetic finite comparisons only; do not claim general savings or universal skill learning. |
 
-## P0 exit decision
+## Immediate blockers
 
-Sponsor connectivity cannot be claimed yet. Per the implementation plan, local engineering may continue with synthetic fixtures as long as every artifact says fixture and live sponsor proof remains unresolved.
+1. Integrate and verify Meterless Nightshift as the primary AI runtime; direct Nemotron API calls are not equivalent.
+2. Connect the original stock-agent task to the verified Zetaris route or clearly disclose that its run/export path still uses fixtures.
+3. Obtain and review the full current Rules, Technical Execution Requirements, Submission Requirements, Disqualification Checklist, and AI Usage Policy from the hub; verify team/HackOS eligibility.
+4. Finish the demo video, slides, repository explanation, sponsor mapping, and HackOS submission before the official deadline.
 
-## Local demo readiness
+## Evidence links
 
-| Check | Status | Evidence |
-| --- | --- | --- |
-| Local app starts | Complete | `pnpm run dev`; API at `127.0.0.1:3001`, Vite at `127.0.0.1:5174`. |
-| Local workflow | Implemented for fixture mode | Workbench with fixture setup/history, trace assembly, verification/export, frozen evaluation and actual Skill Library execution. |
-| Persistent local execution record | Complete | Local SQLite plus JSON trace artifact under `artifacts/`. |
-| Package runs without a model client | Checked for bundled examples | Fresh-directory package execution has no provider client. Node network instrumentation is not an OS-level network sandbox. |
-| Responsive check | Complete for sampled viewports | Desktop review and mobile viewport 388×843 CSS px; document has no horizontal overflow. |
-| Current static compilation | Passed | TypeScript checking and Vite production compilation pass. Historical suite counts predate the latest integration; no fresh full-suite claim is made. |
-| End-to-end live provider workflow | Blocked | $0 budget, free entitlement unconfirmed, no live credentials or validated Zetaris tenant transport. |
-| Submission readiness | Not complete | Reproduction rehearsal and media/submission materials are still needed. |
-
-The local demo uses a hand-authored seed, synthetic fixture runs, and deterministic assembly from normalized operation traces. Replay samples are explicitly identified; they do not establish model learning. Live Nemotron generation and Zetaris reads remain unverified.
-
-## References
-
-- Node release schedule: https://nodejs.org/en/about/previous-releases
-- Pinned H-MEM source: https://github.com/Meterless/Meterless/tree/1742dec56a66e58eef9dda2d2b865823758ca8cd/engines/hmem
-- NVIDIA chat completions API: https://docs.api.nvidia.com/nim/reference/nvidia-nemotron-3_5-super-vl-120b-a12b-infer
-- Zetaris tenant-specific connector references are in the implementation plan; confirm the active account contract before coding the live connector.
-
+- [Host and Zetaris verification](host-and-zetaris-verification.md)
+- [Nemotron workflow verification](live-verification.md)
+- [Project progress](progress.md)
+- [Demo and submission preparation](demo-and-submission.md)
+- [Resource audit](hackathon-resource-audit.md)

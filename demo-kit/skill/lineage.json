@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "emberforge.lineage/1",
+  "method": "nemotron_synthesis",
+  "adapterId": "emberforge.nemotron-chat-completions/1",
+  "generatedAt": "2026-10-26T18:54:57.626Z",
+  "compilerContextHash": "91881611287820fba062a97a91ca55514fc3f1d09c5bdf163ca6e09bb270e638",
+  "traces": [
+    {
+      "traceId": "3ec6b4b6-9570-4858-8da8-695abd12b3c3",
+      "hash": "bb4fa1f96582c083ab2dfae5cd2fbfef2ac53e7b47146230e4b13b61828fab0b",
+      "outcome": "succeeded",
+      "evidenceClass": "synthetic_fixture",
+      "inputHash": "8db0d0b18b702d4e426632fe5d3fb608044861ff5fce32770e7659321fc14ba4"
+    },
+    {
+      "traceId": "031fd7fb-51f4-4406-9349-8c6da700c75b",
+      "hash": "aff60ee5c198826fcbcb2b6d2b0a18594f1397d9528626145282f43e0574f501",
+      "outcome": "succeeded",
+      "evidenceClass": "synthetic_fixture",
+      "inputHash": "411a0a1d4e5d1178d12e09f4ab00a6a0fc2c62f33fdfd99066b3bf1803ca991e"
+    },
+    {
+      "traceId": "71596229-720c-45d7-8859-82022ad7ec4b",
+      "hash": "c5caf0a8c8bbd75d51ca22202089424c2f66608fd8e1288d14a24f102eaaef3c",
+      "outcome": "failed",
+      "evidenceClass": "synthetic_fixture",
+      "inputHash": "c0074bd2d9c049b59f149f3f49a06a22c60ac6ef6573183c6665a88c98e85c12"
+    },
+    {
+      "traceId": "93c6564e-af73-407d-a071-cf44f992c88e",
+      "hash": "f2e2b2885f8e2b7293bc816c3e540e12d43ba2e11ab214e98d755c379a5082a5",
+      "outcome": "unsupported",
+      "evidenceClass": "synthetic_fixture",
+      "inputHash": "c0074bd2d9c049b59f149f3f49a06a22c60ac6ef6573183c6665a88c98e85c12"
+    }
+  ],
+  "operations": [
+    {
+      "operationId": "orders_read",
+      "traceIds": [
+        "3ec6b4b6-9570-4858-8da8-695abd12b3c3"
+      ]
+    },
+    {
+      "operationId": "inventory_read",
+      "traceIds": [
+        "3ec6b4b6-9570-4858-8da8-695abd12b3c3"
+      ]
+    },
+    {
+      "operationId": "aliases_read",
+      "traceIds": [
+        "3ec6b4b6-9570-4858-8da8-695abd12b3c3"
+      ]
+    },
+    {
+      "operationId": "unit_conversions_read",
+      "traceIds": [
+        "3ec6b4b6-9570-4858-8da8-695abd12b3c3"
+      ]
+    },
+    {
+      "operationId": "filter_orders",
+      "traceIds": []
+    },
+    {
+      "operationId": "filter_inventory",
+      "traceIds": []
+    },
+    {
+      "operationId": "lookup_alias",
+      "traceIds": []
+    },
+    {
+      "operationId": "lookup_unit",
+      "traceIds": [
+        "3ec6b4b6-9570-4858-8da8-695abd12b3c3"
+      ]
+    },
+    {
+      "operationId": "convert_qty",
+      "traceIds": [
+        "3ec6b4b6-9570-4858-8da8-695abd12b3c3",
+        "031fd7fb-51f4-4406-9349-8c6da700c75b"
+      ]
+    },
+    {
+      "operationId": "aggregate_demand",
+      "traceIds": [
+        "3ec6b4b6-9570-4858-8da8-695abd12b3c3",
+        "031fd7fb-51f4-4406-9349-8c6da700c75b"
+      ]
+    },
+    {
+      "operationId": "join_inventory",
+      "traceIds": [
+        "031fd7fb-51f4-4406-9349-8c6da700c75b"
+      ]
+    },
+    {
+      "operationId": "compute_shortage",
+      "traceIds": [
+        "3ec6b4b6-9570-4858-8da8-695abd12b3c3",
+        "031fd7fb-51f4-4406-9349-8c6da700c75b"
+      ]
+    },
+    {
+      "operationId": "project_output",
+      "traceIds": [
+        "3ec6b4b6-9570-4858-8da8-695abd12b3c3",
+        "031fd7fb-51f4-4406-9349-8c6da700c75b"
+      ]
+    },
+    {
+      "operationId": "validate_output",
+      "traceIds": [
+        "3ec6b4b6-9570-4858-8da8-695abd12b3c3"
+      ]
+    },
+    {
+      "operationId": "emit_result",
+      "traceIds": [
+        "3ec6b4b6-9570-4858-8da8-695abd12b3c3"
+      ]
+    }
+  ],
+  "limitations": [
+    "Provider-generated candidate checked on independent development cases; held-out evaluation is a separate gate.",
+    "Compiler context excludes evaluator code, development inputs/answers and held-out data. Repair feedback contains development verdicts only.",
+    "Configured token prices are cost accounting assumptions, not a measured provider invoice. Unknown usage keeps its full request reservation charged.",
+    "Synthesis system prompt SHA-256: 92af82c6e060baf08f89794a104f43f6e283ae33ff4cf90455e65f75447a0993",
+    "Synthesis model/tool/configuration SHA-256: 1a78e06fd51e66412fa8fcbc3375cd92db3b8fa04cd6669da0b2e02cab2809c5"
+  ]
+}

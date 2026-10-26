@@ -1,0 +1,210 @@
+{
+  "schemaVersion": "emberforge.verification/1",
+  "scope": "finite-development-suite",
+  "candidateOrigin": "nemotron_synthesis",
+  "skillId": "zetaris-stock-207ca2ab-retry-3",
+  "skillVersion": "0.1.0",
+  "candidateHash": "efdb2a2d6e247fa03f54a984beb32bea6a16c1ce03bb66115b689fe4f41db647",
+  "status": "validated",
+  "supportedCaseCount": 7,
+  "correctSupportedCount": 7,
+  "unsupportedCaseCount": 14,
+  "rejectedUnsupportedCount": 14,
+  "falseAcceptanceCount": 0,
+  "needlessFallbackCount": 0,
+  "coverage": 1,
+  "cases": [
+    {
+      "caseId": "development-warehouse-a-1b0ec09d",
+      "expectedOutcome": "supported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedResultHash": "57af5d75a12bef42902d9915bdc93a2ee5e95561855d0691ca0a515d9695c228",
+      "actualResultHash": "57af5d75a12bef42902d9915bdc93a2ee5e95561855d0691ca0a515d9695c228",
+      "durationMs": 12.907599999991362
+    },
+    {
+      "caseId": "development-warehouse-b-1b0ec09d",
+      "expectedOutcome": "supported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedResultHash": "2bd26d43012aa70c40a40b09375f877c8e89c8ed796a0009e8fb1773089e908e",
+      "actualResultHash": "2bd26d43012aa70c40a40b09375f877c8e89c8ed796a0009e8fb1773089e908e",
+      "durationMs": 0.7079000000085216
+    },
+    {
+      "caseId": "development-unknown-unit-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "UNKNOWN_UNIT",
+      "actualReason": "UNKNOWN_UNIT",
+      "durationMs": 0.8215000000054715
+    },
+    {
+      "caseId": "development-inclusive-day-boundary-1b0ec09d",
+      "expectedOutcome": "supported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedResultHash": "7fd5bc005000345cccf5e7b7c99b4f8ba390686ab9756242462046727029b616",
+      "actualResultHash": "7fd5bc005000345cccf5e7b7c99b4f8ba390686ab9756242462046727029b616",
+      "durationMs": 0.9439000000129454
+    },
+    {
+      "caseId": "development-row-order-1b0ec09d",
+      "expectedOutcome": "supported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedResultHash": "57af5d75a12bef42902d9915bdc93a2ee5e95561855d0691ca0a515d9695c228",
+      "actualResultHash": "57af5d75a12bef42902d9915bdc93a2ee5e95561855d0691ca0a515d9695c228",
+      "durationMs": 0.7076999999990221
+    },
+    {
+      "caseId": "development-empty-orders-1b0ec09d",
+      "expectedOutcome": "supported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedResultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "actualResultHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "durationMs": 0.45059999999648426
+    },
+    {
+      "caseId": "development-changed-rule-table-1b0ec09d",
+      "expectedOutcome": "supported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedResultHash": "4e1f054475c95f551935e54d823ac47354731862561c93e297aa28bca558d73f",
+      "actualResultHash": "4e1f054475c95f551935e54d823ac47354731862561c93e297aa28bca558d73f",
+      "durationMs": 0.5951000000059139
+    },
+    {
+      "caseId": "development-large-supported-1b0ec09d",
+      "expectedOutcome": "supported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedResultHash": "28d25a6859b1528dc3802769f8f7e16b303753d69543cb399ea21c7ab19d5d39",
+      "actualResultHash": "28d25a6859b1528dc3802769f8f7e16b303753d69543cb399ea21c7ab19d5d39",
+      "durationMs": 62.23110000000452
+    },
+    {
+      "caseId": "development-unknown-alias-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "UNKNOWN_SKU_ALIAS",
+      "actualReason": "UNKNOWN_SKU_ALIAS",
+      "durationMs": 0.6401000000041677
+    },
+    {
+      "caseId": "development-missing-inventory-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "INVENTORY_NOT_FOUND",
+      "actualReason": "INVENTORY_NOT_FOUND",
+      "durationMs": 0.40149999999266583
+    },
+    {
+      "caseId": "development-future-snapshot-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "INVENTORY_SNAPSHOT_AFTER_RANGE",
+      "actualReason": "INVENTORY_SNAPSHOT_AFTER_RANGE",
+      "durationMs": 0.3043000000034226
+    },
+    {
+      "caseId": "development-policy-change-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "POLICY_VERSION_MISMATCH",
+      "actualReason": "POLICY_VERSION_MISMATCH",
+      "durationMs": 0.49219999999331776
+    },
+    {
+      "caseId": "development-schema-change-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "SCHEMA_VERSION_MISMATCH",
+      "actualReason": "SCHEMA_VERSION_MISMATCH",
+      "durationMs": 0.6142000000108965
+    },
+    {
+      "caseId": "development-duplicate-order-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "DUPLICATE_ORDER_ID",
+      "actualReason": "DUPLICATE_ORDER_ID",
+      "durationMs": 0.40099999999802094
+    },
+    {
+      "caseId": "development-duplicate-inventory-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "DUPLICATE_INVENTORY_KEY",
+      "actualReason": "DUPLICATE_INVENTORY_KEY",
+      "durationMs": 0.33979999998700805
+    },
+    {
+      "caseId": "development-duplicate-alias-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "DUPLICATE_SKU_ALIAS",
+      "actualReason": "DUPLICATE_SKU_ALIAS",
+      "durationMs": 0.3986000000004424
+    },
+    {
+      "caseId": "development-duplicate-unit-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "DUPLICATE_UNIT_RULE",
+      "actualReason": "DUPLICATE_UNIT_RULE",
+      "durationMs": 1.1238000000012107
+    },
+    {
+      "caseId": "development-quantity-overflow-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "QUANTITY_OVERFLOW",
+      "actualReason": "QUANTITY_OVERFLOW",
+      "durationMs": 0.48040000000037253
+    },
+    {
+      "caseId": "development-row-limit-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "ROW_LIMIT_EXCEEDED",
+      "actualReason": "ROW_LIMIT_EXCEEDED",
+      "durationMs": 39.924600000013015
+    },
+    {
+      "caseId": "development-negative-quantity-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "INPUT_CONTRACT_INVALID",
+      "actualReason": "INPUT_CONTRACT_INVALID",
+      "durationMs": 1.3585000000020955
+    },
+    {
+      "caseId": "development-invalid-calendar-date-1b0ec09d",
+      "expectedOutcome": "unsupported",
+      "actualOutcome": "correct",
+      "passed": true,
+      "expectedReason": "INPUT_CONTRACT_INVALID",
+      "actualReason": "INPUT_CONTRACT_INVALID",
+      "durationMs": 0.46029999999154825
+    }
+  ],
+  "startedAt": "2026-10-26T18:55:35.255Z",
+  "endedAt": "2026-10-26T18:55:35.382Z",
+  "durationMs": 127.00860000000102
+}

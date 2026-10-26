@@ -1,6 +1,6 @@
 # Host execution and live Zetaris stock reads
 
-Verified on 26–27 October 2026 after the human explicitly requested completion of the host and source checks. Local artifacts are ignored by Git. No publication or submission occurred.
+Verified on 26–27 October 2026 after the human explicitly requested completion of the host and source checks. Raw local artifacts are ignored by Git; the sanitized OpenClaw receipt is tracked under `docs/evidence/`. No publication or submission occurred.
 
 ## Same exported skill in two hosts
 
@@ -37,9 +37,19 @@ On 27 October, an isolated Hermes profile automatically selected and ran the new
 
 The evidence records 4 Nemotron calls, 79,091 input tokens, and 524 output tokens under the previously authorized free endpoint, a $0 ceiling, and a 192,000-token run allowance. App ports 3001 and 5174 were unreachable at the start. The temporary Hermes profile was deleted after the run, leaving the global Hermes profile unchanged. Hermes version was not captured.
 
-This was one synthetic JSON-snapshot request. It did not read Zetaris, verify unknown-input refusal in Hermes, or measure selection accuracy on a broader prompt set. It also used a different candidate from the shared Codex/Claude rehearsal above; same-package cross-harness transfer for this newer export is still unverified. OpenClaw CLI is absent, so it remains untested. See [compatibility matrix](skill-compatibility.md).
+This was one synthetic JSON-snapshot request. It did not read Zetaris, verify unknown-input refusal in Hermes, or measure selection accuracy on a broader prompt set. It used a different candidate from the shared Codex/Claude rehearsal above. Hermes and OpenClaw have since both automatically selected and executed this newer package on one supported synthetic input each, providing a narrow same-package, two-host transfer result rather than a broader benchmark. See [compatibility matrix](skill-compatibility.md).
 
 Evidence: `artifacts/host-verification/hermes-auto-cea3576d-90bd-4b10-94ef-48e4274f9d1c.json`.
+
+## OpenClaw automatic selection and execution
+
+On 27 October, OpenClaw 2026.10.6 installed the exact `zetaris-stock-207ca2ab-retry-3@0.1.0` export into its active workspace. The Gateway registry then reported the skill as `openclaw-workspace` and eligible (58 skills total). A fresh main-agent session used GPT-6-Luna and a normal reconciliation request that did not name the skill. OpenClaw selected the installed skill and invoked its bundled runner against a synthetic fixture; the runner exited 0 in `bounded-local-interpreter` mode.
+
+The result was demand 11 / stock 4 / shortage 7 for `PRODUCT-1b0ec09d-A`, and demand 4 / stock 50 / shortage 0 for `PRODUCT-1b0ec09d-B`. An independent invocation of the exported runtime produced the same stable result fields. The complete result hashes differ because `metrics.durationMs` is measured per run. The bundled export verifier also passed. The test made no Zetaris stock reads and did not publish to ClawHub.
+
+The three OpenClaw receipts report 21,701 input / 903 output tokens for installation, 18,982 / 667 for supported execution, and 18,989 / 501 for the unsupported-input refusal. Reported usage cost sums to **$0.00964078**; this is OpenClaw's usage metadata, not an invoice. The user explicitly requested GPT-6-Luna for these tests. This allowance does not change the separate $0 ceiling for NVIDIA Nemotron calls.
+
+Evidence: [sanitized OpenClaw verification record](evidence/openclaw-auto-selection-20261027.json). A second automatic-selection run used a synthetic unapproved unit and preserved `UNKNOWN_UNIT` without guessing. OpenClaw surfaced host-level exit code 1, while direct execution of the same runner and fixture returned its documented native exit code 2. So the refusal reason is correct, but OpenClaw does not preserve the runner's exit status through its tool wrapper. Broader selection accuracy remains untested.
 
 ## Actual stock reads through Zetaris
 
@@ -73,6 +83,6 @@ Workbench → **Zetaris stock sources → Read Zetaris stock** invokes the real 
 
 ## Current checks
 
-The latest source passes TypeScript, 85 tests across 19 files, and the frontend production build. Source-read boundary tests cover remote targets, write SQL, and caller query injection. The 27 October Hermes check adds one automatic-selection/runtime success for a new package, within the limitations above. OpenClaw, real warehouse accuracy, dollar savings, deployment and submission are not established by these checks.
+The latest source passes TypeScript, 85 tests across 19 files, and the frontend production build. Source-read boundary tests cover remote targets, write SQL, and caller query injection. Hermes and OpenClaw each add one automatic-selection/runtime success for the same newer package on supported synthetic input. OpenClaw also refused an unsupported unit with the correct reason, though its host-level exit code differs from the runner's native code. Real warehouse accuracy, dollar savings, deployment and submission are not established by these checks.
 
 The host procedure follows the official [Codex skill evaluation guidance](https://developers.openai.com/blog/eval-skills) and [Claude Code skills contract](https://code.claude.com/docs/en/skills). Source registration follows the [Zetaris SQL manual](https://kbase.zetaris.com/knowledge/sql-manual); the running local bundle's own JDBC contract supplied the endpoint and driver.

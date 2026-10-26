@@ -1,53 +1,50 @@
 # Ember Forge architecture
 
-The current product is a local, fixture-mode vertical slice. The diagram separates implemented paths from planned live-provider paths.
+The current product is a local prototype with separate fixture-agent and local-Zetaris paths. Model, memory, host, and source evidence is synthetic and bounded; the diagram keeps those paths distinct.
 
 ```mermaid
 flowchart LR
-  UI[React + Vite UI] -->|HTTP /api| API[Fastify API]
+  UI[React + Vite UI] --> API[Fastify API]
   API --> DB[(SQLite run metadata)]
   API --> ART[JSON run and export artifacts]
   API --> FIX[Versioned synthetic fixtures]
-  API --> ORACLE[Deterministic reference procedure]
-  API --> CONTRACT[Zod task and parameter contracts]
-  UI --> IMPORT[Strict normalized trace import]
-  IMPORT --> TRACES[Immutable sanitized trace artifacts]
-  TRACES --> ASSEMBLY[Deterministic graph consensus]
-  ASSEMBLY --> CANDIDATE
-  CANDIDATE[Bounded skill IR] --> VALIDATOR[Static checks and contract verifier]
-  VALIDATOR --> RUNTIME[Trusted TypeScript interpreter]
-  RUNTIME --> EVAL[Development and frozen evaluators]
-  API --> EXPORT[Standalone package builder]
-  EXPORT --> PACKAGE[SKILL.md + IR + contract + runtime + tests + evidence + lineage]
-  API --> MEMORY[Verified skill registry and retrieval]
-  MEMORY --> HMEM[H-MEM pinned local reference]
+  API --> AGENT[Original bounded tool agent]
+  AGENT --> NEM[NVIDIA Nemotron API]
+  AGENT --> TRACE[Sanitized traces and activity log]
+  TRACE --> COMP[Trace selection and skill synthesis]
+  COMP --> IR[Bounded skill IR]
+  IR --> CHECK[Static and contract checks]
+  CHECK --> RUNTIME[Trusted TypeScript interpreter]
+  RUNTIME --> EXPORT[Standalone Agent Skill package]
+  API --> MEMORY[Verified skill registry]
+  MEMORY --> HMEM[Meterless H-MEM reference]
   MEMORY --> RUNTIME
-  API --> JOBS[Bounded synthesis jobs: disabled in production]
-  JOBS -. authorized server adapter required .-> NEMOTRON
-  NEMOTRON[Nemotron API] -. credentials and budget unavailable .-> API
-  ZETARIS[Zetaris sources] -. tenant contract and credentials unavailable .-> API
+  UI --> ZROUTE[Read-only Zetaris stock route]
+  ZROUTE --> ZLOCAL[Local Zetaris JDBC]
+  ZLOCAL --> PG[(Two synthetic PostgreSQL sources)]
+  NIGHT[Meterless Nightshift] -. not integrated .-> AGENT
 ```
 
 ## Implemented boundaries
 
-- The UI sends typed task parameters to Fastify. The local task endpoint reads only the synthetic fixture and records the result in SQLite plus a JSON artifact.
-- A separate import path accepts strict normalized operation traces, excludes raw logs/rows from compiler input, and preserves trace identity. A deterministic adapter assembles agreeing successful graphs and retains counterexamples as lineage; the independent development evaluator is outside the adapter context. This is a replay baseline, not model-driven learning. Generated candidates are stored under artifacts/candidates and selectable in the header.
-- The runtime interprets bounded declarative instructions. Candidate validity and input applicability are decided by deterministic checks; H-MEM retrieval nominates records but does not authorize execution.
-- The exporter includes the runtime and a network guard, then verifies supported execution and an explicit rejection with model calls disabled.
-- A bounded synthesis/repair controller, typed Nemotron adapter, persisted jobs, polling and cancellation exist. Production has no provider adapter under the $0 authorization. Live generation remains unverified. A Zetaris tenant transport contract and bounded page/snapshot orchestration exist; a verified live HTTP/auth implementation is still absent.
-- Raw local snapshots live separately from compiler context and can replay normalized tool observations. New candidates retain an independent development split and matching package example. Frozen evaluation generates a later split and preserves the first outcome per candidate hash.
-- Library registration repeats verification. H-MEM nominates verified records; stored artifact hashes and deterministic applicability are checked before bounded execution. Policy/schema drift deprecates the incompatible entry, with no automatic model fallback.
+- The React workbench calls the Fastify API. Local task runs use typed synthetic fixtures and persist SQLite history plus JSON evidence artifacts.
+- A bounded original agent chooses trusted read-only tools and has produced real Nemotron trajectories over synthetic fixtures. Raw model reasoning and credentials are not recorded.
+- Successful and failed traces can feed bounded skill synthesis. Candidates use a declarative instruction format interpreted by trusted code, with static checks, explicit contracts, independent development cases, and a frozen synthetic evaluation protocol.
+- The standalone exporter includes `SKILL.md`, contracts, examples, the bounded runtime, and verification evidence. Supported package inputs run without a model API call; unsupported inputs return structured reasons.
+- The local Skill Library uses the pinned Meterless H-MEM reference for verified registration, retrieval, bounded execution, and policy/schema invalidation. Deterministic hash and applicability checks authorize execution; H-MEM only nominates a candidate.
+- A separate workbench route performs actual read-only stock reads, a cross-source join, and a controlled freshness check through the local Zetaris JDBC service. It used two synthetic PostgreSQL databases. This path is not yet the source backend of the original Nemotron stock agent or the exported skill.
+- Codex and Claude Code explicitly executed an earlier package; Hermes and OpenClaw automatically selected and executed the same newer package on one supported synthetic case each. OpenClaw also refused an unknown unit, though its wrapper changed native exit code 2 to 1.
+- Meterless Nightshift is not integrated. The current Nemotron adapter calls NVIDIA directly. Cloud/SaaS Zetaris transport, real business data, production deployment, general workflow learning, broad host-selection accuracy, and savings remain unverified.
 
 ## Principal packages
 
-The new original-agent path and evidence boundaries are described in [agent workflow](agent-workflow.md). It chooses trusted tools incrementally rather than replaying a supplied graph. Its model/evaluation/host behavior remains unverified; four-arm measurement and transfer preparation are separate from historical runtime results.
-
-- `apps/web`: workbench, candidate selection, verification/export, frozen evaluation and Skill Library.
-- `apps/api`: Fastify, SQLite history, trace snapshots, cancellable synthesis jobs, evaluation, library and tenant transport contract.
+- `apps/web`: Workbench, verification/export, evaluation, Zetaris read action, and Skill Library.
+- `apps/api`: Fastify, SQLite history, agent/run orchestration, Zetaris JDBC route, library, and export APIs.
 - `packages/contracts`: Zod schemas for task, trace, program, skill, and export data.
-- `packages/compiler`: verification, consensus baseline, bounded synthesis/repair controller, typed provider adapter and snapshot replay.
-- `packages/runtime`: trusted interpreter and standalone entrypoint.
-- `packages/memory`: H-MEM adapter and skill registry.
-- `packages/evaluator`: deterministic stock-reconciliation oracle.
-- `evaluation/frozen-v1`: separated synthetic input/label split and evaluator report.
-- `vendor/meterless/hmem`: pinned upstream reference, attribution, instructions, and conformance suite.
+- `packages/compiler`: trace processing, bounded synthesis/repair, typed Nemotron adapter, and candidate verification.
+- `packages/runtime`: trusted bounded interpreter and standalone package entrypoint.
+- `packages/memory`: H-MEM adapter, evidence checks, and verified skill registry.
+- `packages/evaluator`: independent deterministic stock-reconciliation oracle.
+- `vendor/meterless/hmem`: pinned upstream reference, attribution, and conformance suite.
+
+See [agent workflow](agent-workflow.md), [integration records](integrations.md), [host/source verification](host-and-zetaris-verification.md), and the [hackathon resource audit](hackathon-resource-audit.md) for evidence and remaining sponsor gaps.

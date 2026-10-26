@@ -12,7 +12,7 @@ pnpm marketplace:prepare -- artifacts/exports/<skill-id>/<version>/<verified-exp
 
 The command reruns the package's offline verifier, checks candidate/contract/provenance identity and frontmatter, rejects symlinks, then copies every regular file without rewriting it. It places the copy in an ignored, uniquely named folder under `artifacts/marketplace/clawhub/` whose immediate skill-directory name matches `SKILL.md`'s `name`. `staging-report.json` records the candidate hash and SHA-256 for every staged file. The command does not log in, call a marketplace, upload, or publish anything.
 
-OpenClaw can install a local folder with `openclaw skills install ./path/to/skill --as <slug>` into the active workspace. This CLI is not installed in the current environment, so the package's OpenClaw discovery, selection, and execution remain unverified. See the [official OpenClaw skill documentation](https://docs.openclaw.ai/tools/skills).
+OpenClaw can install a local folder with `openclaw skills install ./path/to/skill --as <slug>` into the active workspace. The `zetaris-stock-207ca2ab-retry-3@0.1.0` package was installed and verified in the active OpenClaw 2026.10.6 workspace; one fresh GPT-6-Luna session automatically selected and executed it on a synthetic input. This proves local-host compatibility only. It does not publish the package to ClawHub. See the [official OpenClaw skill documentation](https://docs.openclaw.ai/tools/skills) and [run record](evidence/openclaw-auto-selection-20261027.json).
 
 ## ClawHub publication gate
 
@@ -23,6 +23,6 @@ After that decision, the owner can use the reviewed folder with ClawHub's docume
 ## Current boundaries
 
 - ClawHub staging is offline; registry publication has not occurred.
-- OpenClaw CLI is absent, so local install, discovery, automatic selection, and execution still need a real harness run.
+- OpenClaw local install, discovery, automatic selection, supported execution, and `UNKNOWN_UNIT` refusal are verified; its wrapper remaps the native refusal exit code 2 to 1. ClawHub publication and broad selection accuracy remain unverified.
 - A ClawHub listing would distribute the skill files; it would not create an Ember Forge hosted service or prove production readiness.
 - The stock package reads a supplied JSON snapshot. Its supported runtime does not make a model call or connect to Zetaris.

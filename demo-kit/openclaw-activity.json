@@ -1,0 +1,67 @@
+{
+  "recordedDate": "2026-10-27",
+  "sourceReceipt": "docs/evidence/openclaw-auto-selection-20261027.json",
+  "host": {
+    "name": "OpenClaw",
+    "version": "2026.10.6",
+    "gateway": "active local Gateway",
+    "model": "openai/gpt-6-luna"
+  },
+  "skill": {
+    "id": "zetaris-stock-207ca2ab-retry-3",
+    "version": "0.1.0",
+    "candidateSha256": "efdb2a2d6e247fa03f54a984beb32bea6a16c1ce03bb66115b689fe4f41db647",
+    "registrySource": "openclaw-workspace",
+    "eligible": true
+  },
+  "sessions": [
+    {
+      "kind": "install",
+      "runId": "7aca6fb5-636d-43fc-acad-7be3426a6988",
+      "observedTools": ["skills_search", "exec", "skills_read", "process"],
+      "outcome": "Installed local package; registry listed it as eligible."
+    },
+    {
+      "kind": "automatic-selection-and-supported-execution",
+      "runId": "a4baebb6-5926-4a4e-8ec1-40853d467b02",
+      "skillNameGivenInPrompt": false,
+      "taskSummary": "Reconcile open orders for a named warehouse, date range, aliases, and unit conversions.",
+      "observedTools": ["skills_search", "exec", "skills_read", "read"],
+      "runnerExitCode": 0,
+      "outcome": "Selected the skill; two synthetic result rows matched an independent invocation of the same runtime."
+    },
+    {
+      "kind": "automatic-selection-and-unsupported-input",
+      "runId": "6ff2f6a6-76d7-40a3-b4d5-4878eea8e76a",
+      "skillNameGivenInPrompt": false,
+      "taskSummary": "Same reconciliation request with one unapproved unit value, MYSTERY.",
+      "observedTools": ["skills_search", "exec", "skills_read", "read"],
+      "rejection": {
+        "status": "unsupported",
+        "reason": "UNKNOWN_UNIT",
+        "message": "Lookup has no match for MYSTERY"
+      },
+      "hostReportedExitCode": 1,
+      "rawRuntimeExitCodeOnSameFixture": 2,
+      "limitation": "OpenClaw preserved the refusal reason but its exec wrapper remapped the runner's native exit code."
+    }
+  ],
+  "modelUsage": {
+    "installInputTokens": 21701,
+    "installOutputTokens": 903,
+    "supportedRunInputTokens": 18982,
+    "supportedRunOutputTokens": 667,
+    "unsupportedRunInputTokens": 18989,
+    "unsupportedRunOutputTokens": 501,
+    "recordedCostUsd": 0.00964078,
+    "costNote": "OpenClaw usage metadata; not an invoice. GPT-6-Luna was explicitly requested by the user."
+  },
+  "privacyAndScope": {
+    "inputsWereSynthetic": true,
+    "liveStockSourceCalls": false,
+    "rawReasoningIncluded": false,
+    "unsupportedResultFileCreated": false,
+    "ClawHubPublished": false,
+    "selectionAccuracyBeyondTheseRequestsMeasured": false
+  }
+}

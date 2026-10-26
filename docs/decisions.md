@@ -28,3 +28,9 @@ The current app demonstrates the end-to-end local workflow without pretending pr
 
 The export contains declarative skill instructions and a trusted interpreter. It does not execute arbitrary model-generated JavaScript or Python. Unsupported conditions return machine-readable reasons.
 
+## Current status amendments — 27 October 2026
+
+Later user-authorized work superseded the setup checkpoints in D-004 and D-006: Nemotron original-agent calls and synthesis ran under a free-endpoint $0 ceiling; local Zetaris stock reads, a cross-source join and freshness check ran on synthetic sources; H-MEM is in the actual library path. See [integration evidence](integrations.md). D-005 remains in force for tenant-specific SaaS routes: use the local deployment's documented JDBC contract where already verified, and do not invent a remote endpoint.
+
+The supplied hackathon guide adds a separate requirement risk: Meterless Nightshift is not integrated as primary provider, and the original agent still reads fixture/snapshot data rather than the separate Zetaris path. See [hackathon resource audit](hackathon-resource-audit.md).
+

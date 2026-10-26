@@ -18,9 +18,9 @@ Ember Forge is a local web application for turning recorded workflows into porta
 
 The main compiled domain is **stock reconciliation**: reconcile open orders against inventory using product aliases and unit-conversion rules, then report demand, stock, and shortages. A second, independently versioned **fulfilment exceptions** workflow checks incomplete shipments and overdue orders from a separate schema. It is a configured template today, not a second Nemotron-learned skill.
 
-> **Status: working local prototype.** Genuine Nemotron tool runs have produced a synthesized stock skill, which passed 21 finite development checks and standalone export checks on synthetic data. Codex and Claude Code explicitly executed an earlier export; Hermes automatically selected and executed the newer export once. Local Zetaris stock reads and a cross-source join pass on synthetic data. OpenClaw and same-package two-host transfer for the newer export remain unverified. Fresh clones keep provider execution disabled until local authorization is configured. General workflow learning, real warehouse accuracy, production readiness, and cost savings remain unverified.
+> **Status: working local prototype.** Genuine Nemotron tool runs have produced a synthesized stock skill, which passed 21 finite development checks and standalone export checks on synthetic data. Codex and Claude Code explicitly executed an earlier export. Hermes and OpenClaw automatically selected and executed the same newer export on one supported synthetic input each. Local Zetaris stock reads and a cross-source join pass on synthetic data. Fresh clones keep provider execution disabled until local authorization is configured. General workflow learning, real warehouse accuracy, production readiness, and cost savings remain unverified.
 
-The workbench supports sanitized JSON/CSV samples, saved original-agent runs, trace assembly, Nemotron synthesis, local H-MEM reuse, and downloadable Agent Skills. In the first frozen four-arm comparison, the exact export passed all 27 invocations with zero model calls; instruction-only also passed all 27 using 33 model requests, while the original agent passed 24/27. These are three repeats of nine synthetic inputs. See the [host and live-source checks](docs/host-and-zetaris-verification.md), [compiler verification record](docs/live-verification.md), [agent workflow](docs/agent-workflow.md), [credential guide](docs/credentials.md), [comparison protocol](docs/comparison-protocol.md) and [remaining activation steps](USER_ACTIONS.md).
+The workbench supports sanitized JSON/CSV samples, saved original-agent runs, trace assembly, Nemotron synthesis, local H-MEM reuse, and downloadable Agent Skills. In the first frozen four-arm comparison, the exact export passed all 27 invocations with zero model calls; instruction-only also passed all 27 using 33 model requests, while the original agent passed 24/27. These are three repeats of nine synthetic inputs. See the [host and live-source checks](docs/host-and-zetaris-verification.md), [compiler verification record](docs/live-verification.md), [agent workflow](docs/agent-workflow.md), [credential guide](docs/credentials.md), [comparison protocol](docs/comparison-protocol.md), [hackathon resource audit](docs/hackathon-resource-audit.md), and [remaining activation steps](USER_ACTIONS.md).
 
 <details>
 <summary><strong>Preview the workbench</strong> — historical capture of the amber-red interface</summary>
@@ -127,8 +127,8 @@ Unsupported inputs return structured reasons such as `UNKNOWN_UNIT`, `POLICY_VER
 | Standalone Node.js | Run the exported procedure from a terminal or another application | New candidate passed exact-package execution checks; frozen-input comparison recorded separately |
 | Codex | Install the Agent Skill folder in a host-supported skill location | Exact new export explicitly invoked and executed on fresh supported/unsupported inputs, with Ember Forge stopped |
 | Claude Code | Use the exported instructions and bundled runner | Explicit Skill-tool invocation and both executions verified using free Nemotron as the host backend |
-| Hermes Agent CLI | Automatically select and run the bundled procedure | One isolated synthetic supported-input run passed on a newer export; same-package two-host transfer is unverified |
-| OpenClaw | Install into its active workspace with `openclaw skills install ./path/to/skill --as <slug>` | Unverified; OpenClaw CLI is not installed here |
+| Hermes Agent CLI | Automatically select and run the bundled procedure | One synthetic supported-input run passed on the newer export; the same package also passed one supported case in OpenClaw |
+| OpenClaw | Install the Agent Skill folder in its active workspace | Newer export automatically selected; supported case passed and unknown unit refused as `UNKNOWN_UNIT`. Wrapper reported exit 1 while the runtime returns 2 |
 
 The export is an **Agent Skill folder**. Codex plugin bundles and Claude marketplace packages require additional host-specific packaging. A host may still use model tokens to select and invoke a skill; the supported procedure itself runs without a model call. See the [compatibility matrix](docs/skill-compatibility.md) for the exact evidence boundaries and [marketplace packaging](docs/marketplace.md) for offline ClawHub staging and its license gate.
 
@@ -206,13 +206,13 @@ Run the checks appropriate to your change:
 
 To export a specific saved candidate, use `pnpm eval:export --candidate artifacts/candidates/<skill-name>`. Export checks instrument common Node networking APIs; they are not an operating-system network sandbox. The [compatibility guide](docs/skill-compatibility.md) covers host-discovery checks separately.
 
-**Latest implementation evidence:** static TypeScript checking passed before source publication. The full suite and isolated API/export checks were not rerun for the latest backend continuation. Historical results and screenshots are recorded with their limits in [release readiness](docs/release-readiness.md).
+**Latest implementation evidence:** the full suite passes 85 tests across 19 files; TypeScript checking and the Vite production build also pass. The package verifier passes for the OpenClaw-tested export. See [release readiness](docs/release-readiness.md) for scope and limits.
 
 ## Provider configuration and local data
 
-The default server enforces a **$0 spending ceiling** and leaves model calls disabled. A Nemotron adapter, bounded repair controller, persistent request/token/cost ledger, and cancellable job checkpoints are implemented, but their latest integration needs runtime verification. No free provider entitlement has been confirmed.
+The server enforces a **$0 NVIDIA spending ceiling**. The configured free prototyping endpoint has been used for original stock-agent runs and skill synthesis on synthetic data; authorization remains local and fresh clones default to providers disabled. The latest automated suite, TypeScript check, and frontend build pass. Local Zetaris JDBC reads, a two-source reconciliation join, and a controlled freshness check also pass on synthetic records. These Zetaris reads are a separate workbench path: the stock agent and exported skill still use a JSON fixture/snapshot. Meterless Nightshift is not integrated, and the public Academy describes it as the primary runtime layer; see the [hackathon resource audit](docs/hackathon-resource-audit.md).
 
-For provider development, start with `.env.example` and the disabled `config/provider-authorization.example.json`. Credentials alone do not enable calls: server-owned authorization binds the endpoint, model, account, evidence, expiry, and finite quotas. Follow [provider authorization](docs/provider-authorization.md) before activation. Zetaris additionally needs an actual tenant transport and verified source contract.
+For a fresh checkout, start with `.env.example` and the disabled `config/provider-authorization.example.json`. Credentials alone do not enable calls: server-owned authorization binds the endpoint, model, account, evidence, expiry, and finite quotas. Follow [provider authorization](docs/provider-authorization.md) before activation. The verified local Zetaris JDBC setup is documented in [credentials](docs/credentials.md); SaaS tenant transport and the stock agent's connection to the Zetaris route remain unverified.
 
 Run records, local snapshots, candidates, exports, and SQLite databases are stored under ignored `artifacts/`. Approval records belong under ignored `.local/`; credentials belong in ignored `.env`. Compiler inputs exclude raw rows and provider logs, but the trace schema cannot detect every secret concealed in an allowed identifier. Review imported traces before sharing them.
 
@@ -220,11 +220,11 @@ The [rename and compatibility notes](docs/rename.md) explain how existing databa
 
 ## Roadmap
 
-- Verify the latest authorization, accounting, cancellation, recovery, and export-receipt paths.
-- Capture genuine agent trajectories and establish model-generated candidate lineage.
-- Complete and verify the live Zetaris tenant integration.
-- Demonstrate discovery, invocation, and correct execution in at least two real agent hosts.
-- Measure generalization, compilation overhead, and costs against fair live baselines.
+- Integrate Meterless Nightshift as the primary AI runtime, then repeat the exact supported and unsupported workflow checks through it.
+- Connect the original stock agent's data path to the verified Zetaris source route and retain query/snapshot evidence.
+- Finish HackOS eligibility/team checks, required resource review, sponsor explanation, demo assets, and submission package before the published deadline.
+- Broaden host-selection checks, reproduce from a clean checkout, and close remaining authorization/recovery gaps.
+- Measure generalization, compilation overhead, and costs against fair live baselines before making savings claims.
 
 The [fulfilment workflow](docs/fulfilment-workflow.md) describes the second domain and its package. The [implementation follow-up](docs/implementation-follow-up.md) tracks remaining work; the [claims ledger](docs/claims.md) distinguishes implementation from demonstrated results.
 
@@ -240,6 +240,8 @@ The [fulfilment workflow](docs/fulfilment-workflow.md) describes the second doma
 | [Skill compatibility](docs/skill-compatibility.md) | Understand exports and host verification status |
 | [Provider authorization](docs/provider-authorization.md) | Configure bounded provider access |
 | [Release readiness](docs/release-readiness.md) | Assess current capabilities and unresolved gates |
+| [Hackathon resource audit](docs/hackathon-resource-audit.md) | Review the checked hub requirements, current evidence, and sponsor gaps |
+| [Runnable demo kit](demo-kit/README.md) | Run the included verified skill and inspect sanitized agent activity |
 | [Progress](docs/progress.md) | Read dated implementation and evidence updates |
 
 ## Attribution and licensing

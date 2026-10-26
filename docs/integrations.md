@@ -1,6 +1,15 @@
 # Provider integration readiness
 
-This page records prerequisites and evidence for a sponsor-connected workflow. No NVIDIA request has been made. Local Zetaris login and a constant query were verified on 26 October; stock source integration remains separate.
+Updated 27 October 2026. This current status supersedes the dated checkpoints below.
+
+| Technology | Current state | Limit |
+| --- | --- | --- |
+| NVIDIA Nemotron | Typed adapter, bounded original-agent runs, and synthesis exercised with synthetic stock data under the separately authorized $0 ceiling. | Not routed through Meterless Nightshift. No real business-data accuracy claim. |
+| Zetaris local | Read-only stock reads, cross-source reconciliation join, and controlled freshness check passed through the official local JDBC stack using two synthetic PostgreSQL databases. | Separate workbench path; the original agent and exported skill still use fixtures/JSON snapshots. Cloud/SaaS tenant transport remains unverified. |
+| Meterless H-MEM | Pinned local reference participates in the actual Skill Library registration, retrieval, bounded execution, and policy/schema invalidation flow. | No hosted H-MEM service is used or claimed. |
+| Meterless Nightshift | Not integrated or configured. | The official Academy describes Nightshift as the primary AI runtime layer; this is a major open sponsor gap. |
+
+The latest full suite passes 85 tests across 19 files, with TypeScript and frontend production build passing. See [host/source evidence](host-and-zetaris-verification.md), [live workflow evidence](live-verification.md), and the [hackathon resource audit](hackathon-resource-audit.md). API keys remain in the ignored root `.env`; no secret values belong in this file or in chat.
 
 ## NVIDIA Nemotron
 
@@ -14,23 +23,23 @@ Configuration fields are server-only in `.env.example`:
 
 Before adding calls, confirm account entitlement and the current tool-calling request/response format against NVIDIA's documentation. Implement a narrow read-only tool schema, token/output/time limits, usage logging, one active compilation, a three-revision maximum, and at most twelve rounds. Never send a key to the browser or include it in an export. Do not infer that configured credentials imply a verified call.
 
-**Current status (25 October):** user budget is $0; no free entitlement or live credentials are established by this work. A bounded controller, typed transport, server-owned authorization modes, persistent request/token/cost reservations and durable job checkpoints are implemented. Zero-cost activation requires human-reviewed external entitlement plus a bounded human allowance; positive metered allowance is denied by the current server ceiling. No enabled records or live calls were created. Current runtime/concurrency/error behavior remains unverified because the user chose implementation only. See [authorization](provider-authorization.md) and [release readiness](release-readiness.md).
+**Historical checkpoint (25 October):** at that time no calls had been authorized or made. The dated 27 October status at the top supersedes that checkpoint; later Nemotron runs and synthesis are recorded in [live verification](live-verification.md).
 
 Adapter request shape was prepared against the [official Nemotron API reference](https://docs.api.nvidia.com/nim/reference/nvidia-nemotron-3-super-120b-a12b-infer). Model alias/account capabilities must be checked before use.
 
 ## Zetaris
 
-`ZETARIS_BASE_URL` and `ZETARIS_API_KEY` are intentionally empty. Obtain the active tenant's documented authentication, endpoint, pagination, source registration, and schema details before implementation; do not copy a guessed URL from an older example. The acceptance target is a read-only query across two distinct sources (orders/inventory plus product/unit rules) with source version, query ID, snapshot time, row limit, and result hash recorded.
+The SaaS/tenant REST route uses a different contract from the local Docker/JDBC route. Obtain the active tenant's documented authentication, endpoint, pagination, source registration, and schema details before implementing SaaS access; do not copy a guessed URL from an older example.
 
-**Current status:** no endpoint/credentials are configured. apps/api/src/zetaris.ts defines the injectable tenant contract and bounded read orchestration: four allowlisted read-only views across at least two registered source IDs, shared snapshot, version consistency, at most 100 pages per query, 5000 rows in total, cancellation and resource cleanup. There is no tenant-specific HTTP/auth implementation or live evidence. The transport must implement the tenant's verified [API contract](https://kbase.zetaris.com/knowledge/zetaris-api-release); no endpoint paths are inferred.
+**SaaS/tenant status:** the injectable tenant contract and bounded read orchestration exist, but no tenant-specific HTTP/auth transport is validated. The separate local JDBC route and its stock reads are verified; see [host/source verification](host-and-zetaris-verification.md). The tenant transport must implement the verified [API contract](https://kbase.zetaris.com/knowledge/zetaris-api-release); no endpoint paths are inferred.
 
 ## Meterless H-MEM
 
 The local integration uses the pinned reference at `vendor/meterless/hmem`, commit `1742dec56a66e58eef9dda2d2b865823758ca8cd`. Skill Library now uses it through the actual UI/API: verified registration, immutable artifact hash checks, retrieval, deterministic applicability, runtime execution, and policy/schema deprecation. Local execution artifacts preserve nominated memories, selected candidate, evidence references, rejections and durations. Cold lookup, changed-input warm execution and policy invalidation were observed on 24 October. This is the pinned minimal local reference, not a hosted production service.
 
-## After credentials arrive
+## Historical local setup checkpoints
 
-**26 October update:** NVIDIA configuration is present with valid URL format; external credential/entitlement verification is pending and execution remains disabled. Local Zetaris is running at `http://localhost:3000`; login and the official constant SELECT probe passed, with sanitized evidence under `artifacts/zetaris/`. The older missing-credential statements above describe their original checkpoint. The actual local route uses username/password and organisation ID rather than the placeholder SaaS API key. See [current credential notes](credentials.md). No verified two-source stock snapshot or production tenant transport is claimed.
+**26 October checkpoint:** NVIDIA endpoint/account entitlement validation and execution were still pending at this date. Zetaris local login and a constant SELECT passed; the 27 October top summary and [host/source report](host-and-zetaris-verification.md) record the later two-source stock reads and join. The local route uses username/password and organisation ID rather than the placeholder SaaS API key. See [credential notes](credentials.md).
 
 1. Confirm the approved budget and endpoint/account details without recording secrets in evidence.
 2. Add one bounded, typed read-only call per provider and retain sanitized requests, responses, query IDs, and hashes.

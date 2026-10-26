@@ -1,0 +1,127 @@
+{
+  "provenance": "synthetic-development-fixture",
+  "parameters": {
+    "warehouseId": "WH-1b0ec09d-A",
+    "fromDate": "2026-10-11",
+    "throughDate": "2026-10-14",
+    "policyVersion": "stock-v1"
+  },
+  "dataset": {
+    "sourceMode": "snapshot",
+    "sourceVersions": {
+      "orders": "orders-1b0ec09d",
+      "inventory": "inventory-1b0ec09d",
+      "productRules": "rules-1b0ec09d"
+    },
+    "sourceSchemaVersions": {
+      "orders": "orders/v1",
+      "inventory": "inventory/v1",
+      "productRules": "product-rules/v1"
+    },
+    "orders": [
+      {
+        "orderId": "1b0ec09d-1",
+        "warehouseId": "WH-1b0ec09d-A",
+        "orderDate": "2026-10-11",
+        "sku": "alias-a",
+        "quantity": 4,
+        "unit": "PACK",
+        "status": "open"
+      },
+      {
+        "orderId": "1b0ec09d-2",
+        "warehouseId": "WH-1b0ec09d-A",
+        "orderDate": "2026-10-14",
+        "sku": "alias-a",
+        "quantity": 3,
+        "unit": "EACH",
+        "status": "open"
+      },
+      {
+        "orderId": "1b0ec09d-3",
+        "warehouseId": "WH-1b0ec09d-A",
+        "orderDate": "2026-10-12",
+        "sku": "alias-b",
+        "quantity": 2,
+        "unit": "PACK",
+        "status": "open"
+      },
+      {
+        "orderId": "1b0ec09d-4",
+        "warehouseId": "WH-1b0ec09d-B",
+        "orderDate": "2026-10-13",
+        "sku": "alias-b",
+        "quantity": 4,
+        "unit": "EACH",
+        "status": "open"
+      },
+      {
+        "orderId": "1b0ec09d-5",
+        "warehouseId": "WH-1b0ec09d-A",
+        "orderDate": "2026-10-13",
+        "sku": "alias-a",
+        "quantity": 99,
+        "unit": "UNAPPROVED",
+        "status": "cancelled"
+      },
+      {
+        "orderId": "1b0ec09d-6",
+        "warehouseId": "WH-1b0ec09d-A",
+        "orderDate": "2026-10-10",
+        "sku": "not-registered",
+        "quantity": 7,
+        "unit": "PACK",
+        "status": "open"
+      }
+    ],
+    "inventory": [
+      {
+        "warehouseId": "WH-1b0ec09d-A",
+        "sku": "PRODUCT-1b0ec09d-A",
+        "snapshotDate": "2026-10-11",
+        "onHandEach": 4
+      },
+      {
+        "warehouseId": "WH-1b0ec09d-A",
+        "sku": "PRODUCT-1b0ec09d-B",
+        "snapshotDate": "2026-10-11",
+        "onHandEach": 50
+      },
+      {
+        "warehouseId": "WH-1b0ec09d-B",
+        "sku": "PRODUCT-1b0ec09d-A",
+        "snapshotDate": "2026-10-11",
+        "onHandEach": 4
+      },
+      {
+        "warehouseId": "WH-1b0ec09d-B",
+        "sku": "PRODUCT-1b0ec09d-B",
+        "snapshotDate": "2026-10-11",
+        "onHandEach": 50
+      }
+    ],
+    "productRules": {
+      "version": "stock-v1",
+      "aliases": [
+        {
+          "alias": "alias-a",
+          "canonicalSku": "PRODUCT-1b0ec09d-A"
+        },
+        {
+          "alias": "alias-b",
+          "canonicalSku": "PRODUCT-1b0ec09d-B"
+        }
+      ],
+      "unitConversions": [
+        {
+          "unit": "EACH",
+          "eachPerUnit": 1
+        },
+        {
+          "unit": "PACK",
+          "eachPerUnit": 2
+        }
+      ]
+    }
+  }
+}
