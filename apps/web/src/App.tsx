@@ -266,7 +266,7 @@ function App() {
 
   return <div className="app-shell">
     <header className="topbar">
-      <div className="brand-lockup"><img src="/pocket-forge.svg" className="brand-mark" width="34" height="34" alt="" /><span>Pocket Forge</span></div>
+      <div className="brand-lockup"><img src="/ember-forge.svg" className="brand-mark" width="34" height="34" alt="" /><span>Ember Forge</span></div>
       <WorkspaceNavigation view={view} onChange={setView} />
       <div className="topbar-action">
         <button className="button button--secondary" type="button" disabled={!exportCurrent || busy} onClick={() => void downloadSkill()}><Glyph name="download" />Export skill</button>

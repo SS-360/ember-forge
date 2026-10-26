@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { StockDatasetSchema, StockParametersSchema, type StockParameters } from "@pocketforge/contracts";
-import { canonicalHash } from "@pocketforge/compiler/trace-compiler";
+import { StockDatasetSchema, StockParametersSchema, type StockParameters } from "@emberforge/contracts";
+import { canonicalHash } from "@emberforge/compiler/trace-compiler";
 
 type View = "orders" | "inventory" | "aliases" | "unitConversions";
 const views: View[] = ["orders", "inventory", "aliases", "unitConversions"];

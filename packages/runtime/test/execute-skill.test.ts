@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { StockDatasetSchema, StockParametersSchema } from "@pocketforge/contracts";
+import { StockDatasetSchema, StockParametersSchema } from "@emberforge/contracts";
 import { reconcileStock } from "../../evaluator/src/index.js";
 import { executeSkill, SkillExecutionError, validateSkillIR } from "../src/index.js";
 

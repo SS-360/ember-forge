@@ -6,7 +6,7 @@ import {
   type StockDataset,
   type StockParameters,
   type StockResult
-} from "@pocketforge/contracts";
+} from "@emberforge/contracts";
 
 export class UnsupportedInputError extends Error {
   readonly code: string;

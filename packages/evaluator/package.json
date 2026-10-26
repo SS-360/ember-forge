@@ -1,5 +1,5 @@
 {
-  "name": "@pocketforge/evaluator",
+  "name": "@emberforge/evaluator",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -8,7 +8,7 @@
     "./protocol": "./src/protocol-fixtures.ts"
   },
   "dependencies": {
-    "@pocketforge/contracts": "workspace:*"
+    "@emberforge/contracts": "workspace:*"
   }
 }
 

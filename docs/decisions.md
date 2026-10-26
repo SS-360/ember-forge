@@ -2,7 +2,7 @@
 
 ## D-001: Keep the implementation separate
 
-The two planning files were a handoff only. The product lives in this independent PocketForge folder and Git repository.
+The two planning files were a handoff only. The product lives in this independent EmberForge folder and Git repository.
 
 ## D-002: Use Node 24 LTS
 

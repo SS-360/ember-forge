@@ -1,4 +1,4 @@
-# Pocket Forge — Skill compilation workbench
+# Ember Forge — Skill compilation workbench
 
 Status: concepts approved by the user on 23 October 2026. The accepted references are `accepted-compilation-workspace.png` and `accepted-verification-export.png`. This document supersedes the generic dashboard composition in the historical `task-setup.png`, `execution-history.png`, `skill-compiler.png`, `verification.png`, and `skill-library.png` screenshots as the active visual target. Keep those files as historical artifacts only.
 
@@ -15,7 +15,7 @@ Status: concepts approved by the user on 23 October 2026. The accepted reference
 
 ### Compilation workspace
 
-- Compact single-row top bar: Pocket Forge wordmark, selected session/skill, source-mode and provider-readiness text, and the verified export action when available.
+- Compact single-row top bar: Ember Forge wordmark, selected session/skill, source-mode and provider-readiness text, and the verified export action when available.
 - No persistent five-item navigation sidebar. Use a compact trace list at the left edge of the workspace, not another navigation/status column.
 - Primary canvas split into **Run evidence** and **Candidate procedure**. Keep the run list compact and selected-run details inspectable. Keep the candidate operations legible and selectable.
 - A narrow contract strip exposes source mode, policy, schema versions, row limit and runtime limit without a second full-height card column.
@@ -51,7 +51,7 @@ Use a frontier AI lab research-workbench direction, without copying a specific l
 
 The user approved both generated concept states. They are the layout and visual reference; keep visible values tied to the local API and the finite development suite.
 
-- **First viewport copy:** Pocket Forge; Skill compilation; candidate `stock-reconciliation` v0.1.0; Development seed; Export skill; Synthetic fixtures · fixture_reference · no live provider; Runs; Run evidence; Execution steps (coarse trace); Output (result); Bounded procedure · hand-authored seed; Parameters / contract; Inspector; Compare selected runs; Verify candidate.
+- **First viewport copy:** Ember Forge; Skill compilation; candidate `stock-reconciliation` v0.1.0; Development seed; Export skill; Synthetic fixtures · fixture_reference · no live provider; Runs; Run evidence; Execution steps (coarse trace); Output (result); Bounded procedure · hand-authored seed; Parameters / contract; Inspector; Compare selected runs; Verify candidate.
 - **Verification copy:** Skill compilation / Verification; finite development suite (7 cases), not a measure of generalization; Verification cases; Case detail; Package preview; `SKILL.md`; Download Agent Skill; Host compatibility; Agent Skills folder package, not a plugin marketplace bundle.
 - **Canvas:** near-white cool gray (#f7f9fc estimated), white work surfaces, thin graphite-blue dividers (#d7dee8), deep charcoal/navy text (#101c30), muted slate secondary text (#52647e). Use saturated blue (#1769e8 estimated) for primary action and active selection, violet only for secondary code focus, green/red for outcomes, amber for evidence limitations. No gradients, glow, or warm paper tint.
 - **Typography:** system sans for interface (`Inter, ui-sans-serif, system-ui` fallback); `ui-monospace, SFMono-Regular, Consolas` for IDs, schema values, versions, and code. H1 20–22px, section headings 15–17px, body 12–14px, labels/captions 10–12px; keep controls at a deliberate 12–14px.

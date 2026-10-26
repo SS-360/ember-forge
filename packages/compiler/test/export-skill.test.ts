@@ -11,7 +11,7 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "
 
 describe("candidate-specific Agent Skill exports", () => {
   it("exports a second verified ID/version and rejects stale verification", async () => {
-    const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "Pocket Forge candidate export "));
+    const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "Ember Forge candidate export "));
     try {
       const sourceRoot = path.join(projectRoot, "skills", "stock-reconciliation");
       const candidateRoot = path.join(temporaryRoot, "stock-reconciliation-alt");

@@ -32,7 +32,7 @@ const report = {
 
 console.log(JSON.stringify(report, null, 2));
 if (report.nodeMajor !== 24) {
-  console.error("Pocket Forge expects Node 24 LTS.");
+  console.error("Ember Forge expects Node 24 LTS.");
   process.exitCode = 1;
 }
 

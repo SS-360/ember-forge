@@ -1,4 +1,4 @@
-# Pocket Forge — implementation follow-up
+# Ember Forge — implementation follow-up
 
 Review date: 23 October 2026; implementation update: 25 October 2026 (Asia/Calcutta)
 Project: independent Track 3 entry. Do not merge with VRAM Rescue or NeuroDBG.
@@ -65,7 +65,7 @@ This checklist reconciles the product decision with the inspected implementation
   Current partial implementation: Codex CLI 0.163.0 installs/discovers the generated candidate in an isolated repository skill directory, returning enabled=true and scope=repo through its local app-server API. No thread, turn or inference was requested. Invocation and execution through the host, and every gate in a second harness, remain open. Claude Code 2.1.309 is installed but untested.
   Spec ref: `implementation-plan.md > Portable Agent Skills and harness compatibility`.
   What to build: Track format validation, installation/discovery, invocation, and correct execution separately for Codex, Claude Code, OpenClaw, and Hermes. Add only the host-specific metadata required by official documentation.
-  Acceptance: At least two real harnesses install/discover the exported skill, invoke it on a new supported input without Pocket Forge running, and display an actionable rejection for an unsupported case. Other untested hosts remain `unverified`.
+  Acceptance: At least two real harnesses install/discover the exported skill, invoke it on a new supported input without Ember Forge running, and display an actionable rejection for an unsupported case. Other untested hosts remain `unverified`.
   Verify: Preserve harness version, installation steps, prompts/commands, inputs, outputs, and logs in `docs/skill-compatibility.md`.
 
 ### P0 — demonstrate compilation from experience

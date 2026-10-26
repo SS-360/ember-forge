@@ -6,7 +6,7 @@ import {
   SkillDefinitionSchema,
   StockDatasetSchema,
   StockParametersSchema
-} from "@pocketforge/contracts";
+} from "@emberforge/contracts";
 import { executeSkill, SkillExecutionError } from "./index.js";
 
 interface CliOptions {
@@ -33,7 +33,7 @@ function parseArgs(args: string[]): CliOptions {
       options.outputPath = value;
       index += 1;
     } else if (flag === "--help" || flag === "-h") {
-      console.log("Usage: node runtime/pocketforge-runtime.mjs --input <file.json> [--output <result.json>]");
+      console.log("Usage: node runtime/emberforge-runtime.mjs --input <file.json> [--output <result.json>]");
       process.exit(0);
     } else {
       throw new CliError("ARGUMENT_INVALID", "Unknown or incomplete argument: " + String(flag));

@@ -2,16 +2,16 @@ import { mkdir, readFile, readdir, writeFile, access } from "node:fs/promises";
 import path from "node:path";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
-import { SkillContractSchema, SkillDefinitionSchema } from "@pocketforge/contracts";
-import { SanitizedTraceSchema, TraceSetSchema, type SanitizedTrace } from "@pocketforge/contracts/traces";
-import { buildDevelopmentSuite } from "@pocketforge/compiler/development-suite";
-import { captureReplayCases } from "@pocketforge/compiler/trace-fixtures";
-import { buildProtocolSplit, assertSplitSeparation, type ProtocolSplit } from "@pocketforge/evaluator/protocol";
-import { canonicalHash, compileFromTraces, TraceCompilationError, type TraceLineage } from "@pocketforge/compiler/trace-compiler";
-import type { VerificationReport } from "@pocketforge/compiler";
+import { SkillContractSchema, SkillDefinitionSchema } from "@emberforge/contracts";
+import { SanitizedTraceSchema, TraceSetSchema, type SanitizedTrace } from "@emberforge/contracts/traces";
+import { buildDevelopmentSuite } from "@emberforge/compiler/development-suite";
+import { captureReplayCases } from "@emberforge/compiler/trace-fixtures";
+import { buildProtocolSplit, assertSplitSeparation, type ProtocolSplit } from "@emberforge/evaluator/protocol";
+import { canonicalHash, compileFromTraces, TraceCompilationError, type TraceLineage } from "@emberforge/compiler/trace-compiler";
+import type { VerificationReport } from "@emberforge/compiler";
 import { exportVerifiedCandidate } from "../../../scripts/export-skill.js";
 import { registerSynthesisRoutes, type SynthesisDependencies } from "./synthesis.js";
-import { replayTraceSnapshot, SourceSnapshotSchema } from "@pocketforge/compiler/trace-replay";
+import { replayTraceSnapshot, SourceSnapshotSchema } from "@emberforge/compiler/trace-replay";
 
 export const SkillIdSchema = z.string().regex(/^[a-z0-9][a-z0-9-]{1,63}$/).refine(
   (value) => !/^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i.test(value), "Use a portable skill name."
@@ -192,7 +192,7 @@ export async function registerCompilationRoutes(app: FastifyInstance, projectRoo
     try { examples = TraceSetSchema.parse(JSON.parse(await readFile(cache, "utf8"))); }
     catch { /* Capture the current seed once, preserving real execution hashes. */ }
     const seed = await readCandidate(projectRoot, "stock-reconciliation");
-    const compilationSplit = buildProtocolSplit("compilation", "pocketforge-compilation-v2");
+    const compilationSplit = buildProtocolSplit("compilation", "emberforge-compilation-v2");
     if (!examples) {
       examples = captureReplayCases(seed.skill, seed.contract, compilationSplit.cases);
       await writeFile(cache, JSON.stringify(examples, null, 2) + "\n", "utf8");
@@ -200,7 +200,7 @@ export async function registerCompilationRoutes(app: FastifyInstance, projectRoo
     for (const trace of examples.traces) {
       const source = compilationSplit.cases.find((testCase) => canonicalHash({ parameters: testCase.parameters, dataset: testCase.dataset }) === trace.inputHash);
       if (!source) throw new Error("Cached replay examples do not match the compilation split.");
-      await saveReplay(trace, { schemaVersion: "pocketforge.source-snapshot/1", inputHash: trace.inputHash, parameters: source.parameters, dataset: source.dataset });
+      await saveReplay(trace, { schemaVersion: "emberforge.source-snapshot/1", inputHash: trace.inputHash, parameters: source.parameters, dataset: source.dataset });
     }
     return examples;
   });
@@ -245,7 +245,7 @@ export async function registerCompilationRoutes(app: FastifyInstance, projectRoo
         try { traces.push(await readTrace(id)); }
         catch { return reply.code(404).send({ error: "TRACE_NOT_FOUND", message: "A selected trace is no longer available. Refresh the evidence list." }); }
       }
-      const developmentSplit = buildProtocolSplit("development", "pocketforge-development-v2");
+      const developmentSplit = buildProtocolSplit("development", "emberforge-development-v2");
       const hashes = new Set(traces.map((trace) => trace.inputHash));
       if (developmentSplit.inputHashes.some((hash) => hashes.has(hash))) throw new TraceCompilationError("EVALUATION_INPUT_OVERLAP", "Compilation and development inputs must have different hashes.");
       const result = await compileFromTraces({ traces, skillId: parsed.data.skillId, developmentCases: developmentSplit.cases, signal: controller.signal });

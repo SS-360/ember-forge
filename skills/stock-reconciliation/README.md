@@ -1,6 +1,6 @@
 # Stock reconciliation seed skill
 
-This is a development candidate for the bounded Pocket Forge instruction format. It was hand-authored as a runtime seed because live Nemotron access is not configured. It is not a skill learned from trajectories and is not a portable export yet.
+This is a development candidate for the bounded Ember Forge instruction format. It was hand-authored as a runtime seed because live Nemotron access is not configured. It is not a skill learned from trajectories and is not a portable export yet.
 
 The program filters open orders for the requested warehouse and inclusive date range, resolves approved aliases, converts approved whole-number units, aggregates demand, joins the inventory snapshot, validates postconditions, and emits shortage rows.
 

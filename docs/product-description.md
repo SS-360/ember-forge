@@ -1,11 +1,11 @@
-# Pocket Forge — Project Description
+# Ember Forge — Project Description
 
 Prepared: 23 October 2026. Status: product brief; see [progress](progress.md) and [claims](claims.md) for implementation and measured evidence.
 Intended submission: Track 3 — Reasoning Architecture, Open Agent Hackathon 2026.
 
 ## The idea in one sentence
 
-Pocket Forge is an agent that converts repeated reasoning into a reusable executable skill, checks when that skill is applicable, and falls back to reasoning when it is not.
+Ember Forge is an agent that converts repeated reasoning into a reusable executable skill, checks when that skill is applicable, and falls back to reasoning when it is not.
 
 ## The problem
 
@@ -13,11 +13,11 @@ An AI agent may repeatedly perform the same kind of work: inspect a dataset, fin
 
 Today, an agent can spend model calls rediscovering that procedure on every run. Saving the previous answer does not solve this: the next input is different. Saving a natural-language instruction still requires a model to interpret it.
 
-Pocket Forge asks a different question: can the useful procedure become an ordinary program, with explicit conditions for when it works?
+Ember Forge asks a different question: can the useful procedure become an ordinary program, with explicit conditions for when it works?
 
 ## What the user receives
 
-The user supplies a task, access to approved data sources, and examples of correct behavior. Pocket Forge observes actual agent executions, proposes a reusable procedure, tests it, and exports an installable Agent Skill. The primary artifact follows the open Agent Skills folder format so compatible agent harnesses can discover its `SKILL.md` and invoke its bundled, bounded runner. A standalone CLI is included as a secondary way to run the same procedure.
+The user supplies a task, access to approved data sources, and examples of correct behavior. Ember Forge observes actual agent executions, proposes a reusable procedure, tests it, and exports an installable Agent Skill. The primary artifact follows the open Agent Skills folder format so compatible agent harnesses can discover its `SKILL.md` and invoke its bundled, bounded runner. A standalone CLI is included as a secondary way to run the same procedure.
 
 The portable package contains:
 
@@ -37,7 +37,7 @@ Consider a recurring stock-reconciliation task. Orders are in a database, invent
 
 An agent initially investigates how these sources relate. It learns that some quantities are recorded in boxes, others in individual units, and cancelled orders should be excluded. It queries records, normalizes quantities, joins product identities, aggregates demand, and reports shortages.
 
-Pocket Forge examines several executions and generates a procedure that accepts a date range and warehouse identifier. The procedure performs the same operations on new records without asking an LLM to reconstruct the workflow.
+Ember Forge examines several executions and generates a procedure that accepts a date range and warehouse identifier. The procedure performs the same operations on new records without asking an LLM to reconstruct the workflow.
 
 If a new supplier introduces an unknown unit, the input contract rejects that case. In the application, the user can choose to send it back to Nemotron for investigation. In a standalone export with reasoning disabled, it returns a structured “unsupported” result. It does not guess a conversion.
 
@@ -69,13 +69,13 @@ H-MEM is a specified memory architecture with a reference implementation, not si
 
 ## What would make the demonstration convincing
 
-Run the original workflow with Nemotron, compile a skill, install it into a different supported harness, and execute new supported inputs without Pocket Forge running. Then submit an unsupported input and show a clear refusal or an explicit reasoning fallback. Demonstrate end-to-end discovery and execution in at least two real harnesses before claiming cross-harness transfer.
+Run the original workflow with Nemotron, compile a skill, install it into a different supported harness, and execute new supported inputs without Ember Forge running. Then submit an unsupported input and show a clear refusal or an explicit reasoning fallback. Demonstrate end-to-end discovery and execution in at least two real harnesses before claiming cross-harness transfer.
 
 Show correctness, skill coverage, false acceptance, needless fallback, model/tool calls, compilation cost, break-even reuse count, and latency together. Report standalone runner cost separately from any agent orchestration. A system that rejects every input is not successful; neither is one that accepts everything and returns incorrect results.
 
 ## Boundaries and originality
 
-Pocket Forge does not train a smaller model, quantize model weights, or optimize GPU memory. It compiles a bounded procedure. Its first release supports structured, read-only data workflows, not arbitrary browser automation or unrestricted generated code.
+Ember Forge does not train a smaller model, quantize model weights, or optimize GPU memory. It compiles a bounded procedure. Its first release supports structured, read-only data workflows, not arbitrary browser automation or unrestricted generated code.
 
 Executable skill induction has prior research, including [SKILL-DISCO](https://arxiv.org/abs/2606.26669). Our proposed contribution is a usable workflow with explicit applicability contracts, independently measured generalization, controlled fallback, and portable Agent Skills exports that carry executable bounded procedures across harnesses. Those benefits must be demonstrated; they are not established yet.
 
@@ -83,6 +83,6 @@ This is an independent project, not a NeuroDBG extension. Track 3 is the intende
 
 ## Short submission draft
 
-Pocket Forge turns repeated agent work into portable, executable Agent Skills. Nemotron investigates real task trajectories, identifies reusable procedures, and generates parameterized programs. Independent tests establish which inputs each program supports. Meterless H-MEM retrieves validated skills and their applicability evidence, while Zetaris connects the fragmented data those skills operate on. Supported tasks then run through a trusted bounded runner without repeated reasoning for the procedure; unfamiliar cases are explicitly rejected or escalated. The product exports a standard `SKILL.md` bundle, executable procedure, contract, tests, provenance, and measured performance for installation into compatible agent harnesses. A standalone CLI remains available for direct use.
+Ember Forge turns repeated agent work into portable, executable Agent Skills. Nemotron investigates real task trajectories, identifies reusable procedures, and generates parameterized programs. Independent tests establish which inputs each program supports. Meterless H-MEM retrieves validated skills and their applicability evidence, while Zetaris connects the fragmented data those skills operate on. Supported tasks then run through a trusted bounded runner without repeated reasoning for the procedure; unfamiliar cases are explicitly rejected or escalated. The product exports a standard `SKILL.md` bundle, executable procedure, contract, tests, provenance, and measured performance for installation into compatible agent harnesses. A standalone CLI remains available for direct use.
 
-Implementation details: [Pocket Forge Implementation Plan](implementation-plan.md).
+Implementation details: [Ember Forge Implementation Plan](implementation-plan.md).

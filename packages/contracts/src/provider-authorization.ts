@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { formatVersionSchema } from "./format.js";
 
 const Hash = z.string().regex(/^[a-f0-9]{64}$/);
 export const ProviderScopeSchema = z.object({
@@ -16,7 +17,7 @@ export const ProviderAllowanceSchema = z.object({
   maxConcurrentJobs: z.literal(1)
 }).strict();
 const common = {
-  schemaVersion: z.literal("pocketforge.provider-authorization/1"),
+  schemaVersion: formatVersionSchema("provider-authorization/1"),
   authorizationId: z.string().uuid(), scope: ProviderScopeSchema,
   allowance: ProviderAllowanceSchema, approvedAt: z.iso.datetime(), expiresAt: z.iso.datetime(),
   approvalEvidenceHash: Hash

@@ -5,10 +5,11 @@ import {
   StockDatasetSchema,
   StockParametersSchema,
   type SkillContract,
-  type SkillDefinition
-} from "@pocketforge/contracts";
-import { reconcileStock, UnsupportedInputError } from "@pocketforge/evaluator";
-import { executeSkill, SkillExecutionError, validateSkillIR } from "@pocketforge/runtime";
+  type SkillDefinition,
+  type FormatVersion
+} from "@emberforge/contracts";
+import { reconcileStock, UnsupportedInputError } from "@emberforge/evaluator";
+import { executeSkill, SkillExecutionError, validateSkillIR } from "@emberforge/runtime";
 
 export type VerificationCase =
   | {
@@ -38,7 +39,7 @@ export interface VerificationCaseResult {
 }
 
 export interface VerificationReport {
-  schemaVersion: "pocketforge.verification/1";
+  schemaVersion: FormatVersion<"verification/1">;
   scope: "finite-development-suite";
   candidateOrigin: "provided_candidate_draft" | "deterministic_trace_assembly" | "nemotron_synthesis" | "test_synthesis";
   skillId: string;
@@ -227,7 +228,7 @@ export function verifyCandidate(
   const durationMs = performance.now() - timerStart;
 
   return {
-    schemaVersion: "pocketforge.verification/1",
+    schemaVersion: "emberforge.verification/1",
     scope: "finite-development-suite",
     candidateOrigin: "provided_candidate_draft",
     skillId: skill.id,

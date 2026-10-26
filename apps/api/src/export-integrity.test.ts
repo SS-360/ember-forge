@@ -6,7 +6,7 @@ import { expect, it } from "vitest";
 import { exportFilesMatchManifest } from "./export-integrity.js";
 
 it("rejects changed, missing, additional, or unsafe package manifest files", async () => {
-  const directory = await mkdtemp(path.join(os.tmpdir(), "pocketforge integrity "));
+  const directory = await mkdtemp(path.join(os.tmpdir(), "emberforge integrity "));
   const hash = (text: string) => createHash("sha256").update(text).digest("hex");
   try {
     await mkdir(path.join(directory, "runtime"));
@@ -22,7 +22,7 @@ it("rejects changed, missing, additional, or unsafe package manifest files", asy
     await writeFile(path.join(directory, "undeclared.json"), "unexpected");
     expect(await exportFilesMatchManifest(directory, manifest)).toBe(false);
   } finally {
-    if (!directory.startsWith(path.join(os.tmpdir(), "pocketforge integrity "))) throw new Error("Unexpected cleanup path");
+    if (!directory.startsWith(path.join(os.tmpdir(), "emberforge integrity "))) throw new Error("Unexpected cleanup path");
     await rm(directory, { recursive: true, force: true });
   }
 });

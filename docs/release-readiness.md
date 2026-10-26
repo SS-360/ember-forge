@@ -4,7 +4,7 @@
 
 | Capability | Implementation | Evidence boundary |
 | --- | --- | --- |
-| Apple-style UI, pocket/flame logo, amber-red accents | Implemented | Prior screenshots and UI observations in docs/design; preserved in this continuation |
+| Apple-style UI, Ember Forge name/ember mark, amber-red accents | Implemented | Prior screenshots in docs/design predate the rename; new SVG assets and references need fresh visual observation |
 | Typed IR, assembly, independent development/frozen protocol | Implemented | Historical v2 assembled candidate: 21 development and 21 frozen synthetic cases; not a fresh current-source result or learning claim |
 | Normalized traces and separate source snapshots | Implemented | Historical snapshot replay; newly added zero-operation applicability failures still need exercise |
 | Bounded synthesis/repair and typed provider adapter | Implemented | Test-only prior controller evidence; current authorization/composition integration unverified |
@@ -24,7 +24,7 @@
 3. Workbench: load the labeled synthetic replay examples, name a new candidate, and assemble it when compilation/verification is explicitly wanted. Compilation triggers its product verification/export checks.
 4. Verification: inspect supported/rejected examples and separate frozen results. Existing immutable candidate and frozen artifacts must not be overwritten for a rehearsal.
 5. Skill Library: register a passing candidate, inspect cold lookup/warm execution and deliberate policy drift. These are product executions; run them only when requested.
-6. For an authorized transfer rehearsal, export/check an exact candidate, install the actual package into isolated Codex and Claude workspaces, stop Pocket Forge, and use new supported/unsupported JSON from an unrelated path with spaces. Record discovery, invocation and execution separately. Host model access/cost must be authorized before model-backed sessions.
+6. For an authorized transfer rehearsal, export/check an exact candidate, install the actual package into isolated Codex and Claude workspaces, stop Ember Forge, and use new supported/unsupported JSON from an unrelated path with spaces. Record discovery, invocation and execution separately. Host model access/cost must be authorized before model-backed sessions.
 
 ## Short demo outline
 

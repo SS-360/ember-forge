@@ -15,7 +15,7 @@ Replay examples are captured from actual operations executed by the hand-authore
 
 ## Import contract
 
-The strict schema is `packages/contracts/src/traces.ts`. A file has `schemaVersion: "pocketforge.trace-set/1"` and a `traces` array. Each trace contains:
+The strict schema is `packages/contracts/src/traces.ts`. A file has `schemaVersion: "emberforge.trace-set/1"` and a `traces` array. Each trace contains:
 
 | Field | Purpose |
 | --- | --- |
@@ -34,7 +34,7 @@ This schema enforces structure and excludes raw payload fields. It is not a univ
 
 ### Local source snapshots
 
-Replay examples retain separate local snapshots. For custom imports, POST a strict `pocketforge.source-snapshot/1` object containing `inputHash`, `parameters`, and `dataset` to `/api/traces/:traceId/replay`. Content hash, source/schema/policy versions, normalized observations and the independent evaluator outcome must agree. Empty-call records now require `failureStage: "applicability"`, a recognized pre-operation rejection and no output; replay uses the trusted applicability check rather than inventing tool calls. Malformed raw inputs still cannot use the strictly typed snapshot format. Raw snapshots stay under ignored `artifacts/source-snapshots/` and outside model context. New pre-operation paths have not been exercised in this implementation-only continuation.
+Replay examples retain separate local snapshots. For custom imports, POST a strict `emberforge.source-snapshot/1` object containing `inputHash`, `parameters`, and `dataset` to `/api/traces/:traceId/replay`. Content hash, source/schema/policy versions, normalized observations and the independent evaluator outcome must agree. Empty-call records now require `failureStage: "applicability"`, a recognized pre-operation rejection and no output; replay uses the trusted applicability check rather than inventing tool calls. Malformed raw inputs still cannot use the strictly typed snapshot format. Raw snapshots stay under ignored `artifacts/source-snapshots/` and outside model context. New pre-operation paths have not been exercised in this implementation-only continuation.
 
 The current evaluator accepts fixture mode only. Other source modes may be imported for inspection, but compilation rejects them until the relevant source and evaluation paths are implemented.
 

@@ -1,5 +1,5 @@
 {
-  "name": "pocket-forge",
+  "name": "ember-forge",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
   },
   "scripts": {
     "doctor": "tsx scripts/doctor.ts",
-    "dev": "pnpm --parallel --filter @pocketforge/api --filter @pocketforge/web dev",
+    "dev": "pnpm --parallel --filter @emberforge/api --filter @emberforge/web dev",
     "source:state": "tsx scripts/capture-source-state.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",

@@ -1,10 +1,10 @@
 import {
   SkillContractSchema, SkillDefinitionSchema, StockDatasetSchema, StockParametersSchema,
   type SkillContract, type SkillDefinition
-} from "@pocketforge/contracts";
-import { SanitizedTraceSchema, type SanitizedTrace, type TraceSet } from "@pocketforge/contracts/traces";
-import { reconcileStock, UnsupportedInputError } from "@pocketforge/evaluator";
-import { executeSkill, SkillExecutionError, type OperationObservation } from "@pocketforge/runtime";
+} from "@emberforge/contracts";
+import { SanitizedTraceSchema, type SanitizedTrace, type TraceSet } from "@emberforge/contracts/traces";
+import { reconcileStock, UnsupportedInputError } from "@emberforge/evaluator";
+import { executeSkill, SkillExecutionError, type OperationObservation } from "@emberforge/runtime";
 import { buildDevelopmentSuite } from "./development-suite.js";
 import { canonicalHash } from "./trace-compiler.js";
 
@@ -41,7 +41,7 @@ export function captureReplayCases(skillInput: unknown, contractInput: unknown, 
     const identity = canonicalHash({ sourceCandidateHash, inputHash });
     const traceId = `${identity.slice(0, 8)}-${identity.slice(8, 12)}-4${identity.slice(13, 16)}-8${identity.slice(17, 20)}-${identity.slice(20, 32)}`;
     traces.push(SanitizedTraceSchema.parse({
-      schemaVersion: "pocketforge.trace/1", traceId, taskFamily: "stock-reconciliation",
+      schemaVersion: "emberforge.trace/1", traceId, taskFamily: "stock-reconciliation",
       evidenceClass: "synthetic_fixture", recordingMethod: "compiled_runtime_replay", sourceCandidateHash,
       recordedAt: new Date().toISOString(), sourceMode: dataset.sourceMode,
       policyVersion: parameters.policyVersion, sourceVersions: dataset.sourceVersions, sourceSchemaVersions: dataset.sourceSchemaVersions,
@@ -49,8 +49,8 @@ export function captureReplayCases(skillInput: unknown, contractInput: unknown, 
       ...(calls.length === 0 && actualReason ? { failureStage: "applicability" } : {}),
       ...(outputHash ? { outputArtifactHash: outputHash } : {}),
       label: { authority: "independent_evaluator", evaluatorVersion: "stock-reference/2", outcome: expectedReason ? "unsupported" : "succeeded", ...(expectedReason ? { reason: expectedReason } : {}) },
-      redaction: { profile: "pocketforge.redaction/1", rawLogsIncluded: false, rawInputValuesIncluded: false, removedFieldCount: 0 }
+      redaction: { profile: "emberforge.redaction/1", rawLogsIncluded: false, rawInputValuesIncluded: false, removedFieldCount: 0 }
     }));
   }
-  return { schemaVersion: "pocketforge.trace-set/1", traces };
+  return { schemaVersion: "emberforge.trace-set/1", traces };
 }

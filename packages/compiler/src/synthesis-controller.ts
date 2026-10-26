@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { setTimeout as waitForRetry } from "node:timers/promises";
-import { SkillContractSchema, SkillDefinitionSchema, type SkillContract, type SkillDefinition } from "@pocketforge/contracts";
-import { SanitizedTraceSchema, type SanitizedTrace } from "@pocketforge/contracts/traces";
-import { validateSkillIR } from "@pocketforge/runtime";
+import { SkillContractSchema, SkillDefinitionSchema, type SkillContract, type SkillDefinition } from "@emberforge/contracts";
+import { SanitizedTraceSchema, type SanitizedTrace } from "@emberforge/contracts/traces";
+import { validateSkillIR } from "@emberforge/runtime";
 import { compileCandidate, type CompileCandidateResult, type VerificationCase } from "./index.js";
 import { canonicalHash, TraceCompilationError, type TraceLineage } from "./trace-compiler.js";
-import { ProviderAuthorizationSchema, assertAuthorizationCurrent, providerScopeKey, type ActiveProviderAuthorization } from "@pocketforge/contracts/provider-authorization";
+import { ProviderAuthorizationSchema, assertAuthorizationCurrent, providerScopeKey, type ActiveProviderAuthorization } from "@emberforge/contracts/provider-authorization";
 
 export interface SynthesisFeedback {
   stage: "static_validation" | "development_verification";
@@ -180,7 +180,7 @@ export async function synthesizeCandidate(input: {
   const result: SynthesisResult = {
     runId: input.runId ?? randomUUID(), state: "rejected", revisions: [], attempts: [],
     lineage: {
-      schemaVersion: "pocketforge.lineage/1", method: origin, adapterId: input.adapter.id, generatedAt: new Date().toISOString(), compilerContextHash: canonicalHash(base),
+      schemaVersion: "emberforge.lineage/1", method: origin, adapterId: input.adapter.id, generatedAt: new Date().toISOString(), compilerContextHash: canonicalHash(base),
       traces: traces.map((trace) => ({ traceId: trace.traceId, hash: canonicalHash(trace), outcome: trace.label.outcome, evidenceClass: trace.evidenceClass, inputHash: trace.inputHash })), operations: [],
       limitations: [input.adapter.mode === "test_only" ? "Test-only transport evidence: no model-generated learning or provider access is established." : "Provider-generated candidate checked on independent development cases; held-out evaluation is a separate gate.", "Compiler context excludes evaluator code, development inputs/answers and held-out data. Repair feedback contains development verdicts only.", "Configured token prices are cost accounting assumptions, not a measured provider invoice. Unknown usage keeps its full request reservation charged."]
     },

@@ -1,12 +1,12 @@
 import { createHash } from "node:crypto";
-import type { StockDataset, StockParameters } from "@pocketforge/contracts";
+import type { StockDataset, StockParameters } from "@emberforge/contracts";
 
 export type ProtocolPartition = "compilation" | "development" | "frozen";
 export type ProtocolCase = { caseId: string; parameters: unknown; dataset: unknown } & (
   { expectedOutcome: "supported" } | { expectedOutcome: "unsupported"; expectedReason: string }
 );
 export interface ProtocolSplit {
-  schemaVersion: "pocketforge.evaluation-split/2";
+  schemaVersion: "emberforge.evaluation-split/2";
   partition: ProtocolPartition;
   generatorVersion: "stock-protocol/2";
   seedHash: string;
@@ -78,7 +78,7 @@ export function buildProtocolSplit(partition: ProtocolPartition, seed: string): 
     add("invalid-calendar-date", (input) => { input.parameters.fromDate = "2026-02-30"; }, "INPUT_CONTRACT_INVALID");
   }
   const inputHashes = cases.map(caseInputHash);
-  return { schemaVersion: "pocketforge.evaluation-split/2", partition, generatorVersion: "stock-protocol/2", seedHash, cases, inputHashes, splitHash: protocolHash({ partition, seedHash, cases, inputHashes }) };
+  return { schemaVersion: "emberforge.evaluation-split/2", partition, generatorVersion: "stock-protocol/2", seedHash, cases, inputHashes, splitHash: protocolHash({ partition, seedHash, cases, inputHashes }) };
 }
 
 export function assertSplitSeparation(splits: readonly ProtocolSplit[]): void {

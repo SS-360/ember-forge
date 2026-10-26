@@ -1,4 +1,4 @@
-import { CandidateDraftJsonSchema } from "@pocketforge/contracts/synthesis";
+import { CandidateDraftJsonSchema } from "@emberforge/contracts/synthesis";
 import { SynthesisProviderError, type SynthesisAdapter, type SynthesisContext, type SynthesisUsage } from "./synthesis-controller.js";
 
 export interface NemotronConfig {
@@ -56,7 +56,7 @@ export function createNemotronAdapter(config: NemotronConfig, test?: { transport
   const endpoint = new URL(config.baseUrl.replace(/\/$/, "") + "/chat/completions");
   const transport: ProviderFetch = test?.transport ?? ((url, init) => fetch(url, init));
   return {
-    id: "pocketforge.nemotron-chat-completions/1" + (test ? "-test-transport" : ""),
+    id: "emberforge.nemotron-chat-completions/1" + (test ? "-test-transport" : ""),
     mode: test ? "test_only" : "nemotron",
     providerScope: { baseUrl: base.href.replace(/\/+$/, ""), model: config.model, accountReference: config.accountReference ?? (test ? "test-account" : "unverified-account") },
     inputTokenUpperBound(context) { return Buffer.byteLength(JSON.stringify(requestBody(context, config, config.maxOutputTokens)), "utf8") + 1024; },

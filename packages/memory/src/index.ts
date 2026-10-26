@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
-import { SkillContractSchema, SkillDefinitionSchema } from "@pocketforge/contracts";
-import { assessApplicability } from "@pocketforge/runtime";
-import type { SkillContract, SkillDefinition, StockDataset, StockParameters } from "@pocketforge/contracts";
+import { SkillContractSchema, SkillDefinitionSchema } from "@emberforge/contracts";
+import { assessApplicability } from "@emberforge/runtime";
+import type { SkillContract, SkillDefinition, StockDataset, StockParameters } from "@emberforge/contracts";
 
 interface HmemMemoryRecord {
   id: string;
@@ -90,6 +90,7 @@ export interface SkillSelection {
 
 interface RegistryFile {
   schemaVersion: 1;
+  chatId?: string;
   entries: SkillMemoryEntry[];
 }
 
@@ -131,6 +132,7 @@ export class SkillMemoryService {
   private readonly projectRoot: string;
   private readonly storageDir: string;
   private readonly registryPath: string;
+  private readonly chatId: string;
   private registry: RegistryFile;
 
   constructor(options: { projectRoot: string; storageDir: string }) {
@@ -142,11 +144,14 @@ export class SkillMemoryService {
       ? JSON.parse(fs.readFileSync(this.registryPath, "utf8")) as RegistryFile
       : { schemaVersion: 1, entries: [] };
     if (this.registry.schemaVersion !== 1 || !Array.isArray(this.registry.entries)) {
-      throw new Error("Unsupported Pocket Forge skill registry format");
+      throw new Error("Unsupported Ember Forge skill registry format");
     }
+    // Keep existing chat-scoped memories reachable without rewriting their trust ledger.
+    this.chatId = this.registry.chatId ?? (fs.existsSync(this.registryPath) ? "pocketforge-local" : "emberforge-local");
+    this.registry.chatId = this.chatId;
     this.hmem = new HMEM({
       persistDir: path.join(this.storageDir, "hmem"),
-      actor: "pocketforge"
+      actor: "emberforge"
     });
   }
 
@@ -196,7 +201,7 @@ export class SkillMemoryService {
       : [];
     const evidenceIds = ["verification:" + candidateHash, ...caseIds];
     const memory = this.hmem.add({
-      content: "Pocket Forge validated skill " + skill.id + " version " + skill.version +
+      content: "Ember Forge validated skill " + skill.id + " version " + skill.version +
         " for stock reconciliation. Policy " + contract.policyVersion +
         ". Source schemas " + contract.sourceSchemaVersions.orders + ", " +
         contract.sourceSchemaVersions.inventory + ", " + contract.sourceSchemaVersions.productRules +
@@ -204,7 +209,7 @@ export class SkillMemoryService {
       type: "factual",
       layer: "long_term",
       tags: [
-        "pocketforge:skill",
+        "emberforge:skill",
         "skill:" + skill.id,
         "version:" + skill.version,
         "status:validated",
@@ -221,7 +226,7 @@ export class SkillMemoryService {
         label: "validated using an independent finite verification suite",
         refs: evidenceIds
       },
-      chatId: "pocketforge-local",
+      chatId: this.chatId,
       missionId: "skill-library",
       goalRunId: skill.id + ":" + skill.version
     });
@@ -252,12 +257,12 @@ export class SkillMemoryService {
     evidenceIds: string[];
   }): HmemMemoryRecord {
     const record = this.hmem.add({
-      content: "Pocket Forge rejected candidate " + input.skillId + " version " + input.skillVersion +
+      content: "Ember Forge rejected candidate " + input.skillId + " version " + input.skillVersion +
         " because " + input.reason + ". Evidence " + input.candidateHash + ".",
       type: "general",
       layer: "working",
       tags: [
-        "pocketforge:skill",
+        "emberforge:skill",
         "skill:" + input.skillId,
         "version:" + input.skillVersion,
         "status:rejected",
@@ -271,7 +276,7 @@ export class SkillMemoryService {
         label: "candidate verification rejected this draft",
         refs: input.evidenceIds
       },
-      chatId: "pocketforge-local",
+      chatId: this.chatId,
       missionId: "skill-library",
       goalRunId: input.skillId + ":" + input.skillVersion
     });
@@ -286,13 +291,13 @@ export class SkillMemoryService {
     sourceVersions: Record<string, string>;
   }): HmemMemoryRecord {
     const record = this.hmem.add({
-      content: "Pocket Forge skill " + input.skillId + " version " + input.skillVersion +
+      content: "Ember Forge skill " + input.skillId + " version " + input.skillVersion +
         " rejected an input during run " + input.runId + " with reason " + input.reason +
         ". Source snapshots " + Object.values(input.sourceVersions).join(", ") + ".",
       type: "factual",
       layer: "working",
       tags: [
-        "pocketforge:failure",
+        "emberforge:failure",
         "skill:" + input.skillId,
         "version:" + input.skillVersion,
         "failure:" + input.reason
@@ -305,7 +310,7 @@ export class SkillMemoryService {
         label: "structured unsupported execution result",
         refs: [input.runId, ...Object.values(input.sourceVersions)]
       },
-      chatId: "pocketforge-local",
+      chatId: this.chatId,
       missionId: "skill-library",
       goalRunId: input.runId
     });
@@ -317,7 +322,7 @@ export class SkillMemoryService {
     parameters: StockParameters;
     dataset: StockDataset;
   }): SkillSelection {
-    const retrieval = this.hmem.query(input.query, { topN: 5, threshold: 0.35, chatId: "pocketforge-local" });
+    const retrieval = this.hmem.query(input.query, { topN: 5, threshold: 0.35, chatId: this.chatId });
     const rejections: SkillSelection["rejections"] = [];
     for (const candidate of retrieval.memories) {
       const entry = this.registry.entries.find((item) => item.memoryId === candidate.memory.id);

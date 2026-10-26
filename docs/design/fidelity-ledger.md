@@ -38,14 +38,14 @@ The user subsequently requested the apple-design skill and a UI modification. Th
 ## Verification performed
 
 - pnpm typecheck passed after the UI and API changes.
-- pnpm --filter @pocketforge/web exec vite build passed after the UI changes.
+- pnpm --filter @emberforge/web exec vite build passed after the UI changes.
 - The sandboxed localhost processes could not be reached by the browser. Starting the loopback servers outside the sandbox resolved the connection issue. The target remains http://127.0.0.1:5174/.
 - Browser page identity and meaningful content were observed without a framework overlay. On 24 October the embedded browser reported a Vite development WebSocket connection/send error; HTTP interactions and production compilation work. Do not describe the latest console as clean.
 - The interaction path replay loading → three selected traces → new candidate compilation → seven-case verification report → archive download completed. The generated procedure inspector displayed two supporting trace IDs for selected operations.
 - Additional checks passed: switching from generated candidate to seed and back; fixture-run dialog execution; selecting a different verification case; toggling comparison evidence; and rerunning verification with an enabled download afterward. The actual Codex discovery result is shown only for its matching candidate hash, with invocation still unverified.
 - The actual downloaded archive was extracted to an unrelated temporary directory, and its packaged verifier passed supported output, unknown unit, schema/policy drift, malformed JSON, invalid output path, and missing-asset checks.
 - Earlier width-clamp diagnosis was incorrect: 75% page zoom changes requested physical dimensions to CSS dimensions. Actual measured dimensions on 24 October were 1706×960 and 390×844, both without document overflow. The phone compile action occupies y764–803. Earlier keyboard navigation showed a solid focus outline; full keyboard review of the library remains open.
-- Screenshots succeeded on 23 October and are saved as pocket-forge-desktop.jpg and pocket-forge-phone.jpg under the task visualization directory. They predate the new library. On 24 October both screenshot methods again failed, even with preview visibility enabled, so no current library screenshot was saved. This is not final visual sign-off.
+- Screenshots succeeded on 23 October and are saved as ember-forge-desktop.jpg and ember-forge-phone.jpg under the task visualization directory. They predate the new library. On 24 October both screenshot methods again failed, even with preview visibility enabled, so no current library screenshot was saved. This is not final visual sign-off.
 - Actual latest interactions: empty library lookup → verified registration → changed-order warm execution (49 demand/34 shortage) → policy change refusal and deprecation; separate 21-case candidate assembly → frozen evaluation (21 passing) → new library registration/execution. Latest true phone library and workbench DOM checks have no page overflow.
 
 ## Remaining visual review

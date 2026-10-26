@@ -50,7 +50,13 @@ const candidateHash = hash({ skill: JSON.parse(skillText), contract: JSON.parse(
 assert.equal(verification.status, "validated", "candidate must pass its visible development suite");
 assert.equal(verification.candidateHash, candidateHash, "export verification is stale for this candidate");
 
-const scratch = await mkdtemp(path.join(os.tmpdir(), "pocketforge-frozen-"));
+const runtimePath = path.join(exportDirectory, "runtime", "emberforge-runtime.mjs");
+// Historical exports retain their original filenames and hash-bound manifests.
+const packageRuntime = await readFile(runtimePath).then(() => runtimePath).catch((error: NodeJS.ErrnoException) => {
+  if (error.code !== "ENOENT") throw error;
+  return path.join(exportDirectory, "runtime", "pocketforge-runtime.mjs");
+});
+const scratch = await mkdtemp(path.join(os.tmpdir(), "emberforge-frozen-"));
 const results: Array<{ caseId: string; expectedOutcome: string; actualOutcome: string; passed: boolean; reason?: string; durationMs: number }> = [];
 try {
   const networkGuard = pathToFileURL(path.join(exportDirectory, "tests", "network-guard.mjs")).href;
@@ -62,7 +68,7 @@ try {
     const startedAt = performance.now();
     const child = spawnSync(process.execPath, [
       "--import", networkGuard,
-      path.join(exportDirectory, "runtime", "pocketforge-runtime.mjs"),
+      packageRuntime,
       "--input", inputPath
     ], {
       cwd: exportDirectory,
@@ -106,7 +112,7 @@ try {
 const supported = results.filter((item) => item.expectedOutcome === "supported");
 const unsupported = results.filter((item) => item.expectedOutcome === "unsupported");
 const report = {
-  schemaVersion: "pocketforge.frozen-evaluation-report/1",
+  schemaVersion: "emberforge.frozen-evaluation-report/1",
   split: "frozen-smoke-v1",
   scope: "Small synthetic smoke split; not held-out or representative evaluation. One procedure family only.",
   candidateHash,

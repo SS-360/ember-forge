@@ -1,9 +1,9 @@
 import { readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import path from "node:path";
-import { ProviderAuthorizationSchema, ProviderApprovalEvidenceSchema, ZeroCostEntitlementEvidenceSchema, assertAuthorizationCurrent, providerScopeKey, type ProviderAuthorization } from "@pocketforge/contracts/provider-authorization";
-import { createNemotronAdapter, type ProviderFetch } from "@pocketforge/compiler/nemotron-adapter";
-import { canonicalHash } from "@pocketforge/compiler/trace-compiler";
+import { ProviderAuthorizationSchema, ProviderApprovalEvidenceSchema, ZeroCostEntitlementEvidenceSchema, assertAuthorizationCurrent, providerScopeKey, type ProviderAuthorization } from "@emberforge/contracts/provider-authorization";
+import { createNemotronAdapter, type ProviderFetch } from "@emberforge/compiler/nemotron-adapter";
+import { canonicalHash } from "@emberforge/compiler/trace-compiler";
 import { PersistentProviderLedger } from "./provider-ledger.js";
 import type { SynthesisDependencies } from "./synthesis.js";
 

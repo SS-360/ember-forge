@@ -2,9 +2,9 @@ import { DatabaseSync } from "node:sqlite";
 import { mkdirSync } from "node:fs";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
-import { ProviderAuthorizationSchema, assertAuthorizationCurrent, type ActiveProviderAuthorization } from "@pocketforge/contracts/provider-authorization";
-import { canonicalHash } from "@pocketforge/compiler/trace-compiler";
-import type { CostReservation, SynthesisCostLedger } from "@pocketforge/compiler/synthesis-controller";
+import { ProviderAuthorizationSchema, assertAuthorizationCurrent, type ActiveProviderAuthorization } from "@emberforge/contracts/provider-authorization";
+import { canonicalHash } from "@emberforge/compiler/trace-compiler";
+import type { CostReservation, SynthesisCostLedger } from "@emberforge/compiler/synthesis-controller";
 
 function nanoUsd(value: number): number {
   const amount = Math.ceil(value * 1000000000);

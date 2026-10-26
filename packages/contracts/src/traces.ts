@@ -1,9 +1,10 @@
 import { z } from "zod";
+import { formatVersionSchema } from "./format.js";
 import { SkillOperationSchema, SourceModeSchema, StockDatasetSchema, StockParametersSchema } from "./index.js";
 
 const HashSchema = z.string().regex(/^[a-f0-9]{64}$/);
 export const SourceSnapshotSchema = z.object({
-  schemaVersion: z.literal("pocketforge.source-snapshot/1"), inputHash: HashSchema,
+  schemaVersion: formatVersionSchema("source-snapshot/1"), inputHash: HashSchema,
   parameters: StockParametersSchema, dataset: StockDatasetSchema
 }).strict();
 const VersionTagSchema = z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._/-]{0,63}$/);
@@ -16,7 +17,7 @@ const SourceVersionsSchema = z.object({
 
 /** Normalized tool arguments only. Raw rows, prompts, credentials and provider logs are excluded. */
 export const SanitizedTraceSchema = z.object({
-  schemaVersion: z.literal("pocketforge.trace/1"),
+  schemaVersion: formatVersionSchema("trace/1"),
   traceId: z.string().uuid(),
   taskFamily: z.literal("stock-reconciliation"),
   evidenceClass: z.enum(["synthetic_fixture", "user_sanitized"]),
@@ -45,7 +46,7 @@ export const SanitizedTraceSchema = z.object({
     reason: ReasonSchema.optional()
   }).strict(),
   redaction: z.object({
-    profile: z.literal("pocketforge.redaction/1"),
+    profile: formatVersionSchema("redaction/1"),
     rawLogsIncluded: z.literal(false),
     rawInputValuesIncluded: z.literal(false),
     removedFieldCount: z.number().int().nonnegative()
@@ -96,7 +97,7 @@ export const SanitizedTraceSchema = z.object({
 export type SanitizedTrace = z.infer<typeof SanitizedTraceSchema>;
 
 export const TraceSetSchema = z.object({
-  schemaVersion: z.literal("pocketforge.trace-set/1"),
+  schemaVersion: formatVersionSchema("trace-set/1"),
   traces: z.array(SanitizedTraceSchema).min(1).max(32)
 }).strict().superRefine((set, context) => {
   if (new Set(set.traces.map((trace) => trace.traceId)).size !== set.traces.length) {

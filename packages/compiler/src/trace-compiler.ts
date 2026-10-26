@@ -1,10 +1,10 @@
 import { createHash } from "node:crypto";
 import {
   SkillContractSchema, SkillDefinitionSchema,
-  type SkillContract, type SkillDefinition, type SkillOperation
-} from "@pocketforge/contracts";
-import { SanitizedTraceSchema, type SanitizedTrace } from "@pocketforge/contracts/traces";
-import { validateSkillIR } from "@pocketforge/runtime";
+  type SkillContract, type SkillDefinition, type SkillOperation, type FormatVersion
+} from "@emberforge/contracts";
+import { SanitizedTraceSchema, type SanitizedTrace } from "@emberforge/contracts/traces";
+import { validateSkillIR } from "@emberforge/runtime";
 import { compileCandidate, type CompileCandidateResult, type VerificationCase } from "./index.js";
 
 export function canonicalHash(value: unknown): string {
@@ -33,7 +33,7 @@ export interface CandidateGenerationAdapter {
 }
 
 export interface TraceLineage {
-  schemaVersion: "pocketforge.lineage/1";
+  schemaVersion: FormatVersion<"lineage/1">;
   method: "deterministic_trace_assembly" | "nemotron_synthesis" | "test_synthesis";
   adapterId: string;
   generatedAt: string;
@@ -72,7 +72,7 @@ function deriveAssumptions(operations: SkillOperation[]): string[] {
 }
 
 export const deterministicTraceAdapter: CandidateGenerationAdapter = {
-  id: "pocketforge.deterministic-trace-assembly/1",
+  id: "emberforge.deterministic-trace-assembly/1",
   async generate(context, signal) {
     signal.throwIfAborted();
     const successful = context.traces.filter((trace) => trace.label.outcome === "succeeded");
@@ -86,11 +86,11 @@ export const deterministicTraceAdapter: CandidateGenerationAdapter = {
     const reference = successful[0]!;
     const skill: SkillDefinition = {
       id: context.skillId, version: context.version, taskFamily: reference.taskFamily,
-      ir: { schemaVersion: "pocketforge.ir/1", operations, outputStep: output.id, runtimeLimits: context.limits }
+      ir: { schemaVersion: "emberforge.ir/1", operations, outputStep: output.id, runtimeLimits: context.limits }
     };
     const contract: SkillContract = {
       skillId: skill.id, skillVersion: skill.version, taskFamily: skill.taskFamily,
-      contractVersion: "pocketforge.contract/1", policyVersion: reference.policyVersion,
+      contractVersion: "emberforge.contract/1", policyVersion: reference.policyVersion,
       sourceSchemaVersions: reference.sourceSchemaVersions,
       supportedSourceModes: [reference.sourceMode], ...context.limits,
       postconditions: ["nonnegative-stock-fields", "shortage-equals-demand-gap", "unique-sku-output"],
@@ -134,7 +134,7 @@ export async function compileFromTraces(input: {
     for (const parameter of ["warehouseId", "fromDate", "throughDate", "policyVersion"] as const) {
       if (!trace.parameterNames.includes(parameter)) throw new TraceCompilationError("PARAMETER_EVIDENCE_MISSING", "Successful traces must declare every stock-reconciliation parameter.");
     }
-    validateSkillIR({ schemaVersion: "pocketforge.ir/1", operations: trace.calls.map((call) => call.operation), outputStep: trace.calls.at(-1)!.operation.id, runtimeLimits: { maxRows: 5000, maxRuntimeMs: 5000 } });
+    validateSkillIR({ schemaVersion: "emberforge.ir/1", operations: trace.calls.map((call) => call.operation), outputStep: trace.calls.at(-1)!.operation.id, runtimeLimits: { maxRows: 5000, maxRuntimeMs: 5000 } });
   }
   for (const trace of counterexamples) {
     if (trace.calls.some((call, index) => !reference.calls[index] || canonicalHash(call.operation) !== canonicalHash(reference.calls[index]!.operation))) {
@@ -168,7 +168,7 @@ export async function compileFromTraces(input: {
   signal.throwIfAborted();
   compiled.verification.candidateOrigin = "deterministic_trace_assembly";
   const lineage: TraceLineage = {
-    schemaVersion: "pocketforge.lineage/1", method: "deterministic_trace_assembly", adapterId: adapter.id,
+    schemaVersion: "emberforge.lineage/1", method: "deterministic_trace_assembly", adapterId: adapter.id,
     generatedAt: new Date().toISOString(), compilerContextHash: canonicalHash(context),
     traces: traces.map((trace) => ({ traceId: trace.traceId, hash: canonicalHash(trace), outcome: trace.label.outcome, evidenceClass: trace.evidenceClass, inputHash: trace.inputHash })),
     operations: skill.ir.operations.map((operation) => ({ operationId: operation.id, traceIds: successful.map((trace) => trace.traceId) })),

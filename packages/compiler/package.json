@@ -1,5 +1,5 @@
 {
-  "name": "@pocketforge/compiler",
+  "name": "@emberforge/compiler",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -13,9 +13,9 @@
     "./trace-replay": "./src/trace-replay.ts"
   },
   "dependencies": {
-    "@pocketforge/contracts": "workspace:*",
-    "@pocketforge/evaluator": "workspace:*",
-    "@pocketforge/runtime": "workspace:*"
+    "@emberforge/contracts": "workspace:*",
+    "@emberforge/evaluator": "workspace:*",
+    "@emberforge/runtime": "workspace:*"
   }
 }
 

@@ -2,12 +2,12 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile, stat } from "node:fs/promises";
 import path from "node:path";
 import type { FastifyInstance } from "fastify";
-import { compileCandidate } from "@pocketforge/compiler";
-import { canonicalHash, type TraceLineage } from "@pocketforge/compiler/trace-compiler";
-import { buildProtocolSplit, assertSplitSeparation, type ProtocolSplit } from "@pocketforge/evaluator/protocol";
-import { reconcileStock } from "@pocketforge/evaluator";
-import { StockDatasetSchema, StockParametersSchema } from "@pocketforge/contracts";
-import { executeSkill } from "@pocketforge/runtime";
+import { compileCandidate } from "@emberforge/compiler";
+import { canonicalHash, type TraceLineage } from "@emberforge/compiler/trace-compiler";
+import { buildProtocolSplit, assertSplitSeparation, type ProtocolSplit } from "@emberforge/evaluator/protocol";
+import { reconcileStock } from "@emberforge/evaluator";
+import { StockDatasetSchema, StockParametersSchema } from "@emberforge/contracts";
+import { executeSkill } from "@emberforge/runtime";
 import { candidateDirectory, readCandidate, SkillIdSchema } from "./compilation.js";
 
 export async function registerEvaluationRoutes(app: FastifyInstance, projectRoot: string): Promise<void> {
@@ -73,7 +73,7 @@ export async function registerEvaluationRoutes(app: FastifyInstance, projectRoot
       const current = await readCandidate(projectRoot, id.data);
       if (canonicalHash({ skill: current.skill, contract: current.contract }) !== candidateHash) throw new Error("Candidate changed during evaluation.");
       const report = {
-        schemaVersion: "pocketforge.frozen-evaluation/2", scope: "finite-synthetic-frozen-variants",
+        schemaVersion: "emberforge.frozen-evaluation/2", scope: "finite-synthetic-frozen-variants",
         status: evaluation.exportable ? "passed" : "failed", candidateHash, skillId: id.data,
         frozenAt: (await stat(splitPath)).mtime.toISOString(),
         completedAt: new Date().toISOString(), developmentSplitHash: development.splitHash, frozenSplitHash: frozen.splitHash,

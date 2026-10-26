@@ -1,7 +1,7 @@
-import { SkillContractSchema, SkillDefinitionSchema, type SkillOperation } from "@pocketforge/contracts";
-import { SanitizedTraceSchema, SourceSnapshotSchema } from "@pocketforge/contracts/traces";
-import { reconcileStock, UnsupportedInputError } from "@pocketforge/evaluator";
-import { executeSkill, assessApplicability, SkillExecutionError, type OperationObservation } from "@pocketforge/runtime";
+import { SkillContractSchema, SkillDefinitionSchema, type SkillOperation } from "@emberforge/contracts";
+import { SanitizedTraceSchema, SourceSnapshotSchema } from "@emberforge/contracts/traces";
+import { reconcileStock, UnsupportedInputError } from "@emberforge/evaluator";
+import { executeSkill, assessApplicability, SkillExecutionError, type OperationObservation } from "@emberforge/runtime";
 import { canonicalHash, TraceCompilationError } from "./trace-compiler.js";
 
 /** Raw source data stays in local snapshot artifacts, never in SynthesisContext. */
@@ -22,7 +22,7 @@ export function replayTraceSnapshot(traceInput: unknown, snapshotInput: unknown,
     const verdict = assessApplicability(trustedContract, snapshot.parameters, snapshot.dataset);
     if (trace.calls.length !== 0 || verdict.supported || verdict.reason !== expectedReason) throw new TraceCompilationError("TRACE_REPLAY_MISMATCH", "The trusted applicability check did not reproduce the pre-operation failure.");
     return {
-      schemaVersion: "pocketforge.trace-replay/1" as const, traceId: trace.traceId, traceHash: canonicalHash(trace), inputHash: snapshot.inputHash,
+      schemaVersion: "emberforge.trace-replay/1" as const, traceId: trace.traceId, traceHash: canonicalHash(trace), inputHash: snapshot.inputHash,
       status: "verified" as const, replayedAt: new Date().toISOString(), operationCount: 0,
       evaluatorVersion: "stock-reference/2", basis: "applicability_replay" as const,
       limitation: "Reproduces a contract rejection before any operation; it is not evidence of a live model trajectory."
@@ -37,14 +37,14 @@ export function replayTraceSnapshot(traceInput: unknown, snapshotInput: unknown,
     operations.push({ id: emitId, kind: "emit", input: outputStep }); outputStep = emitId;
   }
   const contract = { ...trustedContract, skillId: "trace-replay", skillVersion: "0.1.0" };
-  const skill = SkillDefinitionSchema.parse({ id: contract.skillId, version: contract.skillVersion, taskFamily: trace.taskFamily, ir: { schemaVersion: "pocketforge.ir/1", runtimeLimits: { maxRows: contract.maxRows, maxRuntimeMs: contract.maxRuntimeMs }, operations, outputStep } });
+  const skill = SkillDefinitionSchema.parse({ id: contract.skillId, version: contract.skillVersion, taskFamily: trace.taskFamily, ir: { schemaVersion: "emberforge.ir/1", runtimeLimits: { maxRows: contract.maxRows, maxRuntimeMs: contract.maxRuntimeMs }, operations, outputStep } });
   const observed: OperationObservation[] = [];
   let actualReason: string | undefined;
   try { executeSkill(skill, contract, snapshot.parameters, snapshot.dataset, (event) => observed.push(event)); }
   catch (error) { if (!(error instanceof SkillExecutionError)) throw error; actualReason = error.code; }
   if (actualReason !== expectedReason || canonicalHash(observed) !== canonicalHash(trace.calls)) throw new TraceCompilationError("TRACE_REPLAY_MISMATCH", "The bounded replay did not reproduce the recorded operation hashes and outcome.");
   return {
-    schemaVersion: "pocketforge.trace-replay/1" as const, traceId: trace.traceId, traceHash: canonicalHash(trace), inputHash: snapshot.inputHash,
+    schemaVersion: "emberforge.trace-replay/1" as const, traceId: trace.traceId, traceHash: canonicalHash(trace), inputHash: snapshot.inputHash,
     status: "verified" as const, replayedAt: new Date().toISOString(), operationCount: observed.length,
     evaluatorVersion: "stock-reference/2", basis: "bounded_operation_replay" as const,
     limitation: "Reproduces normalized tool observations against a local snapshot. It does not prove that a live model originally produced the trajectory."

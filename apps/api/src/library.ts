@@ -3,10 +3,10 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
-import { StockDatasetSchema, StockParametersSchema } from "@pocketforge/contracts";
-import { compileCandidate } from "@pocketforge/compiler";
-import { SkillMemoryService } from "@pocketforge/memory";
-import { executeSkill, SkillExecutionError } from "@pocketforge/runtime";
+import { StockDatasetSchema, StockParametersSchema } from "@emberforge/contracts";
+import { compileCandidate } from "@emberforge/compiler";
+import { SkillMemoryService } from "@emberforge/memory";
+import { executeSkill, SkillExecutionError } from "@emberforge/runtime";
 import { candidateDirectory, readCandidate, readDevelopmentCases, SkillIdSchema } from "./compilation.js";
 
 export async function registerLibraryRoutes(app: FastifyInstance, projectRoot: string): Promise<void> {
@@ -48,7 +48,7 @@ export async function registerLibraryRoutes(app: FastifyInstance, projectRoot: s
     const selection = memory.retrieveApplicable(input.data);
     const retrievalDurationMs = performance.now() - started;
     let evidence: Record<string, unknown> = {
-      schemaVersion: "pocketforge.library-execution/1", runId, startedAt,
+      schemaVersion: "emberforge.library-execution/1", runId, startedAt,
       sourceMode: input.data.dataset.sourceMode, sourceVersions: input.data.dataset.sourceVersions,
       retrieval: selection.retrieval, rejections: selection.rejections,
       status: "requires_reasoning", modelCallCount: 0, retrievalDurationMs,

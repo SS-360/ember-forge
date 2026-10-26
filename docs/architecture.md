@@ -1,4 +1,4 @@
-# Pocket Forge architecture
+# Ember Forge architecture
 
 The current product is a local, fixture-mode vertical slice. The diagram separates implemented paths from planned live-provider paths.
 

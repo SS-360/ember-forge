@@ -12,7 +12,7 @@ import {
   type SkillOperation,
   type StockDataset,
   type StockParameters
-} from "@pocketforge/contracts";
+} from "@emberforge/contracts";
 
 type Row = Record<string, unknown>;
 type SourceName = "orders" | "inventory" | "aliases" | "unitConversions";

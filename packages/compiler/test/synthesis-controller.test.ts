@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { buildProtocolSplit, assertSplitSeparation } from "@pocketforge/evaluator/protocol";
-import { SkillDefinitionSchema, type SkillOperation } from "@pocketforge/contracts";
+import { buildProtocolSplit, assertSplitSeparation } from "@emberforge/evaluator/protocol";
+import { SkillDefinitionSchema, type SkillOperation } from "@emberforge/contracts";
 import { captureReplayCases } from "../src/trace-fixtures.js";
 import { compileFromTraces } from "../src/trace-compiler.js";
 import { verifyCandidate } from "../src/index.js";

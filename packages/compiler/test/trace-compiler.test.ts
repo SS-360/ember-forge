@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { TraceSetSchema } from "@pocketforge/contracts/traces";
+import { TraceSetSchema } from "@emberforge/contracts/traces";
 import { buildDevelopmentSuite } from "../src/development-suite.js";
 import { captureReplayExamples } from "../src/trace-fixtures.js";
 import { compileFromTraces, deterministicTraceAdapter } from "../src/trace-compiler.js";

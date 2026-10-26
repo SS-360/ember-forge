@@ -1,5 +1,5 @@
 {
-  "name": "@pocketforge/api",
+  "name": "@emberforge/api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -7,11 +7,11 @@
     "dev": "tsx watch src/index.ts"
   },
   "dependencies": {
-    "@pocketforge/compiler": "workspace:*",
-    "@pocketforge/contracts": "workspace:*",
-    "@pocketforge/evaluator": "workspace:*",
-    "@pocketforge/memory": "workspace:*",
-    "@pocketforge/runtime": "workspace:*",
+    "@emberforge/compiler": "workspace:*",
+    "@emberforge/contracts": "workspace:*",
+    "@emberforge/evaluator": "workspace:*",
+    "@emberforge/memory": "workspace:*",
+    "@emberforge/runtime": "workspace:*",
     "fastify": "5.12.7",
     "zod": "4.6.7"
   }

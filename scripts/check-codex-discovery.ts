@@ -19,7 +19,7 @@ await mkdir(path.dirname(skillPath), { recursive: true });
 const exported = await exportVerifiedCandidate({ candidateDirectory, outputDirectory: path.join(runRoot, "export", skill.id) });
 await cp(path.resolve(projectRoot, exported.artifactDirectory), skillPath, { recursive: true, errorOnExist: true, force: false });
 
-const command = process.env.POCKETFORGE_CODEX_BINARY;
+const command = process.env.EMBERFORGE_CODEX_BINARY ?? process.env.POCKETFORGE_CODEX_BINARY;
 const proc = command ? spawn(command, ["app-server", "--listen", "stdio://"], { cwd: workspace, stdio: ["pipe", "pipe", "pipe"], windowsHide: true }) : process.platform === "win32"
   ? spawn("powershell.exe", ["-NoProfile", "-Command", "codex app-server --listen stdio://"], { cwd: workspace, stdio: ["pipe", "pipe", "pipe"], windowsHide: true })
   : spawn("codex", ["app-server", "--listen", "stdio://"], { cwd: workspace, stdio: ["pipe", "pipe", "pipe"] });
@@ -35,7 +35,7 @@ const failPending = (error: Error) => {
   pending.clear();
 };
 proc.on("error", failPending);
-proc.on("close", (code) => failPending(new Error("Codex app-server closed before the discovery response (exit " + code + (accessDenied ? ", filesystem access denied" : "") + "). If a Windows shell shim cannot preserve stdio, set POCKETFORGE_CODEX_BINARY to the installed codex.exe path.")));
+proc.on("close", (code) => failPending(new Error("Codex app-server closed before the discovery response (exit " + code + (accessDenied ? ", filesystem access denied" : "") + "). If a Windows shell shim cannot preserve stdio, set EMBERFORGE_CODEX_BINARY to the installed codex.exe path.")));
 const closed = new Promise<void>((resolve) => proc.once("close", () => resolve()));
 lines.on("line", (line) => {
   let message: { id?: number; result?: unknown; error?: { message?: string } };
@@ -61,7 +61,7 @@ function request(method: string, params: unknown): Promise<unknown> {
 }
 
 try {
-  const initialized = await request("initialize", { clientInfo: { name: "pocketforge_discovery_check", title: "Pocket Forge discovery check", version: "0.1.0" } }) as { userAgent?: string };
+  const initialized = await request("initialize", { clientInfo: { name: "emberforge_discovery_check", title: "Ember Forge discovery check", version: "0.1.0" } }) as { userAgent?: string };
   send("initialized", {});
   const result = await request("skills/list", { cwds: [workspace], forceReload: true }) as {
     data?: Array<{ cwd: string; skills: Array<{ name: string; path: string; enabled: boolean; scope?: string }>; errors: unknown[] }>
@@ -70,7 +70,7 @@ try {
   const discovered = listing?.skills.find((item) => item.name === skill.id && path.resolve(item.path).toLowerCase() === path.join(skillPath, "SKILL.md").toLowerCase());
   if (!discovered || !discovered.enabled) throw new Error("Codex did not discover and enable the staged exported skill.");
   const evidence = {
-    schemaVersion: "pocketforge.harness-discovery/1", checkedAt: new Date().toISOString(),
+    schemaVersion: "emberforge.harness-discovery/1", checkedAt: new Date().toISOString(),
     harness: "codex", harnessUserAgent: initialized.userAgent, status: "discovered",
     skillId: skill.id, skillVersion: skill.version, candidateHash: exported.candidateHash,
     installation: path.relative(projectRoot, skillPath), discoveredSkill: discovered,

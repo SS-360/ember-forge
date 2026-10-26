@@ -3,8 +3,8 @@ import { mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { createHash, randomUUID } from "node:crypto";
 import path from "node:path";
 import { z } from "zod";
-import { SkillDefinitionSchema, SkillContractSchema } from "@pocketforge/contracts";
-import type { SynthesisResult } from "@pocketforge/compiler/synthesis-controller";
+import { SkillDefinitionSchema, SkillContractSchema, formatVersionSchema } from "@emberforge/contracts";
+import type { SynthesisResult } from "@emberforge/compiler/synthesis-controller";
 
 export interface SynthesisJob {
   jobId: string; skillId: string; createdAt: string; updatedAt: string;
@@ -23,7 +23,7 @@ const FeedbackSchema = z.object({ stage: z.enum(["static_validation", "developme
 const CandidateSchema = z.object({
   skill: SkillDefinitionSchema, contract: SkillContractSchema, exportable: z.boolean(),
   verification: z.object({
-    schemaVersion: z.literal("pocketforge.verification/1"), scope: z.literal("finite-development-suite"),
+    schemaVersion: formatVersionSchema("verification/1"), scope: z.literal("finite-development-suite"),
     candidateOrigin: z.enum(["provided_candidate_draft", "deterministic_trace_assembly", "test_synthesis", "nemotron_synthesis"]),
     skillId: z.string().max(64), skillVersion: z.string().max(80), candidateHash: Hash, status: z.enum(["validated", "rejected"]),
     supportedCaseCount: Count, correctSupportedCount: Count, unsupportedCaseCount: Count, rejectedUnsupportedCount: Count,
@@ -40,7 +40,7 @@ const ResultSchema = z.object({
   revisions: RevisionsSchema, attempts: AttemptsSchema, usage: CompleteUsageSchema, durationMs: z.number().nonnegative(),
   failure: z.object({ code: z.string().max(100), message: z.string().max(2000) }).strict().optional(),
   lineage: z.object({
-    schemaVersion: z.literal("pocketforge.lineage/1"), method: z.enum(["deterministic_trace_assembly", "test_synthesis", "nemotron_synthesis"]), adapterId: z.string().max(200), generatedAt: z.iso.datetime(), compilerContextHash: Hash,
+    schemaVersion: formatVersionSchema("lineage/1"), method: z.enum(["deterministic_trace_assembly", "test_synthesis", "nemotron_synthesis"]), adapterId: z.string().max(200), generatedAt: z.iso.datetime(), compilerContextHash: Hash,
     traces: z.array(z.object({ traceId: z.uuid(), hash: Hash, outcome: z.string().max(40), evidenceClass: z.string().max(40), inputHash: Hash }).strict()).max(32),
     operations: z.array(z.object({ operationId: z.string().max(100), traceIds: z.array(z.uuid()).max(32) }).strict()).max(64), limitations: z.array(z.string().max(2000)).max(20)
   }).strict()

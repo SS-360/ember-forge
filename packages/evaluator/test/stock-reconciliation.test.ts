@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { StockDatasetSchema, StockParametersSchema } from "@pocketforge/contracts";
+import { StockDatasetSchema, StockParametersSchema } from "@emberforge/contracts";
 import { reconcileStock, UnsupportedInputError } from "../src/stock-reconciliation.js";
 
 const fixtureUrl = new URL("../../../fixtures/dev/stock-reconciliation.json", import.meta.url);

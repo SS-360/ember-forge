@@ -26,19 +26,19 @@ importers:
 
   apps/api:
     dependencies:
-      '@pocketforge/compiler':
+      '@emberforge/compiler':
         specifier: workspace:*
         version: link:../../packages/compiler
-      '@pocketforge/contracts':
+      '@emberforge/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
-      '@pocketforge/evaluator':
+      '@emberforge/evaluator':
         specifier: workspace:*
         version: link:../../packages/evaluator
-      '@pocketforge/memory':
+      '@emberforge/memory':
         specifier: workspace:*
         version: link:../../packages/memory
-      '@pocketforge/runtime':
+      '@emberforge/runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
       fastify:
@@ -72,13 +72,13 @@ importers:
 
   packages/compiler:
     dependencies:
-      '@pocketforge/contracts':
+      '@emberforge/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pocketforge/evaluator':
+      '@emberforge/evaluator':
         specifier: workspace:*
         version: link:../evaluator
-      '@pocketforge/runtime':
+      '@emberforge/runtime':
         specifier: workspace:*
         version: link:../runtime
 
@@ -90,22 +90,22 @@ importers:
 
   packages/evaluator:
     dependencies:
-      '@pocketforge/contracts':
+      '@emberforge/contracts':
         specifier: workspace:*
         version: link:../contracts
 
   packages/memory:
     dependencies:
-      '@pocketforge/contracts':
+      '@emberforge/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@pocketforge/runtime':
+      '@emberforge/runtime':
         specifier: workspace:*
         version: link:../runtime
 
   packages/runtime:
     dependencies:
-      '@pocketforge/contracts':
+      '@emberforge/contracts':
         specifier: workspace:*
         version: link:../contracts
 

@@ -10,13 +10,13 @@ const sourceRoot = fileURLToPath(new URL("../../../", import.meta.url));
 const temporaryRoots: string[] = [];
 afterEach(async () => {
   for (const root of temporaryRoots.splice(0)) {
-    if (!root.startsWith(path.join(os.tmpdir(), "pocketforge trace routes "))) throw new Error("Unexpected cleanup path");
+    if (!root.startsWith(path.join(os.tmpdir(), "emberforge trace routes "))) throw new Error("Unexpected cleanup path");
     await rm(root, { recursive: true, force: true });
   }
 });
 
 async function createApp() {
-  const root = await mkdtemp(path.join(os.tmpdir(), "pocketforge trace routes "));
+  const root = await mkdtemp(path.join(os.tmpdir(), "emberforge trace routes "));
   temporaryRoots.push(root);
   await Promise.all([mkdir(path.join(root, "skills", "stock-reconciliation"), { recursive: true }), mkdir(path.join(root, "fixtures", "dev"), { recursive: true })]);
   await Promise.all([

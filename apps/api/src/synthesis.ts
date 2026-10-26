@@ -3,13 +3,13 @@ import { access, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
-import type { SanitizedTrace } from "@pocketforge/contracts/traces";
-import { buildProtocolSplit } from "@pocketforge/evaluator/protocol";
-import { synthesizeCandidate, type SynthesisAdapter, type SynthesisCostLedger, type SynthesisPolicy, type SynthesisResult } from "@pocketforge/compiler/synthesis-controller";
+import type { SanitizedTrace } from "@emberforge/contracts/traces";
+import { buildProtocolSplit } from "@emberforge/evaluator/protocol";
+import { synthesizeCandidate, type SynthesisAdapter, type SynthesisCostLedger, type SynthesisPolicy, type SynthesisResult } from "@emberforge/compiler/synthesis-controller";
 import { SkillIdSchema, saveDevelopmentSplit, writeVerificationFiles } from "./compilation.js";
-import { ProviderAuthorizationSchema, assertAuthorizationCurrent, providerScopeKey, type ProviderAuthorization } from "@pocketforge/contracts/provider-authorization";
+import { ProviderAuthorizationSchema, assertAuthorizationCurrent, providerScopeKey, type ProviderAuthorization } from "@emberforge/contracts/provider-authorization";
 import { SynthesisJobStore, type SynthesisJob } from "./synthesis-job-store.js";
-import { canonicalHash } from "@pocketforge/compiler/trace-compiler";
+import { canonicalHash } from "@emberforge/compiler/trace-compiler";
 
 export interface SynthesisDependencies {
   /** Server composition only. No browser request can configure a provider, price or spending permission. */
@@ -109,7 +109,7 @@ export async function registerSynthesisRoutes(app: FastifyInstance, projectRoot:
       cancellationPoll.unref();
       try {
         checkpoint("preparing_development");
-        const development = buildProtocolSplit("development", "pocketforge-development-v2");
+        const development = buildProtocolSplit("development", "emberforge-development-v2");
         const result = await synthesizeCandidate({
           skillId: job.skillId, runId: job.jobId, traces, developmentCases: development.cases,
           adapter: dependencies.adapter!, policy: dependencies.policy!,

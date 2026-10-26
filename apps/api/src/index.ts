@@ -1,15 +1,16 @@
 import { createHash, randomUUID } from "node:crypto";
 import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
+import { existsSync } from "node:fs";
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import Fastify from "fastify";
 import { z } from "zod";
-import { SkillContractSchema, SkillDefinitionSchema, StockDatasetSchema, StockParametersSchema } from "@pocketforge/contracts";
-import { compileCandidate } from "@pocketforge/compiler";
-import { buildDevelopmentSuite } from "@pocketforge/compiler/development-suite";
-import { reconcileStock, UnsupportedInputError } from "@pocketforge/evaluator";
+import { SkillContractSchema, SkillDefinitionSchema, StockDatasetSchema, StockParametersSchema } from "@emberforge/contracts";
+import { compileCandidate } from "@emberforge/compiler";
+import { buildDevelopmentSuite } from "@emberforge/compiler/development-suite";
+import { reconcileStock, UnsupportedInputError } from "@emberforge/evaluator";
 import { candidateDirectory as resolveCandidateDirectory, readCandidate, readDevelopmentCases, registerCompilationRoutes, writeVerificationFiles } from "./compilation.js";
 import { exportVerifiedCandidate } from "../../../scripts/export-skill.js";
 import { exportFilesMatchManifest } from "./export-integrity.js";
@@ -27,7 +28,10 @@ try { process.loadEnvFile(path.join(projectRoot, ".env")); } catch (error) {
 
 await mkdir(artifactsRoot, { recursive: true });
 await mkdir(runsRoot, { recursive: true });
-const database = new DatabaseSync(path.join(artifactsRoot, "pocketforge.sqlite"));
+// Continue using an existing history database; new workspaces use the new name.
+const legacyDatabasePath = path.join(artifactsRoot, "pocketforge.sqlite");
+const databasePath = existsSync(legacyDatabasePath) ? legacyDatabasePath : path.join(artifactsRoot, "emberforge.sqlite");
+const database = new DatabaseSync(databasePath);
 database.exec(`
   PRAGMA journal_mode = WAL;
   CREATE TABLE IF NOT EXISTS runs (
@@ -532,9 +536,9 @@ app.setErrorHandler((error, _request, reply) => {
   return reply.code(500).send({ error: "INTERNAL_ERROR", message: "The local operation failed. Review the API log for details." });
 });
 
-const port = Number(process.env.POCKETFORGE_API_PORT ?? "3001");
+const port = Number(process.env.EMBERFORGE_API_PORT ?? process.env.POCKETFORGE_API_PORT ?? "3001");
 await app.listen({ host: "127.0.0.1", port });
-app.log.info({ port, mode: "fixture", database: path.relative(projectRoot, path.join(artifactsRoot, "pocketforge.sqlite")) }, "Pocket Forge API ready");
+app.log.info({ port, mode: "fixture", database: path.relative(projectRoot, databasePath) }, "Ember Forge API ready");
 
 async function shutdown(): Promise<void> {
   await app.close();

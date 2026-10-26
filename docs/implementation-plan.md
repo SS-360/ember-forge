@@ -1,14 +1,14 @@
-# Pocket Forge — Codex Implementation Plan
+# Ember Forge — Codex Implementation Plan
 
 Prepared: 23 October 2026, Asia/Calcutta.
 Status: active implementation plan; completed work and current gaps are recorded in [progress](progress.md), [readiness](readiness.md), and [implementation follow-up](implementation-follow-up.md).
-Product explanation: [Pocket Forge Description](product-description.md).
+Product explanation: [Ember Forge Description](product-description.md).
 
 ## 1. Project contract
 
-Build an independent Track 3 product that learns reusable procedures from agent trajectories, compiles them into portable Agent Skills, and verifies their applicability on new inputs. The primary deliverable is a standards-based skill folder that compatible harnesses can discover and invoke. The standalone Pocket Forge CLI remains a secondary interface to the same trusted runtime.
+Build an independent Track 3 product that learns reusable procedures from agent trajectories, compiles them into portable Agent Skills, and verifies their applicability on new inputs. The primary deliverable is a standards-based skill folder that compatible harnesses can discover and invoke. The standalone Ember Forge CLI remains a secondary interface to the same trusted runtime.
 
-Do not merge this with VRAM Rescue. Do not import NeuroDBG source, its environment, or research results. These planning files are stored in the current workspace only for handoff. The actual project should live in a separate Codex project folder, suggested name `PocketForge`.
+Do not merge this with VRAM Rescue. Do not import NeuroDBG source, its environment, or research results. These planning files are stored in the current workspace only for handoff. The actual project should live in a separate Codex project folder, suggested name `EmberForge`.
 
 The first supported domain is read-only structured-data reconciliation. A skill consists of a generated program in a bounded intermediate representation (IR), an input contract, a versioned runtime, test artifacts, and data bindings. This is executable workflow compilation, not model training or answer caching.
 
@@ -179,7 +179,7 @@ Compare:
 - Original Nemotron agent on each new case.
 - Exact-input response cache: demonstrates why new inputs require computation.
 - Parameterized single-trajectory replay: tests whether multi-trace generalization adds value.
-- Pocket Forge compiled skill.
+- Ember Forge compiled skill.
 - A human-written reference procedure as a useful performance/correctness ceiling, not an AI competitor to hide.
 
 Score exact canonical records, totals, and error outcomes using independent reference logic. Do not use an LLM as the sole judge. Count both false acceptance and needless fallback. Report `correct supported executions / all supported cases`, coverage, fallback rate, per-case calls, wall time, and compilation overhead.
@@ -212,7 +212,7 @@ Assume work starts 23 October; actual available working hours are not yet known.
 - **26 Oct:** P5 and reproduction fixes; freeze functional scope by evening.
 - **27 Oct:** P6, record demo, verify submission fields, upload before 20:00 IST.
 
-VRAM Rescue has its own milestones. Pocket Forge needs no local GPU, so its development can coexist with GPU experiments. Do not silently spend both projects' API budgets on retries. Record daily status as completed evidence, failures, next gate, and scope cuts.
+VRAM Rescue has its own milestones. Ember Forge needs no local GPU, so its development can coexist with GPU experiments. Do not silently spend both projects' API budgets on retries. Record daily status as completed evidence, failures, next gate, and scope cuts.
 
 ## 12. Quality gates and failure handling
 
@@ -234,10 +234,10 @@ Track claim-to-evidence links in `docs/claims.md`: every number points to a run/
 
 ## 14. Codex kickoff prompt
 
-Paste this into a new Codex chat opened on the independent PocketForge project folder, with this plan available:
+Paste this into a new Codex chat opened on the independent EmberForge project folder, with this plan available:
 
 ```text
-Build Pocket Forge according to docs/implementation-plan.md and
+Build Ember Forge according to docs/implementation-plan.md and
 docs/product-description.md. This is an independent Track 3 project, not NeuroDBG
 and not VRAM Rescue. First inspect the folder and applicable AGENTS.md files.
 Preserve existing user work. Implement P0 through the later gates in order,

@@ -92,15 +92,15 @@ const labels = Object.fromEntries([
 ]);
 await mkdir(splitDirectory, { recursive: true });
 await writeFile(path.join(splitDirectory, "inputs.json"), JSON.stringify({
-  schemaVersion: "pocketforge.evaluation-inputs/1",
+  schemaVersion: "emberforge.evaluation-inputs/1",
   cases
 }, null, 2) + "\n", "utf8");
 await writeFile(path.join(splitDirectory, "labels.json"), JSON.stringify({
-  schemaVersion: "pocketforge.evaluation-labels/1",
+  schemaVersion: "emberforge.evaluation-labels/1",
   labels
 }, null, 2) + "\n", "utf8");
 await writeFile(path.join(splitDirectory, "protocol.json"), JSON.stringify({
-  schemaVersion: "pocketforge.evaluation-protocol/1",
+  schemaVersion: "emberforge.evaluation-protocol/1",
   split: "frozen-smoke-v1",
   frozenAt: new Date().toISOString(),
   taskFamilies: ["stock-reconciliation"],

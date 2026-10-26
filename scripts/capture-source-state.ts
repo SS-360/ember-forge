@@ -30,7 +30,7 @@ for (const name of names) {
 }
 const stateHash = createHash("sha256").update(JSON.stringify(files)).digest("hex");
 const manifest = {
-  schemaVersion: "pocketforge.source-state/1", stateHash, capturedAt: new Date().toISOString(),
+  schemaVersion: "emberforge.source-state/1", stateHash, capturedAt: new Date().toISOString(),
   headCommit: git(["rev-parse", "HEAD"], true).trim() || null,
   dirty: Boolean(git(["status", "--porcelain"]).trim()), files, excluded,
   scope: "working-file content manifest; not a commit, test result, or atomic filesystem snapshot"

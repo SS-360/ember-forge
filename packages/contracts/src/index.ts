@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { formatVersionSchema } from "./format.js";
+export { formatVersionSchema, type FormatVersion } from "./format.js";
 
 function isRealIsoDate(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
@@ -245,7 +247,7 @@ export const SkillOperationSchema = z.discriminatedUnion("kind", [
 export type SkillOperation = z.infer<typeof SkillOperationSchema>;
 
 export const SkillIRSchema = z.object({
-  schemaVersion: z.literal("pocketforge.ir/1"),
+  schemaVersion: formatVersionSchema("ir/1"),
   operations: z.array(SkillOperationSchema).min(1).max(64),
   outputStep: OperationIdSchema,
   runtimeLimits: z.object({
@@ -266,7 +268,7 @@ export type SkillDefinition = z.infer<typeof SkillDefinitionSchema>;
 export const SkillContractSchema = z.object({
   skillId: z.string().regex(/^[a-z0-9][a-z0-9-]{1,63}$/),
   skillVersion: z.string().regex(/^\d+\.\d+\.\d+$/),
-  contractVersion: z.literal("pocketforge.contract/1"),
+  contractVersion: formatVersionSchema("contract/1"),
   taskFamily: z.literal("stock-reconciliation"),
   policyVersion: z.string().min(1),
   sourceSchemaVersions: z.object({

@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="apps/web/public/pocket-forge.svg" alt="Pocket Forge pocket-and-flame logo" width="76" height="76">
+  <img src="apps/web/public/ember-forge.svg" alt="Ember Forge ember logo" width="76" height="76">
 </p>
 
-<h1 align="center">Pocket Forge</h1>
+<h1 align="center">Ember Forge</h1>
 
-<p align="center"><strong>Turn repeated agent work into a skill you can inspect, verify, and carry with you.</strong></p>
+<p align="center"><strong>Turn repeated work into reusable skills.</strong></p>
 
 <p align="center">
   <a href="#quick-start">Quick start</a> ·
@@ -14,26 +14,26 @@
   <a href="#documentation">Documentation</a>
 </p>
 
-Pocket Forge is a local web application for turning recorded workflows into portable, executable Agent Skills. Collect examples, compile a bounded procedure, inspect its supported inputs and verification evidence, then download it or reuse it through the local Skill Library.
+Ember Forge is a local web application for turning recorded workflows into portable, executable Agent Skills. Collect examples, compile a bounded procedure, inspect its supported inputs and verification evidence, then download it or reuse it through the local Skill Library.
 
 The current domain is **stock reconciliation**: reconcile open orders against inventory using product aliases and unit-conversion rules, then report demand, stock, and shortages.
 
 > **Status: local prototype.** The available compiler assembles matching operation graphs from synthetic seed-runtime replays. Live Nemotron synthesis is disabled, and live Zetaris access is unfinished. General workflow learning, cross-host execution, and cost savings have not been established.
 
 <details>
-<summary><strong>Preview the workbench</strong> — pocket/flame identity and amber-red interface</summary>
+<summary><strong>Preview the workbench</strong> — historical capture of the amber-red interface</summary>
 
 <p align="center">
-  <img src="docs/design/amber-red-workspace.jpg" alt="Pocket Forge workbench showing trace compilation, reference runs, execution evidence, and amber-red controls" width="760">
+  <img src="docs/design/amber-red-workspace.jpg" alt="Workbench before the rename, showing trace compilation, reference runs, execution evidence, and amber-red controls" width="760">
 </p>
 
-Actual local UI capture from 24 October 2026 using synthetic data. It illustrates the interface; it is not a fresh verification of later backend changes. See the [interface notes](docs/design/apple-interface.md) and [brand assets](docs/design/brand.md).
+Actual local UI capture from 24 October 2026 using synthetic data, before the Ember Forge rename and ember mark. It illustrates the interface; it is not a fresh verification of later backend changes. See the [interface notes](docs/design/apple-interface.md) and [brand assets](docs/design/brand.md).
 
 </details>
 
-## Why Pocket Forge?
+## Why Ember Forge?
 
-A recurring task often repeats the same reads, filters, lookups, calculations, and checks. Pocket Forge makes that procedure explicit and packages it with the conditions under which it can run. For supported JSON inputs, the exported runner executes without Pocket Forge or a model API call. Unsupported inputs return a structured reason.
+A recurring task often repeats the same reads, filters, lookups, calculations, and checks. Ember Forge makes that procedure explicit and packages it with the conditions under which it can run. For supported JSON inputs, the exported runner executes without Ember Forge or a model API call. Unsupported inputs return a structured reason.
 
 - **Inspect the procedure.** Review bounded operations, parameters, branches, and source-trace lineage.
 - **Keep counterexamples.** Record failures alongside successful runs to make boundaries visible.
@@ -53,8 +53,8 @@ A recurring task often repeats the same reads, filters, lookups, calculations, a
 | Git | Required to clone the repository |
 
 ```sh
-git clone https://github.com/SS-360/pocket-forge.git
-cd pocket-forge
+git clone https://github.com/SS-360/ember-forge.git
+cd ember-forge
 pnpm install --frozen-lockfile
 pnpm doctor
 pnpm dev
@@ -84,7 +84,7 @@ An Agent Skill folder contains both host instructions and the executable procedu
 ├── skill.json                     # Bounded operations and parameters
 ├── contract.json                  # Supported inputs and assumptions
 ├── runtime/
-│   └── pocketforge-runtime.mjs     # Bundled standalone Node.js runner
+│   └── emberforge-runtime.mjs     # Bundled standalone Node.js runner
 ├── tests/
 │   ├── cases.json                 # Finite development cases
 │   ├── verify-export.mjs          # Package execution checks
@@ -106,10 +106,10 @@ An Agent Skill folder contains both host instructions and the executable procedu
 Extract the download and enter its directory. Copy `input.example.json` to `input.json`, then replace the parameters and dataset with data matching `contract.json`.
 
 ```sh
-node runtime/pocketforge-runtime.mjs --input input.json --output result.json
+node runtime/emberforge-runtime.mjs --input input.json --output result.json
 ```
 
-The bundle requires Node 24, with no separate dependency installation or running Pocket Forge server. Input and output paths resolve from your current directory; bundled assets resolve from the installed skill directory. The current runner consumes JSON rather than querying live business systems.
+The bundle requires Node 24, with no separate dependency installation or running Ember Forge server. Input and output paths resolve from your current directory; bundled assets resolve from the installed skill directory. The current runner consumes JSON rather than querying live business systems.
 
 Unsupported inputs return structured reasons such as `UNKNOWN_UNIT`, `POLICY_VERSION_MISMATCH`, or `SCHEMA_VERSION_MISMATCH`. Downloads require a successful package-check receipt bound to the candidate and verification hashes. Older exports without that receipt need an explicit re-export.
 
@@ -117,7 +117,7 @@ Unsupported inputs return structured reasons such as `UNKNOWN_UNIT`, `POLICY_VER
 
 | Environment | Use | Current evidence |
 | --- | --- | --- |
-| Pocket Forge | Retrieve and execute a registered skill on new compatible inputs | Historical local UI/API execution; later backend changes need fresh verification |
+| Ember Forge | Retrieve and execute a registered skill on new compatible inputs | Historical local UI/API execution; later backend changes need fresh verification |
 | Standalone Node.js | Run the exported procedure from a terminal or another application | Historical package checks; latest receipt/cancellation changes need exercise |
 | Codex | Install the Agent Skill folder in a host-supported skill location | Repository discovery verified for an earlier candidate; host invocation and execution unverified |
 | Claude Code and other Agent Skills hosts | Use the exported instructions and bundled runner where supported | Host discovery, invocation, and execution unverified |
@@ -206,6 +206,8 @@ For provider development, start with `.env.example` and the disabled `config/pro
 
 Run records, local snapshots, candidates, exports, and SQLite databases are stored under ignored `artifacts/`. Approval records belong under ignored `.local/`; credentials belong in ignored `.env`. Compiler inputs exclude raw rows and provider logs, but the trace schema cannot detect every secret concealed in an allowed identifier. Review imported traces before sharing them.
 
+The [rename and compatibility notes](docs/rename.md) explain how existing databases, schemas, memory records, and exported packages retain their original identities while new artifacts use Ember Forge names.
+
 ## Roadmap
 
 - Verify the latest authorization, accounting, cancellation, recovery, and export-receipt paths.
@@ -231,6 +233,6 @@ The [implementation follow-up](docs/implementation-follow-up.md) tracks the rema
 
 ## Attribution and licensing
 
-The local memory integration uses the pinned [Meterless H-MEM reference](vendor/meterless/hmem/README.md), whose [Apache 2.0 license](vendor/meterless/hmem/LICENSE) is retained. Exported bundles include their own third-party notices. Pocket Forge's pocket/flame SVG mark is included in [the web assets](apps/web/public).
+The local memory integration uses the pinned [Meterless H-MEM reference](vendor/meterless/hmem/README.md), whose [Apache 2.0 license](vendor/meterless/hmem/LICENSE) is retained. Exported bundles include their own third-party notices. Ember Forge's ember SVG mark is included in [the web assets](apps/web/public).
 
-No top-level license has been added for Pocket Forge's own source. Third-party components retain their respective licenses.
+No top-level license has been added for Ember Forge's own source. Third-party components retain their respective licenses.

@@ -1,10 +1,18 @@
 # Progress
 
-Last updated: 25 October 2026, Asia/Calcutta.
+Last updated: 26 October 2026, Asia/Calcutta.
+
+## Ember Forge rename — 26 October
+
+The user requested the new name throughout the project. App text, page metadata, package scopes/imports, new export runtime filenames, generated format identifiers, asset names and documentation now use Ember Forge. The pocket logo is replaced by an ember in the existing amber-red palette. New exports use `emberforge-runtime.mjs`. Historical screenshots, hash-bound seed/evaluation records and existing local artifacts retain their original contents; compatibility handling preserves old schema identifiers, database history, environment-variable aliases and memory scopes. See [rename notes](rename.md).
+
+This rename does not establish new runtime, provider or cross-host evidence. Verification and publication results for the rename are recorded separately from the historical results below.
+
+Rename review: the offline frozen-lockfile dependency install and `pnpm typecheck` passed. README local links, SVG XML and Git whitespace checks passed. The publication audit reported no issues; its two warnings concern ignored dependency symlinks and Windows/MSYS path spelling. No test suite, API/export checks or live provider calls were run, in keeping with the user's implementation-only instruction. The development servers started with the renamed packages and reused existing database history. A fresh browser observation remains unavailable because the embedded browser's error page was blocked by its URL policy; the current logo and UI have not received a new visual sign-off.
 
 ## Source publication — 25 October
 
-The user requested publication of the current changes to the existing private `SS-360/pocket-forge` repository. Source, test definitions, documentation and design assets are included; local credentials, generated artifacts, databases and dependency directories remain excluded. No additional tests, export checks or provider calls were requested for this publication. The implementation and evidence limits below still apply.
+The user requested publication of the current changes to the existing private `SS-360/ember-forge` repository. Source, test definitions, documentation and design assets are included; local credentials, generated artifacts, databases and dependency directories remain excluded. No additional tests, export checks or provider calls were requested for this publication. The implementation and evidence limits below still apply.
 
 ## Implementation continuation — 25 October
 
@@ -58,7 +66,7 @@ The user chose **implementation only**: no full suite, isolated API/export check
 
 - `pnpm run doctor`: completed. Node 24.13.0 and pnpm 11.25.0 found; NVIDIA and Zetaris readiness both false because configuration is absent.
 - `pnpm typecheck`: passed.
-- `pnpm --filter @pocketforge/web exec vite build`: passed after the current UI and API changes.
+- `pnpm --filter @emberforge/web exec vite build`: passed after the current UI and API changes.
 - Initial sandboxed localhost requests failed. Starting the loopback dev servers outside the sandbox resolved access. Browser DOM/interaction checks passed at the default 1316px width and the available 500px narrow width; no document overflow, no browser warnings/errors, visible keyboard focus, trace import/compilation, operation lineage, and package download were observed. Screenshot calls still fail, leaving visual comparison and a true phone viewport outstanding.
 - `pnpm test`: 9 files and 45 checks passed, including trace privacy/label rejection, graph disagreement, duplicate-input evidence, incorrect procedure rejection, timeout cancellation, immutable import IDs, candidate persistence, and export-file integrity. Affected API/export tests passed again after candidate-specific host discovery status was added.
 - Downloaded stock-reconciliation-compiled-0.1.0-agent-skill.tar.gz through the browser, extracted it to an unrelated temporary directory, and ran its packaged verifier successfully. The seven-case development report has 2 supported correct and 5 unsupported rejected. This candidate is deterministic trace assembly, not model learning.
