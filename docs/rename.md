@@ -7,6 +7,7 @@
 - App header, browser title, metadata, documentation and generated instructions: Ember Forge.
 - Workspace packages: `@emberforge/*`; repository package: `ember-forge`.
 - Brand assets: `ember-forge.svg`, `ember-forge-symbol.svg`, `ember-forge-lockup.svg`.
+- The original pocket-and-flame SVG artwork is retained; only its name and wordmark text change to Ember Forge.
 - Newly exported runtime: `runtime/emberforge-runtime.mjs`.
 - Newly generated format identifiers: `emberforge.*`.
 - Preferred local environment variables: `EMBERFORGE_API_PORT` and `EMBERFORGE_CODEX_BINARY`.

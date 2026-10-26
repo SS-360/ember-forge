@@ -4,7 +4,7 @@ Last updated: 26 October 2026, Asia/Calcutta.
 
 ## Ember Forge rename — 26 October
 
-The user requested the new name throughout the project. App text, page metadata, package scopes/imports, new export runtime filenames, generated format identifiers, asset names and documentation now use Ember Forge. The pocket logo is replaced by an ember in the existing amber-red palette. New exports use `emberforge-runtime.mjs`. Historical screenshots, hash-bound seed/evaluation records and existing local artifacts retain their original contents; compatibility handling preserves old schema identifiers, database history, environment-variable aliases and memory scopes. See [rename notes](rename.md).
+The user requested the new name throughout the project. App text, page metadata, package scopes/imports, new export runtime filenames, generated format identifiers, asset names and documentation now use Ember Forge. The original pocket-and-flame SVG logo is retained at the user's request, with only its brand name updated. New exports use `emberforge-runtime.mjs`. Historical screenshots, hash-bound seed/evaluation records and existing local artifacts retain their original contents; compatibility handling preserves old schema identifiers, database history, environment-variable aliases and memory scopes. See [rename notes](rename.md).
 
 This rename does not establish new runtime, provider or cross-host evidence. Verification and publication results for the rename are recorded separately from the historical results below.
 

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="apps/web/public/ember-forge.svg" alt="Ember Forge ember logo" width="76" height="76">
+  <img src="apps/web/public/ember-forge.svg" alt="Ember Forge logo" width="76" height="76">
 </p>
 
 <h1 align="center">Ember Forge</h1>
@@ -27,7 +27,7 @@ The current domain is **stock reconciliation**: reconcile open orders against in
   <img src="docs/design/amber-red-workspace.jpg" alt="Workbench before the rename, showing trace compilation, reference runs, execution evidence, and amber-red controls" width="760">
 </p>
 
-Actual local UI capture from 24 October 2026 using synthetic data, before the Ember Forge rename and ember mark. It illustrates the interface; it is not a fresh verification of later backend changes. See the [interface notes](docs/design/apple-interface.md) and [brand assets](docs/design/brand.md).
+Actual local UI capture from 24 October 2026 using synthetic data, before the Ember Forge rename. It illustrates the interface; it is not a fresh verification of later backend changes. See the [interface notes](docs/design/apple-interface.md) and [brand assets](docs/design/brand.md).
 
 </details>
 
@@ -233,6 +233,6 @@ The [implementation follow-up](docs/implementation-follow-up.md) tracks the rema
 
 ## Attribution and licensing
 
-The local memory integration uses the pinned [Meterless H-MEM reference](vendor/meterless/hmem/README.md), whose [Apache 2.0 license](vendor/meterless/hmem/LICENSE) is retained. Exported bundles include their own third-party notices. Ember Forge's ember SVG mark is included in [the web assets](apps/web/public).
+The local memory integration uses the pinned [Meterless H-MEM reference](vendor/meterless/hmem/README.md), whose [Apache 2.0 license](vendor/meterless/hmem/LICENSE) is retained. Exported bundles include their own third-party notices. Ember Forge's pocket-and-flame SVG mark is included in [the web assets](apps/web/public).
 
 No top-level license has been added for Ember Forge's own source. Third-party components retain their respective licenses.

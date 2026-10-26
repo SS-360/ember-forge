@@ -4,7 +4,7 @@
 
 | Capability | Implementation | Evidence boundary |
 | --- | --- | --- |
-| Apple-style UI, Ember Forge name/ember mark, amber-red accents | Implemented | Prior screenshots in docs/design predate the rename; new SVG assets and references need fresh visual observation |
+| Apple-style UI, Ember Forge name/pocket-and-flame mark, amber-red accents | Implemented | Prior screenshots in docs/design predate the rename; the retained SVG mark and renamed wordmark need fresh visual observation |
 | Typed IR, assembly, independent development/frozen protocol | Implemented | Historical v2 assembled candidate: 21 development and 21 frozen synthetic cases; not a fresh current-source result or learning claim |
 | Normalized traces and separate source snapshots | Implemented | Historical snapshot replay; newly added zero-operation applicability failures still need exercise |
 | Bounded synthesis/repair and typed provider adapter | Implemented | Test-only prior controller evidence; current authorization/composition integration unverified |
