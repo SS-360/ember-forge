@@ -58,7 +58,7 @@ export function CompilationSources({ traces, selectedIds, busy, readiness, sugge
         <span className={"run-status run-status--" + trace.outcome}>{trace.outcome === "succeeded" ? "Success" : trace.reason ?? trace.outcome}</span>
         <code title={trace.traceId}>{trace.traceId.slice(0, 8)}…</code>
         <span>{trace.operationCount ? trace.operationCount + " operations" : "Rejected before operations"}</span>
-        <span>{trace.recordingMethod === "compiled_runtime_replay" ? "Runtime replay" : "Declared agent tools"}</span>
+        <span>{trace.recordingMethod === "compiled_runtime_replay" ? "Runtime replay" : trace.originalAgentVerified ? "Recorded original agent" : "Declared agent tools"}</span>
         <span>{trace.evidenceClass === "synthetic_fixture" ? "Synthetic fixture" : "User sanitized"}</span>
         <span>{trace.replayVerified ? "Snapshot replay verified" : "Snapshot replay unverified"}</span>
         <code className="trace-fingerprint" title={trace.hash}>sha256 {trace.hash.slice(0, 10)}…</code>

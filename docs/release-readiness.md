@@ -1,6 +1,12 @@
 # Capability and release evidence
 
-25 October 2026. Current work is implementation-only at the user's request. No full suite, API/export checks, host sessions or live provider calls were run during this continuation.
+## 27 October 2026 status
+
+The local prototype has two distinct workflow families: a stock-reconciliation skill generated from Nemotron traces and a checked fulfilment-exceptions template with a portable `SKILL.md` package. The stock candidate `zetaris-stock-207ca2ab-retry-3` passed 21 finite synthetic development checks and offline export verification. The fulfilment package uses synthetic snapshots and fixed trusted logic; it does not demonstrate second-domain learning. The local Zetaris read path has synthetic source evidence.
+
+Explicit Codex and Claude Code execution exists for an earlier stock package. An isolated Hermes run automatically selected and executed the newer package on one synthetic input, but the same-package two-host transfer gate is still open. OpenClaw is untested because its CLI is absent. Offline ClawHub staging is implemented; publication is blocked on owner approval of ClawHub's MIT-0 licensing requirement. A clean-checkout rehearsal and protected cloud deployment remain unverified. The project is a local prototype, not production-ready. Report call/token/latency measurements with test scope and failures; no savings or break-even claim is currently supported.
+
+Historical 25 October checkpoint. The user's later authorization expanded work to free-endpoint rehearsals and testing. The details below should be read with the dated updates in [progress](progress.md) and [host/source verification](host-and-zetaris-verification.md).
 
 | Capability | Implementation | Evidence boundary |
 | --- | --- | --- |
@@ -13,8 +19,10 @@
 | Durable jobs and cancellation | Implemented | Transactional checkpoints, shared cancellation flag, owner recovery and preserved malformed legacy files; runtime scenarios unverified |
 | Candidate export completion receipt | Implemented | Downloads require a successful receipt matching candidate and verification hashes; current packages need explicit re-export/checks to acquire that receipt |
 | H-MEM library registration/retrieval/execution/invalidation | Implemented | Historical actual UI/API cold/warm/policy-change evidence; no new product checks in this continuation |
-| Zetaris tenant transport | Interface/orchestration implemented | Real authentication/endpoints, two-source reads and tenant behavior unverified |
-| Host transfer | Portable format implemented | Historical Codex discovery only; model invocation/execution and second-host discovery unverified |
+| Zetaris local stock path | Implemented | Two synthetic PostgreSQL sources registered in local Zetaris; reads, join and controlled freshness check passed; cloud tenant transport remains unverified |
+| Host transfer | Portable format implemented | Codex and Claude explicitly ran the same older package; Hermes automatically selected and ran a newer package once; OpenClaw untested and same-package transfer for the newer artifact remains open |
+| ClawHub package preparation | Offline staging command implemented | Rechecks and stages an exact verified folder; publication has not occurred and MIT-0 rights/owner decision are pending |
+| Cloud deployment | Not deployed | No authenticated hosted environment, persistent operational service or deployment rehearsal |
 | Live savings / generalization | Not established | No live agent/instruction-only baselines, model-generated candidate or representative real data |
 
 ## Current-source setup and local walkthrough
@@ -32,8 +40,11 @@ Show repeated reconciliation work → explicit synthetic traces → assembly →
 
 ## Outstanding release gates
 
-- Exercise the latest code when verification is requested; capture counts and failures against a named source manifest.
+- Rerun the full test suite after the current packaging edits and capture counts/failures against a named source manifest.
 - Confirm free entitlement/credentials, finite request/token authorization and the actual tenant contract before activation.
-- Finish real model trajectory generation/repair, two-host invocation/execution and fair measured baselines.
+- Run OpenClaw install/discovery/invocation/execution, and test the exact same newer export in two hosts before claiming cross-harness transfer.
+- Build a protected cloud deployment with authentication, secret handling, persistent storage, and operational checks before calling the service deployable.
+- Resolve MIT-0 rights and owner metadata before considering ClawHub publication.
+- Broaden fair measurements before making any savings claim.
 - Rehearse current-source setup and exact-package transfer in isolated locations. Record unresolved gaps without promoting historical evidence.
 - The user authorized pushing the current essential files to the existing private GitHub repository on 25 October. This source publication does not establish that the outstanding release gates have passed. No public deployment or submission is included.

@@ -1,0 +1,19 @@
+{
+  "taskFamily": "fulfilment-exceptions",
+  "sourceMode": "snapshot",
+  "schemaVersion": "fulfilment-v1",
+  "policyVersion": "0.1.0",
+  "asOfDate": "2026-10-26",
+  "orders": [
+    { "orderId": "ORD-2001", "sku": "CUP-RED", "promisedDate": "2026-10-22", "quantity": 10, "status": "open" },
+    { "orderId": "ORD-2002", "sku": "MUG-BLUE", "promisedDate": "2026-10-25", "quantity": 4, "status": "open" },
+    { "orderId": "ORD-2003", "sku": "PLATE-WHITE", "promisedDate": "2026-10-20", "quantity": 8, "status": "open" },
+    { "orderId": "ORD-2004", "sku": "CUP-RED", "promisedDate": "2026-10-20", "quantity": 2, "status": "cancelled" }
+  ],
+  "shipments": [
+    { "shipmentId": "SHIP-9001", "orderId": "ORD-2001", "sku": "CUP-RED", "shippedDate": "2026-10-24", "quantity": 3, "status": "shipped" },
+    { "shipmentId": "SHIP-9002", "orderId": "ORD-2002", "sku": "MUG-BLUE", "shippedDate": "2026-10-27", "quantity": 3, "status": "shipped" },
+    { "shipmentId": "SHIP-9003", "orderId": "ORD-2003", "sku": "PLATE-WHITE", "shippedDate": "2026-10-22", "quantity": 8, "status": "shipped" },
+    { "shipmentId": "SHIP-9004", "orderId": "ORD-2004", "sku": "CUP-RED", "shippedDate": "2026-10-22", "quantity": 1, "status": "cancelled" }
+  ]
+}

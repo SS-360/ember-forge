@@ -202,7 +202,7 @@ export class SkillMemoryService {
     const evidenceIds = ["verification:" + candidateHash, ...caseIds];
     const memory = this.hmem.add({
       content: "Ember Forge validated skill " + skill.id + " version " + skill.version +
-        " for stock reconciliation. Policy " + contract.policyVersion +
+        " for stock reconciliation. Reconcile stock demand and inventory using orders, product aliases and unit conversions. Policy " + contract.policyVersion +
         ". Source schemas " + contract.sourceSchemaVersions.orders + ", " +
         contract.sourceSchemaVersions.inventory + ", " + contract.sourceSchemaVersions.productRules +
         ". Evidence " + candidateHash + ".",
@@ -326,7 +326,11 @@ export class SkillMemoryService {
     const rejections: SkillSelection["rejections"] = [];
     for (const candidate of retrieval.memories) {
       const entry = this.registry.entries.find((item) => item.memoryId === candidate.memory.id);
-      if (!entry || entry.status !== "validated") continue;
+      if (!entry) continue;
+      if (entry.status !== "validated") {
+        rejections.push({ skillId: entry.skillId, skillVersion: entry.skillVersion, memoryId: entry.memoryId, reason: entry.invalidatedReason ?? "MEMORY_NOT_VALIDATED" });
+        continue;
+      }
 
       let skill: SkillDefinition;
       let contract: SkillContract;

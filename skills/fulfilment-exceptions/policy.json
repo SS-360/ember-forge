@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "emberforge.fulfilment-policy/1",
+  "id": "dispatch-review",
+  "version": "0.1.0",
+  "graceDays": 2,
+  "includeIncomplete": true
+}

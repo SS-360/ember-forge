@@ -50,7 +50,7 @@ export async function registerEvaluationRoutes(app: FastifyInstance, projectRoot
       try { frozen = JSON.parse(await readFile(splitPath, "utf8")) as ProtocolSplit; }
       catch (error) {
         if (!(error instanceof Error) || !("code" in error) || error.code !== "ENOENT") throw error;
-        frozen = buildProtocolSplit("frozen", randomUUID());
+        frozen = buildProtocolSplit("frozen", randomUUID(), candidate.contract.supportedSourceModes.includes("snapshot") ? "snapshot" : "fixture");
         // Freeze before execution. Process restarts reuse this exact split, including after failure.
         await writeFile(splitPath, JSON.stringify(frozen, null, 2) + "\n", { encoding: "utf8", flag: "wx" });
       }

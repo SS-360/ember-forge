@@ -83,7 +83,7 @@ export interface SkillPayload {
   skill: SkillDefinition;
   contract: SkillContract;
   verification: VerificationReport;
-  harnessChecks?: Array<{ harness: "codex"; candidateHash: string; discovery: "verified"; invocation: "unverified"; execution: "unverified" }>;
+  harnessChecks?: Array<{ harness: "codex" | "claude"; candidateHash: string; discovery: "verified"; invocation: "verified" | "unverified"; execution: "verified" | "unverified"; providerLabel?: string }>;
   lineage?: {
     method: "deterministic_trace_assembly" | "test_synthesis" | "nemotron_synthesis";
     adapterId: string;
@@ -108,6 +108,7 @@ export interface TraceRecord {
   inputHash: string;
   sourceCandidateHash?: string;
   replayVerified?: boolean;
+    originalAgentVerified?: boolean;
 }
 
 export interface CandidateSummary {

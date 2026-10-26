@@ -33,7 +33,7 @@ function caseTitle(id: string): string {
 }
 
 export function VerificationExport({
-  report, caseDetails, preview, selectedCaseId, busy, codexDiscovered, onSelectCase, onVerify, onExport
+  report, caseDetails, preview, selectedCaseId, busy, codexDiscovered, codexExecuted, claudeExecuted, onSelectCase, onVerify, onExport
 }: {
   report: VerificationReport | null;
   caseDetails: VerificationCaseDetail[];
@@ -41,6 +41,8 @@ export function VerificationExport({
   selectedCaseId: string | null;
   busy: boolean;
   codexDiscovered: boolean;
+  codexExecuted: boolean;
+  claudeExecuted: boolean;
   onSelectCase: (caseId: string) => void;
   onVerify: () => void;
   onExport: () => void;
@@ -131,8 +133,8 @@ export function VerificationExport({
         <table className="host-table">
           <thead><tr><th scope="col">Host</th><th scope="col">Status</th></tr></thead>
           <tbody>
-            <tr><td>Codex</td><td><span className="compat-dot compat-dot--ready" />{codexDiscovered ? "Repo discovery verified · invocation unverified" : "Folder format ready · discovery unverified"}</td></tr>
-            <tr><td>Claude Code</td><td><span className="compat-dot compat-dot--ready" />Folder format ready · discovery unverified</td></tr>
+            <tr><td>Codex</td><td><span className="compat-dot compat-dot--ready" />{codexExecuted ? "Explicit invocation + execution verified" : codexDiscovered ? "Repo discovery verified · invocation unverified" : "Folder format ready · discovery unverified"}</td></tr>
+            <tr><td>Claude Code</td><td><span className="compat-dot compat-dot--ready" />{claudeExecuted ? "Invocation + execution verified · Nemotron backend" : "Folder format ready · discovery unverified"}</td></tr>
             <tr><td>OpenClaw</td><td><span className="compat-dot" />Unverified</td></tr>
             <tr><td>Hermes</td><td><span className="compat-dot" />Unverified</td></tr>
           </tbody>

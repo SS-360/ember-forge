@@ -10,12 +10,14 @@
     "./trace-fixtures": "./src/trace-fixtures.ts",
     "./synthesis-controller": "./src/synthesis-controller.ts",
     "./nemotron-adapter": "./src/nemotron-adapter.ts",
-    "./trace-replay": "./src/trace-replay.ts"
+    "./trace-replay": "./src/trace-replay.ts",
+    "./agent-loop": "./src/agent-loop.ts"
   },
   "dependencies": {
     "@emberforge/contracts": "workspace:*",
     "@emberforge/evaluator": "workspace:*",
-    "@emberforge/runtime": "workspace:*"
+    "@emberforge/runtime": "workspace:*",
+    "zod": "4.6.7"
   }
 }
 

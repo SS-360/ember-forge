@@ -8,11 +8,12 @@ export const SourceSnapshotSchema = z.object({
   parameters: StockParametersSchema, dataset: StockDatasetSchema
 }).strict();
 const VersionTagSchema = z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._/-]{0,63}$/);
+const SourceVersionSchema = z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$/);
 const ReasonSchema = z.string().regex(/^[A-Z][A-Z0-9_]{1,63}$/);
 const SourceVersionsSchema = z.object({
-  orders: VersionTagSchema,
-  inventory: VersionTagSchema,
-  productRules: VersionTagSchema
+  orders: SourceVersionSchema,
+  inventory: SourceVersionSchema,
+  productRules: SourceVersionSchema
 }).strict();
 
 /** Normalized tool arguments only. Raw rows, prompts, credentials and provider logs are excluded. */
@@ -23,6 +24,11 @@ export const SanitizedTraceSchema = z.object({
   evidenceClass: z.enum(["synthetic_fixture", "user_sanitized"]),
   recordingMethod: z.enum(["compiled_runtime_replay", "normalized_agent_tools"]),
   sourceCandidateHash: HashSchema.optional(),
+  agentOrigin: z.object({
+    runId: z.string().uuid(), attempt: z.number().int().positive(),
+    adapterId: VersionTagSchema, mode: z.enum(["nemotron", "test_only"]),
+    promptHash: HashSchema, configHash: HashSchema, transcriptHash: HashSchema
+  }).strict().optional(),
   recordedAt: z.string().datetime(),
   sourceMode: SourceModeSchema,
   policyVersion: VersionTagSchema,
@@ -37,7 +43,7 @@ export const SanitizedTraceSchema = z.object({
     outcome: z.enum(["succeeded", "failed"]),
     errorCode: ReasonSchema.optional()
   }).strict()).max(64),
-  failureStage: z.literal("applicability").optional(),
+  failureStage: z.enum(["applicability", "agent_refusal"]).optional(),
   outputArtifactHash: HashSchema.optional(),
   label: z.object({
     authority: z.literal("independent_evaluator"),
@@ -81,6 +87,7 @@ export const SanitizedTraceSchema = z.object({
   }
   const finalCall = trace.calls.at(-1);
   if (!finalCall) {
+    if (trace.failureStage === "agent_refusal" && trace.agentOrigin && trace.recordingMethod === "normalized_agent_tools" && trace.label.outcome === "unsupported" && trace.label.reason && !trace.outputArtifactHash) return;
     const applicabilityReasons = ["UNSUPPORTED_SOURCE_MODE", "POLICY_VERSION_MISMATCH", "SCHEMA_VERSION_MISMATCH", "ROW_LIMIT_EXCEEDED", "INVENTORY_SNAPSHOT_AFTER_RANGE", "DUPLICATE_SKU_ALIAS", "DUPLICATE_UNIT_RULE", "DUPLICATE_ORDER_ID", "DUPLICATE_INVENTORY_KEY"];
     if (trace.failureStage !== "applicability" || trace.label.outcome === "succeeded" || !trace.label.reason || !applicabilityReasons.includes(trace.label.reason) || trace.outputArtifactHash) context.addIssue({ code: "custom", path: ["calls"], message: "An empty recording requires an explicit applicability failure, a recognized rejection reason, and no output." });
     return;

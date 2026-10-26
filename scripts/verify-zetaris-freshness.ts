@@ -1,0 +1,6 @@
+import {execFile} from 'node:child_process';import {promisify} from 'node:util';import {readFile,writeFile} from 'node:fs/promises';import {parseEnv} from 'node:util';import {readLocalZetarisStock} from '../apps/api/src/local-zetaris.js';
+const run=promisify(execFile),env=parseEnv(await readFile('.env','utf8')),input=JSON.parse(await readFile('artifacts/zetaris/stock-live-be33034d/input.synthetic.json','utf8'));
+const update=async(n:number)=>run('docker',['exec','zetaris-postgres-1','psql','-U','zetaris','-d','ember_warehouse_be33034d','-v','ON_ERROR_STOP=1','-c',`UPDATE inventory SET "onHandEach"=${n} WHERE sku='CUP-RED' AND "warehouseId"='WH-01'`],{windowsHide:true});
+let changed;
+try{await update(17);changed=await readLocalZetarisStock(process.cwd(),input.parameters,env);if(changed.records.find(x=>x.sku==='CUP-RED')?.shortageEach!==8)throw Error('LIVE_MUTATION_NOT_OBSERVED')}finally{await update(15)}
+await writeFile('artifacts/zetaris/stock-live-be33034d/freshness-check.json',JSON.stringify({status:'passed',changedReadId:changed.readId,changedShortage:8,restoredOnHand:15,source:'Dedicated synthetic warehouse PostgreSQL database',limitation:'Controlled local test; no production source changed.'},null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({status:'freshness_verified',changedReadId:changed.readId,changedShortage:8,restoredOnHand:15}));

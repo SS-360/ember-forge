@@ -53,13 +53,15 @@ export async function registerLibraryRoutes(app: FastifyInstance, projectRoot: s
       retrieval: selection.retrieval, rejections: selection.rejections,
       status: "requires_reasoning", modelCallCount: 0, retrievalDurationMs,
       reason: selection.rejections[0]?.reason ?? "NO_VERIFIED_APPLICABLE_SKILL",
+      nextAction: "Inspect the rejection requirements or explicitly authorize a new original-agent run. No reasoning endpoint is called automatically.",
+      sequence: selection.selected ? ["hmem_retrieval", "artifact_hash_check_passed", "contract_check_passed", "bounded_execution"] : ["hmem_retrieval", selection.rejections.length ? "candidate_refused" : "cold_miss", "requires_separately_authorized_agent_run"],
       limitation: "Local H-MEM retrieval and bounded execution. No automatic model fallback or live source query occurs. Finite verification is not a general correctness proof."
     };
     if (selection.selected) {
       const { skill, contract, memoryId, evidenceIds } = selection.selected;
       try {
         const execution = executeSkill(skill, contract, input.data.parameters, input.data.dataset);
-        evidence = { ...evidence, reason: null, status: "succeeded", candidate: { skillId: skill.id, skillVersion: skill.version, memoryId, evidenceIds }, result: execution.records, metrics: execution.metrics };
+        evidence = { ...evidence, reason: null, nextAction: null, status: "succeeded", candidate: { skillId: skill.id, skillVersion: skill.version, memoryId, evidenceIds }, result: execution.records, metrics: execution.metrics };
       } catch (error) {
         const reason = error instanceof SkillExecutionError ? error.code : "EXECUTION_FAILED";
         memory.recordExecutionFailure({ skillId: skill.id, skillVersion: skill.version, runId, reason, sourceVersions: input.data.dataset.sourceVersions });

@@ -1,10 +1,11 @@
 import { createHash, randomUUID } from "node:crypto";
-import { access, mkdir, readFile, writeFile, rename } from "node:fs/promises";
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 import { SkillContractSchema, SkillDefinitionSchema, StockDatasetSchema, StockParametersSchema, formatVersionSchema } from "../packages/contracts/src/index.js";
 import { reconcileStock } from "../packages/evaluator/src/index.js";
+import { replaceArtifactFile } from "./atomic-artifact.js";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -84,14 +85,17 @@ await mkdir(path.join(target, "runtime"), { recursive: true });
 await mkdir(path.join(target, "tests"), { recursive: true });
 await mkdir(path.join(target, "examples"), { recursive: true });
 
+const skillDescription = skill.taskFamily === "stock-reconciliation"
+  ? "Reconcile open stock orders against warehouse inventory, including SKU aliases, unit conversions, and shortage totals. Use when asked to reconcile stock, check inventory shortages, or compare open orders with available warehouse stock. Requires the declared snapshot schemas and policy; do not use for other data sources or policies."
+  : "Execute the verified " + skill.taskFamily + " procedure for compatible inputs. Use only when the user requests this task and the input matches the applicability contract. Do not use for other task families, schemas, policies, or live data sources.";
 const skillDocumentText = [
   "---", "name: " + skill.id,
-  "description: Execute the verified " + skill.taskFamily + " procedure for compatible inputs. Use only when the user requests this task and the input matches the applicability contract. Do not use for other task families, schemas, policies, or live data sources.",
+  "description: " + skillDescription,
   "---", "", "# " + skill.id, "",
   "Use this skill only when the request is a " + skill.taskFamily + " task and the supplied parameters, source mode, schema versions, policy version, and row count satisfy [the contract](contract.json). The runner reads JSON supplied by the user; it does not connect to external data sources.", "",
   "## Execute", "", "1. Prepare an input JSON file using [the example](input.example.json) and confirm it matches the contract. Never place credentials in the input.",
-  "2. Resolve the installed skill directory from the SKILL.md file the host loaded. Use an absolute path to the bundled runtime, quoted for spaces; do not assume the caller is in this folder. Replace /absolute/path/to/" + skill.id + " below with that directory. Run with Node.js 24.13 or newer:", "", "   ```sh", "   node \"/absolute/path/to/" + skill.id + "/runtime/emberforge-runtime.mjs\" --input input.json --output result.json", "   ```", "",
-  "3. Return the result and execution status. The runner makes no model calls.", "4. If the runner exits with status 2, report the machine-readable rejection reason and request compatible data or use the host's normal reasoning workflow. Do not silently alter schemas, policy, aliases, or units.", "",
+  "2. Run the bundled runtime with Node.js 24.13 or newer. Hermes substitutes ${HERMES_SKILL_DIR} with the loaded skill's absolute directory, including paths with spaces. Run this command from the caller's current directory:", "", "   ```sh", "   node \"${HERMES_SKILL_DIR}/runtime/emberforge-runtime.mjs\" --input input.json --output result.json", "   ```", "",
+  "   Other hosts should resolve the runtime relative to the loaded SKILL.md location, quote the complete path, and run from the caller's working directory. The runner reads input/output paths from that working directory and makes no model calls.", "3. Return the result and execution status. If the runner exits with status 2, report the machine-readable rejection reason and request compatible data or use the host's normal reasoning workflow. Do not silently alter schemas, policy, aliases, or units.", "",
   "Run node with the absolute, quoted path to tests/verify-export.mjs in the same installed skill directory to check the bundled examples. Verification covers a finite synthetic development suite only.", "", "## Resources", "",
   "- [Input contract](contract.json)", "- [Verification evidence](verification.json)", "- [Verification cases](tests/cases.json)",
   ...(lineage ? ["- [Trace lineage and compilation limits](lineage.json)"] : []), "- [Runtime instructions](README.md)", ""
@@ -117,7 +121,7 @@ const writes: Array<[string, string]> = [
   ["verification.json", JSON.stringify(verification, null, 2) + "\n"],
   ["input.example.json", JSON.stringify(inputExample, null, 2) + "\n"],
   ["examples/unsupported-unknown-unit.json", JSON.stringify(unsupportedExample, null, 2) + "\n"],
-  ["bindings.example.json", JSON.stringify({ inputFile: "input.example.json", sourceMode: "fixture", notes: "Replace the example arrays with approved data matching contract.json. The runner does not need Ember Forge, provider credentials, or a source connector." }, null, 2) + "\n"],
+  ["bindings.example.json", JSON.stringify({ inputFile: "input.example.json", sourceMode: fixture.dataset.sourceMode, notes: "Replace the example arrays with approved data matching contract.json. The runner does not need Ember Forge, provider credentials, or a source connector." }, null, 2) + "\n"],
   ["provenance.json", JSON.stringify({ schemaVersion: "emberforge.export-provenance/1", skillId: skill.id, skillVersion: skill.version, candidateHash: canonicalHash({ skill, contract }), candidateOrigin: verification.candidateOrigin ?? "unknown", verificationScope: verification.scope, files: { "skill.json": sha256(JSON.stringify(skill, null, 2) + "\n"), "contract.json": sha256(JSON.stringify(contract, null, 2) + "\n"), "verification.json": sha256(JSON.stringify(verification, null, 2) + "\n") } }, null, 2) + "\n"],
   ["package.json", JSON.stringify({ name: `emberforge-${skill.id}`, version: skill.version, private: true, type: "module", engines: { node: ">=24.13.0 <25" }, scripts: { run: "node runtime/emberforge-runtime.mjs --input input.json", verify: "node tests/verify-export.mjs" } }, null, 2) + "\n"],
   ["SKILL.md", skillDocumentText], ["README.md", readmeText], ["THIRD_PARTY_NOTICES.md", noticeText]
@@ -182,7 +186,7 @@ provenance.packageCheck.status = "passed";
 provenance.packageCheck.completedAt = new Date().toISOString();
 const receiptPath = path.join(target, "provenance-" + randomUUID() + ".tmp");
 await writeFile(receiptPath, JSON.stringify(provenance, null, 2) + "\n", "utf8");
-await rename(receiptPath, path.join(target, "provenance.json"));
+await replaceArtifactFile(receiptPath, path.join(target, "provenance.json"));
 return { status: "exported_and_verified", skillId: skill.id, skillVersion: skill.version, candidateHash: canonicalHash({ skill, contract }), artifactDirectory: path.relative(projectRoot, target), verification: check.stdout.trim() };
 }
 

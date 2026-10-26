@@ -40,6 +40,8 @@ flowchart LR
 
 ## Principal packages
 
+The new original-agent path and evidence boundaries are described in [agent workflow](agent-workflow.md). It chooses trusted tools incrementally rather than replaying a supplied graph. Its model/evaluation/host behavior remains unverified; four-arm measurement and transfer preparation are separate from historical runtime results.
+
 - `apps/web`: workbench, candidate selection, verification/export, frozen evaluation and Skill Library.
 - `apps/api`: Fastify, SQLite history, trace snapshots, cancellable synthesis jobs, evaluation, library and tenant transport contract.
 - `packages/contracts`: Zod schemas for task, trace, program, skill, and export data.

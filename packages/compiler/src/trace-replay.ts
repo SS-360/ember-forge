@@ -18,6 +18,9 @@ export function replayTraceSnapshot(traceInput: unknown, snapshotInput: unknown,
   try { expectedHash = canonicalHash(reconcileStock(snapshot.parameters, snapshot.dataset).lines); }
   catch (error) { if (!(error instanceof UnsupportedInputError)) throw error; expectedReason = error.code; }
   if (expectedReason !== trace.label.reason || (expectedHash && expectedHash !== trace.outputArtifactHash)) throw new TraceCompilationError("TRACE_LABEL_MISMATCH", "The independent reference disagrees with the imported label or result hash.");
+  if (trace.failureStage === "agent_refusal") {
+    return { schemaVersion: "emberforge.trace-replay/1" as const, traceId: trace.traceId, traceHash: canonicalHash(trace), inputHash: snapshot.inputHash, status: "verified" as const, replayedAt: new Date().toISOString(), operationCount: 0, evaluatorVersion: "stock-reference/2", basis: "independent_refusal_check" as const, limitation: "Checks the refusal against the local reference. Original model provenance requires the separately stored original-agent run record." };
+  }
   if (trace.failureStage === "applicability") {
     const verdict = assessApplicability(trustedContract, snapshot.parameters, snapshot.dataset);
     if (trace.calls.length !== 0 || verdict.supported || verdict.reason !== expectedReason) throw new TraceCompilationError("TRACE_REPLAY_MISMATCH", "The trusted applicability check did not reproduce the pre-operation failure.");

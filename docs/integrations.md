@@ -1,6 +1,6 @@
 # Provider integration readiness
 
-This page records the exact prerequisites for turning the current local fixture demo into a sponsor-connected workflow. No provider request has been made from this workspace.
+This page records prerequisites and evidence for a sponsor-connected workflow. No NVIDIA request has been made. Local Zetaris login and a constant query were verified on 26 October; stock source integration remains separate.
 
 ## NVIDIA Nemotron
 
@@ -29,6 +29,8 @@ Adapter request shape was prepared against the [official Nemotron API reference]
 The local integration uses the pinned reference at `vendor/meterless/hmem`, commit `1742dec56a66e58eef9dda2d2b865823758ca8cd`. Skill Library now uses it through the actual UI/API: verified registration, immutable artifact hash checks, retrieval, deterministic applicability, runtime execution, and policy/schema deprecation. Local execution artifacts preserve nominated memories, selected candidate, evidence references, rejections and durations. Cold lookup, changed-input warm execution and policy invalidation were observed on 24 October. This is the pinned minimal local reference, not a hosted production service.
 
 ## After credentials arrive
+
+**26 October update:** NVIDIA configuration is present with valid URL format; external credential/entitlement verification is pending and execution remains disabled. Local Zetaris is running at `http://localhost:3000`; login and the official constant SELECT probe passed, with sanitized evidence under `artifacts/zetaris/`. The older missing-credential statements above describe their original checkpoint. The actual local route uses username/password and organisation ID rather than the placeholder SaaS API key. See [current credential notes](credentials.md). No verified two-source stock snapshot or production tenant transport is claimed.
 
 1. Confirm the approved budget and endpoint/account details without recording secrets in evidence.
 2. Add one bounded, typed read-only call per provider and retain sanitized requests, responses, query IDs, and hashes.

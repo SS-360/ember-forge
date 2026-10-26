@@ -16,9 +16,11 @@
 
 Ember Forge is a local web application for turning recorded workflows into portable, executable Agent Skills. Collect examples, compile a bounded procedure, inspect its supported inputs and verification evidence, then download it or reuse it through the local Skill Library.
 
-The current domain is **stock reconciliation**: reconcile open orders against inventory using product aliases and unit-conversion rules, then report demand, stock, and shortages.
+The main compiled domain is **stock reconciliation**: reconcile open orders against inventory using product aliases and unit-conversion rules, then report demand, stock, and shortages. A second, independently versioned **fulfilment exceptions** workflow checks incomplete shipments and overdue orders from a separate schema. It is a configured template today, not a second Nemotron-learned skill.
 
-> **Status: local prototype.** The available compiler assembles matching operation graphs from synthetic seed-runtime replays. Live Nemotron synthesis is disabled, and live Zetaris access is unfinished. General workflow learning, cross-host execution, and cost savings have not been established.
+> **Status: working local prototype.** Genuine Nemotron tool runs have produced a synthesized stock skill, which passed 21 finite development checks and standalone export checks on synthetic data. Codex and Claude Code explicitly executed an earlier export; Hermes automatically selected and executed the newer export once. Local Zetaris stock reads and a cross-source join pass on synthetic data. OpenClaw and same-package two-host transfer for the newer export remain unverified. Fresh clones keep provider execution disabled until local authorization is configured. General workflow learning, real warehouse accuracy, production readiness, and cost savings remain unverified.
+
+The workbench supports sanitized JSON/CSV samples, saved original-agent runs, trace assembly, Nemotron synthesis, local H-MEM reuse, and downloadable Agent Skills. In the first frozen four-arm comparison, the exact export passed all 27 invocations with zero model calls; instruction-only also passed all 27 using 33 model requests, while the original agent passed 24/27. These are three repeats of nine synthetic inputs. See the [host and live-source checks](docs/host-and-zetaris-verification.md), [compiler verification record](docs/live-verification.md), [agent workflow](docs/agent-workflow.md), [credential guide](docs/credentials.md), [comparison protocol](docs/comparison-protocol.md) and [remaining activation steps](USER_ACTIONS.md).
 
 <details>
 <summary><strong>Preview the workbench</strong> — historical capture of the amber-red interface</summary>
@@ -60,6 +62,8 @@ pnpm doctor
 pnpm dev
 ```
 
+With the required Node/pnpm versions already installed, `pnpm setup:local` performs the locked dependency install and starts the app in one command. This new convenience command still needs a fresh-clone rehearsal.
+
 Open **[http://127.0.0.1:5174](http://127.0.0.1:5174)**. The Fastify API listens on `127.0.0.1:3001`; Vite proxies `/api` requests to it.
 
 **No provider keys are required for the synthetic local workflow.** Dependency installation needs registry access or a populated pnpm cache. Starting the app does not automatically run tests or package checks.
@@ -73,6 +77,8 @@ Open **[http://127.0.0.1:5174](http://127.0.0.1:5174)**. The Fastify API listens
 5. **Reuse it.** Download the Agent Skill, or open **Skill library → Register current candidate**. Load synthetic input, edit compatible data, then choose **Retrieve and execute**.
 
 Candidate names preserve separate artifacts. The header selector reopens saved candidates. Policy or schema drift can deprecate an incompatible library entry; this path has no automatic model fallback.
+
+For the **model-generated workflow**, import a sanitized work sample, observe original agent runs, and inspect their recorded tool steps and shortage reports. Collect two distinct successful inputs and a counterexample, select only their original-agent traces, and choose **Nemotron synthesis** in Compilation method. This path requires a configured free endpoint and local authorization; replay examples stay separately labeled. The first successful live synthesis used 13,543 input and 1,122 output tokens, after earlier failed attempts; whole-workflow usage is partially unknown and retained in the local ledger.
 
 ## What you download
 
@@ -117,18 +123,22 @@ Unsupported inputs return structured reasons such as `UNKNOWN_UNIT`, `POLICY_VER
 
 | Environment | Use | Current evidence |
 | --- | --- | --- |
-| Ember Forge | Retrieve and execute a registered skill on new compatible inputs | Historical local UI/API execution; later backend changes need fresh verification |
-| Standalone Node.js | Run the exported procedure from a terminal or another application | Historical package checks; latest receipt/cancellation changes need exercise |
-| Codex | Install the Agent Skill folder in a host-supported skill location | Repository discovery verified for an earlier candidate; host invocation and execution unverified |
-| Claude Code and other Agent Skills hosts | Use the exported instructions and bundled runner where supported | Host discovery, invocation, and execution unverified |
+| Ember Forge | Retrieve and execute a registered skill on new compatible inputs | New Nemotron candidate retrieved/executed in isolated H-MEM; schema drift rejected |
+| Standalone Node.js | Run the exported procedure from a terminal or another application | New candidate passed exact-package execution checks; frozen-input comparison recorded separately |
+| Codex | Install the Agent Skill folder in a host-supported skill location | Exact new export explicitly invoked and executed on fresh supported/unsupported inputs, with Ember Forge stopped |
+| Claude Code | Use the exported instructions and bundled runner | Explicit Skill-tool invocation and both executions verified using free Nemotron as the host backend |
+| Hermes Agent CLI | Automatically select and run the bundled procedure | One isolated synthetic supported-input run passed on a newer export; same-package two-host transfer is unverified |
+| OpenClaw | Install into its active workspace with `openclaw skills install ./path/to/skill --as <slug>` | Unverified; OpenClaw CLI is not installed here |
 
-The export is an **Agent Skill folder**. Codex plugin bundles and Claude marketplace packages require additional host-specific packaging. A host may still use model tokens to select and invoke a skill; the supported procedure itself runs without a model call. See the [compatibility matrix](docs/skill-compatibility.md) for the exact evidence boundaries.
+The export is an **Agent Skill folder**. Codex plugin bundles and Claude marketplace packages require additional host-specific packaging. A host may still use model tokens to select and invoke a skill; the supported procedure itself runs without a model call. See the [compatibility matrix](docs/skill-compatibility.md) for the exact evidence boundaries and [marketplace packaging](docs/marketplace.md) for offline ClawHub staging and its license gate.
 
 ## How it works
 
 ```mermaid
 flowchart LR
-    T[Sanitized traces] --> A[Graph assembly]
+    I[Sanitized work samples] --> O[Original bounded Nemotron agent]
+    O --> T[Checked tool trajectories]
+    T --> A[Nemotron synthesis or trace assembly]
     A --> C[Typed candidate + contract]
     C --> V[Independent verification]
     V --> E[Portable skill export]
@@ -152,8 +162,8 @@ New assembled candidates use **21 development cases**. A later freeze action cre
 | Execution | Bounded JSON instructions + TypeScript interpreter | Deterministic execution within declared limits |
 | Storage | Built-in Node SQLite + artifact files | Run history, job checkpoints, provider ledger, and versioned artifacts |
 | Memory | Vendored Meterless H-MEM reference | Local verified-skill registration and retrieval |
-| Reasoning integration | NVIDIA Nemotron adapter | Bounded synthesis/repair; disabled in the default server configuration |
-| Data integration | Zetaris tenant transport interface | Bounded read orchestration; live HTTP/auth implementation outstanding |
+| Reasoning integration | NVIDIA Nemotron adapter | Original tool runs and bounded synthesis/repair; disabled by default in fresh clones |
+| Data integration | Zetaris JDBC + local PostgreSQL sources | Two registered stock databases, live table reads, freshness check and cross-source reconciliation join verified on synthetic data |
 | Verification tooling | Vitest, independent evaluator, esbuild | Unit suites, reference comparisons, and portable runtime bundling |
 
 ## Repository map
@@ -216,7 +226,7 @@ The [rename and compatibility notes](docs/rename.md) explain how existing databa
 - Demonstrate discovery, invocation, and correct execution in at least two real agent hosts.
 - Measure generalization, compilation overhead, and costs against fair live baselines.
 
-The [implementation follow-up](docs/implementation-follow-up.md) tracks the remaining work; the [claims ledger](docs/claims.md) distinguishes implementation from demonstrated results.
+The [fulfilment workflow](docs/fulfilment-workflow.md) describes the second domain and its package. The [implementation follow-up](docs/implementation-follow-up.md) tracks remaining work; the [claims ledger](docs/claims.md) distinguishes implementation from demonstrated results.
 
 ## Documentation
 
@@ -225,6 +235,7 @@ The [implementation follow-up](docs/implementation-follow-up.md) tracks the rema
 | [Product description](docs/product-description.md) | Understand the intended product and scope |
 | [Implementation plan](docs/implementation-plan.md) | Follow the build sequence and delivery criteria |
 | [Architecture](docs/architecture.md) | Understand packages, data flow, and trust boundaries |
+| [Fulfilment workflow](docs/fulfilment-workflow.md) | Inspect the second bounded workflow and portable package |
 | [Trace compilation](docs/trace-compilation.md) | Import traces, replay snapshots, or inspect API routes |
 | [Skill compatibility](docs/skill-compatibility.md) | Understand exports and host verification status |
 | [Provider authorization](docs/provider-authorization.md) | Configure bounded provider access |

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { setTimeout as waitForRetry } from "node:timers/promises";
-import { SkillContractSchema, SkillDefinitionSchema, type SkillContract, type SkillDefinition } from "@emberforge/contracts";
+import { SkillContractSchema, SkillDefinitionSchema, type SkillContract, type SkillDefinition, type SkillOperation } from "@emberforge/contracts";
 import { SanitizedTraceSchema, type SanitizedTrace } from "@emberforge/contracts/traces";
 import { validateSkillIR } from "@emberforge/runtime";
 import { compileCandidate, type CompileCandidateResult, type VerificationCase } from "./index.js";
@@ -31,6 +31,8 @@ export interface SynthesisAdapter {
   readonly id: string;
   readonly mode: "nemotron" | "test_only";
   readonly providerScope?: ActiveProviderAuthorization["scope"];
+  readonly promptHash?: string;
+  readonly configHash?: string;
   /** Must bound the complete serialized provider request, including tools/system text. */
   inputTokenUpperBound(context: SynthesisContext): number;
   generate(context: SynthesisContext, options: { signal: AbortSignal; maxOutputTokens: number }): Promise<SynthesisResponse>;
@@ -111,11 +113,11 @@ export interface SynthesisProgressEvent {
   checkpoint: Pick<SynthesisResult, "attempts" | "revisions" | "usage">;
 }
 
-function validatePolicy(policy: SynthesisPolicy, adapter: SynthesisAdapter): void {
+export function validatePolicy(policy: SynthesisPolicy, adapter: Pick<SynthesisAdapter, "mode" | "providerScope">): void {
   const bounded = (value: number, minimum: number, maximum: number) => Number.isInteger(value) && value >= minimum && value <= maximum;
   if (!bounded(policy.maxRevisions, 1, 3) || !bounded(policy.maxProviderCalls, 1, 12) ||
     !bounded(policy.maxInputTokens, 1, 256000) || !bounded(policy.maxOutputTokens, 1, 16384) ||
-    !bounded(policy.maxTotalTokens, 1, 1000000) || !bounded(policy.timeoutMs, 1, 120000) || !bounded(policy.perCallTimeoutMs, 1, 30000) ||
+    !bounded(policy.maxTotalTokens, 1, 1000000) || !bounded(policy.timeoutMs, 1, 300000) || !bounded(policy.perCallTimeoutMs, 1, 90000) ||
     ![policy.maxCompilationCostUsd, policy.inputUsdPerMillionTokens, policy.outputUsdPerMillionTokens].every((value) => Number.isFinite(value) && value >= 0)) {
     throw new TraceCompilationError("SYNTHESIS_POLICY_INVALID", "Configure bounded revisions, calls, tokens, deadlines, token rates and an approved cost ceiling.");
   }
@@ -131,6 +133,35 @@ function usageCost(usage: SynthesisUsage, policy: SynthesisPolicy): number {
 }
 function validUsage(usage: SynthesisUsage): boolean {
   return Number.isSafeInteger(usage.inputTokens) && usage.inputTokens >= 0 && Number.isSafeInteger(usage.outputTokens) && usage.outputTokens >= 0;
+}
+function assertInventoryIsScopedBeforeJoin(skill: SkillDefinition): void {
+  const operations = new Map(skill.ir.operations.map((operation) => [operation.id, operation]));
+  const dependencies = (operation: SkillOperation): string[] => {
+    if (operation.kind === "source_read") return [];
+    if (operation.kind === "join") return [operation.left, operation.right];
+    if (operation.kind === "lookup") return [operation.input, operation.table];
+    return [operation.input];
+  };
+  const inventoryPaths = (id: string, alreadyScoped: boolean, visited = new Set<string>()): { hasInventory: boolean; allScoped: boolean } => {
+    if (visited.has(id)) return { hasInventory: false, allScoped: true };
+    const operation = operations.get(id);
+    if (!operation) return { hasInventory: false, allScoped: true };
+    if (operation.kind === "source_read") return { hasInventory: operation.source === "inventory", allScoped: operation.source !== "inventory" || alreadyScoped };
+    const scoped = alreadyScoped || (operation.kind === "filter" && operation.predicates.some((predicate) =>
+      predicate.field === "warehouseId" && predicate.operator === "eq" && predicate.value.kind === "parameter" && predicate.value.name === "warehouseId"));
+    const nextVisited = new Set(visited).add(id);
+    const branches = dependencies(operation).map((dependency) => inventoryPaths(dependency, scoped, nextVisited));
+    const inventoryBranches = branches.filter((branch) => branch.hasInventory);
+    return { hasInventory: inventoryBranches.length > 0, allScoped: inventoryBranches.every((branch) => branch.allScoped) };
+  };
+  for (const operation of skill.ir.operations) if (operation.kind === "join") {
+    for (const branch of [operation.left, operation.right]) {
+      const result = inventoryPaths(branch, false);
+      if (result.hasInventory && !result.allScoped) {
+        throw new Error("Filter inventory by the caller's warehouseId parameter before the inventory join; SKU keys repeat across warehouses.");
+      }
+    }
+  }
 }
 async function cancellable<T>(task: Promise<T>, signal: AbortSignal): Promise<T> {
   signal.throwIfAborted();
@@ -151,6 +182,7 @@ function validateDraft(draft: unknown, context: SynthesisContext): { skill: Skil
   for (const operation of skill.ir.operations) if (operation.kind === "filter") {
     for (const predicate of operation.predicates) if (predicate.value.kind === "literal" && !(predicate.field === "status" && ["open", "cancelled"].includes(String(predicate.value.value)))) throw new Error("Input-specific filter values must be caller parameters; only task status literals are permitted.");
   }
+  assertInventoryIsScopedBeforeJoin(skill);
   validateSkillIR(skill.ir);
   return { skill, contract };
 }
@@ -169,7 +201,7 @@ export async function synthesizeCandidate(input: {
   if (traces.length > 32 || new Set(traces.map((trace) => trace.traceId)).size !== traces.length || successful.length < 2 || successful.length === traces.length || new Set(successful.map((trace) => trace.inputHash)).size < 2) throw new TraceCompilationError("INSUFFICIENT_EVIDENCE", "Use distinct labeled trajectories with two successful inputs and a counterexample.");
   const reference = successful[0]!;
   if (traces.some((trace) => trace.sourceMode !== reference.sourceMode || trace.policyVersion !== reference.policyVersion || canonicalHash(trace.sourceSchemaVersions) !== canonicalHash(reference.sourceSchemaVersions))) throw new TraceCompilationError("TRACE_CONTRACT_DIFFERS", "Keep one source/schema/policy boundary per compilation.");
-  if (reference.sourceMode !== "fixture") throw new TraceCompilationError("SOURCE_MODE_UNVERIFIED", "The independent development evaluator currently supports fixture inputs.");
+  if (!["fixture", "snapshot"].includes(reference.sourceMode)) throw new TraceCompilationError("SOURCE_MODE_UNVERIFIED", "Generate a procedure for fixtures or captured source snapshots; direct live-source execution is not enabled.");
   const compilationInputHashes = new Set(traces.map((trace) => trace.inputHash));
   if (input.developmentCases.some((testCase) => compilationInputHashes.has(canonicalHash({ parameters: testCase.parameters, dataset: testCase.dataset })))) throw new TraceCompilationError("EVALUATION_INPUT_OVERLAP", "Compilation traces and independent development inputs must have different hashes.");
   const started = performance.now();
@@ -186,6 +218,8 @@ export async function synthesizeCandidate(input: {
     },
     usage: { inputTokens: 0, outputTokens: 0, providerCalls: 0, accountedUsd: 0, uncertainUsageCalls: 0, basis: input.adapter.mode === "nemotron" ? "provider_response" : "test_fixture" }, durationMs: 0
   };
+  if (input.adapter.promptHash) result.lineage.limitations.push("Synthesis system prompt SHA-256: " + input.adapter.promptHash);
+  if (input.adapter.configHash) result.lineage.limitations.push("Synthesis model/tool/configuration SHA-256: " + input.adapter.configHash);
   const ledger: SynthesisCostLedger = input.ledger ?? new InMemoryCostLedger(input.policy.maxCompilationCostUsd);
   const publish = (event: { stage: string; revision?: number; call?: number }) => input.onEvent?.({ ...event, checkpoint: structuredClone({ attempts: result.attempts, revisions: result.revisions, usage: result.usage }) });
   const fail = (state: SynthesisResult["state"], code: string, message: string) => { result.state = state; result.failure = { code, message }; };
@@ -250,7 +284,7 @@ export async function synthesizeCandidate(input: {
           }
           result.usage.inputTokens += usage?.inputTokens ?? inputBound; result.usage.outputTokens += usage?.outputTokens ?? input.policy.maxOutputTokens; result.usage.accountedUsd += accountedUsd;
           if (!usage) result.usage.uncertainUsageCalls++;
-          const code = error instanceof SynthesisProviderError ? error.code : signal.aborted ? "PROVIDER_CANCELLED" : "PROVIDER_TRANSPORT_FAILED";
+          const code = error instanceof SynthesisProviderError ? error.code : input.signal?.aborted ? "PROVIDER_CANCELLED" : overall.aborted ? "COMPILATION_DEADLINE" : signal.aborted ? "PROVIDER_CALL_TIMEOUT" : "PROVIDER_TRANSPORT_FAILED";
           result.attempts.push({ call, revision, contextHash: canonicalHash(context), outcome: "provider_error", code, ...(error instanceof SynthesisProviderError && error.requestId ? { requestId: error.requestId } : {}), ...(usage ? { usage } : {}), reservedUsd, accountedUsd, usageUncertain: !usage });
           publish({ stage: "provider_error", revision, call });
           response = undefined;

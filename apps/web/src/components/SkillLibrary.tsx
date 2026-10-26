@@ -11,6 +11,8 @@ interface Execution {
   result?: Array<Record<string, unknown>>; artifact: string;
   retrieval: { strategy: string; retrievalReason: string; nominatedMemoryIds: string[] };
   rejections: Array<{ skillId: string; reason: string }>;
+  sequence?: string[];
+  nextAction?: string;
 }
 async function request<T>(url: string, body?: unknown): Promise<T> {
   const response = await fetch(url, body === undefined ? undefined : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -73,6 +75,10 @@ export function SkillLibrary({ candidateId, verified }: { candidateId: string; v
       </form><div className="library-result" aria-live="polite">
         {execution ? <><h3>{execution.status === "succeeded" ? "Executed from verified memory" : "Compatible skill required"}</h3>
           {execution.reason && <p>{rejectionExplanation(execution.reason)} <code>{execution.reason}</code></p>}
+          {execution.nextAction && <p>{execution.nextAction}</p>}
+          {execution.sequence && <p className="pane-caption">{execution.sequence.map((step) => step.replaceAll("_", " ")).join(" → ")}</p>}
+          {execution.candidate && <p className="pane-caption">Accepted H-MEM entry <code>{execution.candidate.memoryId}</code> after artifact hash and input contract checks.</p>}
+          {execution.rejections.map((item, index) => <p className="pane-caption" key={index}>{item.skillId}: {rejectionExplanation(item.reason)} <code>{item.reason}</code></p>)}
           <dl className="contract-strip"><div><dt>Model calls</dt><dd>{execution.modelCallCount}</dd></div><div><dt>Total duration</dt><dd>{execution.durationMs.toFixed(2)} ms</dd></div><div><dt>Selected skill</dt><dd>{execution.candidate?.skillId ?? "None"}</dd></div><div><dt>Retrieval</dt><dd>{execution.retrieval.strategy}</dd></div></dl>
           {execution.result && <pre>{JSON.stringify(execution.result, null, 2)}</pre>}
           <details><summary>Retrieval and execution evidence</summary><pre>{JSON.stringify(execution, null, 2)}</pre></details>

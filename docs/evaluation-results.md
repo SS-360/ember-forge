@@ -1,6 +1,12 @@
 # Evaluation results
 
-Updated 24 October 2026. These results are finite synthetic checks, not a representative benchmark or generalization claim.
+Updated 26 October 2026. These results are finite synthetic checks, not a representative benchmark or generalization claim.
+
+## Genuine Nemotron workflow — current
+
+Two independently checked original successes and an unknown-unit refusal produced a new Nemotron-synthesized candidate, `stock-nemotron-be33034d-retry-2`. It passed 21 independent development cases and exact standalone package checks. The nine-case protocol for a three-repeat four-arm comparison was frozen before generation. All 108 invocations completed: original agent 24/27 correct, instruction-only 27/27, executable 27/27, handwritten script 27/27. The executable made no model call. See [live verification](live-verification.md) for per-class denominators, exact hashes, successful and failed jobs, usage uncertainty, memory results and current limits.
+
+The older results below remain historical replay/hand-authored experiments and must not be relabeled as model learning evidence.
 
 ## Independent protocol v2
 

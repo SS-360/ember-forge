@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const envFile = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", ".env");
 if (existsSync(envFile)) process.loadEnvFile(envFile);
 
-const required = ["NVIDIA_BASE_URL", "NVIDIA_MODEL", "NVIDIA_API_KEY", "ZETARIS_BASE_URL", "ZETARIS_API_KEY", "NVIDIA_SESSION_BUDGET_USD"];
+const required = ["NVIDIA_BASE_URL", "NVIDIA_MODEL", "NVIDIA_API_KEY", "NVIDIA_ACCOUNT_REFERENCE", "ZETARIS_BASE_URL", "ZETARIS_API_KEY", "ZETARIS_USERNAME", "ZETARIS_PASSWORD", "NVIDIA_SESSION_BUDGET_USD"];
 const values = new Map(required.map((name) => [name, process.env[name] ?? ""]));
 const report = {
   node: process.version,
@@ -16,10 +16,12 @@ const report = {
       baseUrlConfigured: Boolean(values.get("NVIDIA_BASE_URL")),
       modelConfigured: Boolean(values.get("NVIDIA_MODEL")),
       apiKeyConfigured: Boolean(values.get("NVIDIA_API_KEY")),
+      accountReferenceConfigured: Boolean(values.get("NVIDIA_ACCOUNT_REFERENCE")),
       sessionBudgetConfigured: Boolean(values.get("NVIDIA_SESSION_BUDGET_USD"))
     },
     zetaris: {
       baseUrlConfigured: Boolean(values.get("ZETARIS_BASE_URL")),
+      localLoginConfigured: Boolean(values.get("ZETARIS_USERNAME") && values.get("ZETARIS_PASSWORD")),
       apiKeyConfigured: Boolean(values.get("ZETARIS_API_KEY"))
     }
   },

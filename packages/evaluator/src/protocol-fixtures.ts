@@ -23,7 +23,7 @@ export function caseInputHash(testCase: { parameters: unknown; dataset: unknown 
 const isoDay = (day: number) => new Date(Date.UTC(2026, 9, day)).toISOString().slice(0, 10);
 
 /** Synthetic domain generator, independent of the seed IR and existing development fixture file. */
-export function buildProtocolSplit(partition: ProtocolPartition, seed: string): ProtocolSplit {
+export function buildProtocolSplit(partition: ProtocolPartition, seed: string, sourceMode: "fixture" | "snapshot" = "fixture"): ProtocolSplit {
   const seedHash = protocolHash({ partition, seed });
   const number = parseInt(seedHash.slice(0, 6), 16);
   const tag = seedHash.slice(0, 8);
@@ -33,7 +33,7 @@ export function buildProtocolSplit(partition: ProtocolPartition, seed: string): 
   const factor = 2 + number % 8;
   const parameters: StockParameters = { warehouseId: warehouseA, fromDate: isoDay(day), throughDate: isoDay(day + 3), policyVersion: "stock-v1" };
   const dataset: StockDataset = {
-    sourceMode: "fixture", sourceVersions: { orders: "orders-" + tag, inventory: "inventory-" + tag, productRules: "rules-" + tag },
+    sourceMode, sourceVersions: { orders: "orders-" + tag, inventory: "inventory-" + tag, productRules: "rules-" + tag },
     sourceSchemaVersions: { orders: "orders/v1", inventory: "inventory/v1", productRules: "product-rules/v1" },
     orders: [
       { orderId: tag + "-1", warehouseId: warehouseA, orderDate: isoDay(day), sku: "alias-a", quantity: 1 + number % 5, unit: "PACK", status: "open" },

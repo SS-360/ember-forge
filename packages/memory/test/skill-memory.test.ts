@@ -1,10 +1,11 @@
-import { mkdtemp, readFile, rm, mkdir } from "node:fs/promises";
+import { mkdtemp, readFile, rm, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { StockDatasetSchema, StockParametersSchema } from "@emberforge/contracts";
 import { executeSkill } from "@emberforge/runtime";
 import { SkillMemoryService } from "../src/index.js";
+import { canonicalHash } from "../../compiler/src/trace-compiler.js";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const fixtureUrl = new URL("../../../fixtures/dev/stock-reconciliation.json", import.meta.url);
@@ -36,6 +37,21 @@ async function removeStorageDir(storageDir: string): Promise<void> {
 }
 
 describe("H-MEM-backed skill memory", () => {
+  it("retrieves the task independently of a generated candidate's identifier", async () => {
+    const storageDir = await createStorageDir();
+    try {
+      const generated = { ...skill, id: "stock-nemotron-abcdef12-retry-2" };
+      const generatedContract = { ...contract, skillId: generated.id };
+      await writeFile(path.join(storageDir, "skill.json"), JSON.stringify(generated));
+      await writeFile(path.join(storageDir, "contract.json"), JSON.stringify(generatedContract));
+      const memory = new SkillMemoryService({ projectRoot, storageDir });
+      const entry = memory.registerValidatedSkill({ skill: generated, contract: generatedContract, verification: { ...verification, skillId: generated.id, candidateHash: canonicalHash({ skill: generated, contract: generatedContract }) }, artifactPaths: { skillPath: path.relative(projectRoot, path.join(storageDir, "skill.json")), contractPath: path.relative(projectRoot, path.join(storageDir, "contract.json")) } });
+      const restarted = new SkillMemoryService({ projectRoot, storageDir });
+      const result = restarted.retrieveApplicable({ query: "reconcile stock demand and inventory", parameters, dataset });
+      expect(result.selected?.memoryId).toBe(entry.memoryId);
+      expect(result.selected?.skill.id).toBe(generated.id);
+    } finally { await removeStorageDir(storageDir); }
+  });
   it("registers, retrieves, and executes a validated candidate after a cold/warm restart", async () => {
     const storageDir = await createStorageDir();
     try {

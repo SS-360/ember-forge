@@ -6,6 +6,9 @@ import { RunFixtureDialog, type FixtureRunInput } from "./components/RunFixtureD
 import { VerificationExport } from "./components/VerificationExport.js";
 import { CompilationSources } from "./components/CompilationSources.js";
 import { SkillLibrary } from "./components/SkillLibrary.js";
+import { WorkSample } from "./components/WorkSample.js";
+import { ZetarisStock } from "./components/ZetarisStock.js";
+import { FulfilmentStudio } from "./components/FulfilmentStudio.js";
 import { WorkspaceNavigation, type WorkspaceView } from "./components/WorkspaceNavigation.js";
 import { rejectionExplanation } from "./procedure-summary.js";
 import type {
@@ -46,6 +49,7 @@ function App() {
   const [busy, setBusy] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [snapshotSampleId, setSnapshotSampleId] = useState("");
   const [readiness, setReadiness] = useState<CompilerReadiness | null>(null);
   const [compilerJob, setCompilerJob] = useState<{ jobId: string; stage: string } | null>(null);
 
@@ -99,6 +103,10 @@ function App() {
   }, []);
 
   useEffect(() => { void refresh(); }, [refresh]);
+  const agentRecorded = useCallback(async (ids: string[]) => {
+    await refresh();
+    if (ids.length) setSelectedTraceIds(ids);
+  }, [refresh]);
 
   const selectedRun = useMemo(
     () => runs.find((run) => run.id === selectedRunId) ?? null,
@@ -288,7 +296,7 @@ function App() {
 
     <div className="source-banner" role="note">
       <Glyph name="info" />
-      <div><strong>Local workspace</strong><span>Synthetic data. No live sources or model calls.</span></div>
+      <div><strong>Local workspace</strong><span>Local sources. Replay examples are synthetic; original agent runs require explicit provider authorization.</span></div>
     </div>
 
     {apiError && <div className="alert alert--error" role="alert"><Glyph name="reject" /><span>{apiError}</span><button className="text-button" type="button" onClick={() => void refresh()}>Retry</button></div>}
@@ -297,6 +305,9 @@ function App() {
     {loading && !apiError ? <div className="loading-state" role="status">Loading local workspace…</div> : null}
 
     {!loading && skillPayload && view === "workbench" && <main className="workbench-view">
+      <ZetarisStock busy={busy || compilerJob !== null} onSnapshot={(id) => { setSnapshotSampleId(id); setNotice("Source snapshot saved and selected. Observe its agent run to collect compilation evidence."); }} />
+      <FulfilmentStudio />
+      <WorkSample key={snapshotSampleId} initialSampleId={snapshotSampleId} busy={busy || compilerJob !== null} onRecorded={agentRecorded} />
       <CompilationSources traces={traces} selectedIds={selectedTraceIds} busy={busy} readiness={readiness} suggestedName={suggestedName}
         onToggle={(id, checked) => setSelectedTraceIds((current) => checked ? [...new Set([...current, id])].slice(0, 32) : current.filter((traceId) => traceId !== id))}
         onImport={importTraces} onLoadExamples={() => void loadReplayExamples()} onCompile={(skillId, method) => void compileTraces(skillId, method)} />
@@ -354,6 +365,8 @@ function App() {
         selectedCaseId={selectedCaseId}
         busy={busy}
         codexDiscovered={Boolean(skillPayload?.harnessChecks?.some((check) => check.harness === "codex" && check.candidateHash === skillPayload.verification.candidateHash && check.discovery === "verified"))}
+        codexExecuted={Boolean(skillPayload?.harnessChecks?.some((check) => check.harness === "codex" && check.candidateHash === skillPayload.verification.candidateHash && check.execution === "verified"))}
+        claudeExecuted={Boolean(skillPayload?.harnessChecks?.some((check) => check.harness === "claude" && check.candidateHash === skillPayload.verification.candidateHash && check.execution === "verified"))}
         onSelectCase={setSelectedCaseId}
         onVerify={() => void runVerification()}
         onExport={() => void downloadSkill()}
@@ -363,7 +376,7 @@ function App() {
     {!loading && skillPayload && view === "library" && <main className="library-main"><SkillLibrary candidateId={skillPayload.skill.id} verified={skillPayload.verification.status === "validated"} /></main>}
 
     <footer className="app-footer">
-      <span>Synthetic development fixtures only · no live data or model calls</span>
+      <span>Local stock-reconciliation prototype · inspect each run’s source and model evidence</span>
       <span>{health?.database === "sqlite" ? "Run history stored locally" : "Local API unavailable"}</span>
     </footer>
     {runDialogOpen && <RunFixtureDialog busy={busy} onClose={() => setRunDialogOpen(false)} onSubmit={(input) => void runExample(input)} />}

@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import { ProviderAuthorizationSchema, ProviderApprovalEvidenceSchema, ZeroCostEntitlementEvidenceSchema, assertAuthorizationCurrent, providerScopeKey, type ProviderAuthorization } from "@emberforge/contracts/provider-authorization";
-import { createNemotronAdapter, type ProviderFetch } from "@emberforge/compiler/nemotron-adapter";
+import { createNemotronAdapter, createNemotronAgentAdapter, type ProviderFetch } from "@emberforge/compiler/nemotron-adapter";
 import { canonicalHash } from "@emberforge/compiler/trace-compiler";
 import { PersistentProviderLedger } from "./provider-ledger.js";
 import type { SynthesisDependencies } from "./synthesis.js";
@@ -54,18 +54,19 @@ export async function composeSynthesisProvider(projectRoot: string, options: {
     if (providerScopeKey(configuredScope) !== providerScopeKey(authorization.scope)) throw new Error("PROVIDER_CONFIGURATION_SCOPE_MISMATCH");
     ledger = new PersistentProviderLedger(path.join(privateRoot, "provider-ledger.sqlite"), authorization);
     if (ledger.snapshot().suspended) { ledger.close(); return disabled("This authorization is suspended after a quota/accounting incident; it cannot make another request.", authorization.mode); }
-    const maxProviderCalls = Math.min(6, authorization.allowance.maxRequests);
-    const adapter = createNemotronAdapter({ baseUrl: configuredScope.baseUrl, model: configuredScope.model, accountReference: configuredScope.accountReference, apiKey: environment.NVIDIA_API_KEY, maxOutputTokens: 4096 }, options.testTransport ? { transport: options.testTransport } : undefined);
+    const maxProviderCalls = Math.min(12, authorization.allowance.maxRequests);
+    const config = { baseUrl: configuredScope.baseUrl, model: configuredScope.model, accountReference: configuredScope.accountReference, apiKey: environment.NVIDIA_API_KEY, maxOutputTokens: 4096, reasoningEffort: "none" as const };
+    const adapter = createNemotronAdapter(config, options.testTransport ? { transport: options.testTransport } : undefined);
     const providerLedger = ledger;
     return {
       authorizationMode: authorization.mode,
       dependencies: {
-        adapter, authorization, ledger: providerLedger, dispose() { providerLedger.close(); },
+        adapter, agentAdapter: createNemotronAgentAdapter(config, options.testTransport ? { transport: options.testTransport } : undefined), authorization, ledger: providerLedger, dispose() { providerLedger.close(); },
         readinessReason: adapter.mode === "test_only" ? "Test-only injected transport; entitlement and bounded allowance checks still apply. No live model evidence." : authorization.mode === "verified_zero_cost" ? "Server-owned, human-reviewed zero-cost entitlement with finite request/token quotas." : "Server-owned metered allowance with an approved spending cap.",
         policy: {
           authorization, maxRevisions: Math.min(3, maxProviderCalls), maxProviderCalls,
           maxInputTokens: 64000, maxOutputTokens: 4096, maxTotalTokens: Math.min(192000, authorization.allowance.maxTokens),
-          timeoutMs: 90000, perCallTimeoutMs: 30000,
+          timeoutMs: 120000, perCallTimeoutMs: 30000,
           maxCompilationCostUsd: authorization.maxSessionCostUsd,
           inputUsdPerMillionTokens: authorization.inputUsdPerMillionTokens, outputUsdPerMillionTokens: authorization.outputUsdPerMillionTokens
         }

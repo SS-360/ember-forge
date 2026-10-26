@@ -4,6 +4,7 @@ import {
   SkillContractSchema,
   SkillDefinitionSchema,
   SkillIRSchema,
+  SkillOperationSchema,
   StockDatasetSchema,
   StockParametersSchema,
   type SkillContract,
@@ -126,8 +127,9 @@ function operationInputs(operation: SkillOperation): string[] {
       return [];
     case "join":
       return [operation.left, operation.right];
-    case "filter":
     case "lookup":
+      return [operation.input, operation.table];
+    case "filter":
     case "unit_convert":
     case "aggregate":
     case "project":
@@ -465,6 +467,57 @@ function executeOperation(
 
   if (operation.kind === "emit") return values.get(operation.input)!;
   return fail("UNSUPPORTED_OPERATION", "The trusted interpreter does not support this instruction");
+}
+
+/** Incremental trusted tool execution. No candidate/seed program is loaded here. */
+export function createOperationSession(contractInput: unknown, parametersInput: unknown, datasetInput: unknown) {
+  const contract = SkillContractSchema.parse(contractInput);
+  const parameters = StockParametersSchema.parse(parametersInput);
+  const dataset = StockDatasetSchema.parse(datasetInput);
+  assertApplicable(contract, parameters, dataset);
+  const sources = getSourceTables(dataset);
+  const values = new Map<string, Row[]>();
+  const operations: SkillOperation[] = [];
+  const observations: OperationObservation[] = [];
+  let closed = false;
+  return {
+    inspect(source: SourceName) {
+      const rows = sources[source];
+      return { source, rowCount: rows.length, fields: Object.keys(rows[0] ?? {}), schemaVersions: dataset.sourceSchemaVersions };
+    },
+    read(source: SourceName, offset: number, limit: number) {
+      return { ...this.inspect(source), offset, rows: structuredClone(sources[source].slice(offset, offset + limit)) };
+    },
+    execute(operationInput: unknown) {
+      if (closed) fail("SESSION_CLOSED", "Start a new attempt after emission or failure.");
+      const operation = SkillOperationSchema.parse(operationInput);
+      if (operations.length >= 63) fail("OPERATION_LIMIT", "The bounded session permits at most 63 operations.");
+      if (operation.kind === "filter" && operation.predicates.some((p) => p.value.kind === "literal" && !(p.field === "status" && ["open", "cancelled"].includes(String(p.value.value))))) fail("UNPARAMETERIZED_FILTER", "Use caller parameters and declared status literals.");
+      let placeholderId = "session_output";
+      while ([...operations, operation].some((item) => item.id === placeholderId)) placeholderId += "_";
+      validateSkillIR({ schemaVersion: "emberforge.ir/1", operations: [...operations, operation, ...(operation.kind === "emit" ? [] : [{ id: placeholderId, kind: "emit", input: operation.id }])], outputStep: operation.kind === "emit" ? operation.id : placeholderId, runtimeLimits: { maxRows: contract.maxRows, maxRuntimeMs: contract.maxRuntimeMs } });
+      const dependencies = operation.kind === "source_read" ? sources[operation.source] : operation.kind === "join" ? [values.get(operation.left), values.get(operation.right)] : operation.kind === "lookup" ? [values.get(operation.input), values.get(operation.table)] : values.get(operation.input);
+      const inputHash = observationHash({ operation, parameters, dependencies });
+      const deadline = performance.now() + contract.maxRuntimeMs;
+      const check = () => { if (performance.now() > deadline) fail("TIME_LIMIT_EXCEEDED", "Tool deadline exceeded."); };
+      try {
+        const rows = executeOperation(operation, values, sources, parameters, check);
+        if (rows.length > contract.maxRows) fail("ROW_LIMIT_EXCEEDED", "Tool row limit exceeded.");
+        if (operation.kind === "emit") { validateContractPostconditions(rows, contract); closed = true; }
+        check();
+        operations.push(operation); values.set(operation.id, rows);
+        const event: OperationObservation = { operation, inputHash, outputHash: observationHash(rows), outcome: "succeeded" };
+        observations.push(event);
+        return { observation: structuredClone(event), rowCount: rows.length, preview: structuredClone(rows.slice(0, 20)), truncated: rows.length > 20 };
+      } catch (error) {
+        closed = true;
+        observations.push({ operation, inputHash, outcome: "failed", errorCode: error instanceof SkillExecutionError ? error.code : "EXECUTION_ERROR" });
+        throw error;
+      }
+    },
+    observations: () => structuredClone(observations),
+    result: () => closed && operations.at(-1)?.kind === "emit" ? structuredClone(values.get(operations.at(-1)!.id)) : undefined
+  };
 }
 
 export function executeSkill(

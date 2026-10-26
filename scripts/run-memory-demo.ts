@@ -9,11 +9,12 @@ import { executeSkill } from "../packages/runtime/src/index.js";
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const readJson = async (relativePath: string): Promise<any> =>
   JSON.parse(await readFile(path.join(projectRoot, relativePath), "utf8"));
+const [candidateArgument = "skills/stock-reconciliation", inputArgument = "fixtures/dev/stock-reconciliation.json"] = process.argv.slice(2);
 const [fixture, skill, contract, verification] = await Promise.all([
-  readJson("fixtures/dev/stock-reconciliation.json"),
-  readJson("skills/stock-reconciliation/skill.json"),
-  readJson("skills/stock-reconciliation/contract.json"),
-  readJson("skills/stock-reconciliation/verification.json")
+  readJson(inputArgument),
+  readJson(path.join(candidateArgument, "skill.json")),
+  readJson(path.join(candidateArgument, "contract.json")),
+  readJson(path.join(candidateArgument, "verification.json"))
 ]);
 const parameters = StockParametersSchema.parse(fixture.parameters);
 const dataset = StockDatasetSchema.parse(fixture.dataset);
@@ -23,7 +24,9 @@ const outputDir = path.join(projectRoot, "artifacts", "memory-demo");
 await mkdir(outputDir, { recursive: true });
 
 const cold = new SkillMemoryService({ projectRoot, storageDir });
-const registered = cold.registerValidatedSkill({ skill, contract, verification });
+const coldSelection = cold.retrieveApplicable({ query: "reconcile stock demand and inventory", parameters, dataset });
+if (coldSelection.selected) throw new Error("The isolated fresh memory unexpectedly contained a candidate.");
+const registered = cold.registerValidatedSkill({ skill, contract, verification, artifactPaths: { skillPath: path.join(candidateArgument, "skill.json"), contractPath: path.join(candidateArgument, "contract.json") } });
 
 const warm = new SkillMemoryService({ projectRoot, storageDir });
 const warmSelection = warm.retrieveApplicable({
@@ -63,6 +66,9 @@ const artifact = {
   sourceMode: "fixture",
   candidateHash: registered.candidateHash,
   cold: {
+    isolation: "Fresh per-demo memory directory; existing application memory was preserved.",
+    selectedBeforeRegistration: null,
+    retrievalReason: coldSelection.retrieval.retrievalReason,
     registeredMemoryId: registered.memoryId,
     storedEvidenceIds: registered.evidenceIds
   },
@@ -81,7 +87,7 @@ const artifact = {
     finalStatus: warm.list().find((entry) => entry.memoryId === registered.memoryId)?.status,
     trustLedgerActions: warm.hmem.ledger.history(registered.memoryId).map((entry) => entry.action)
   },
-  limitation: "Synthetic fixture integration only; it does not establish live Nemotron or Zetaris access."
+  limitation: "Synthetic fixture memory integration only. Candidate origin is recorded in its verification; this execution makes no model call and establishes no live Zetaris source access."
 };
 const outputPath = path.join(outputDir, runId + ".json");
 await writeFile(outputPath, JSON.stringify(artifact, null, 2) + "\n", "utf8");

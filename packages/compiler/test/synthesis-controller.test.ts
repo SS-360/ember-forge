@@ -7,6 +7,7 @@ import { captureReplayCases } from "../src/trace-fixtures.js";
 import { compileFromTraces } from "../src/trace-compiler.js";
 import { verifyCandidate } from "../src/index.js";
 import { synthesizeCandidate, InMemoryCostLedger, SynthesisProviderError, type SynthesisAdapter, type SynthesisContext, type SynthesisPolicy } from "../src/synthesis-controller.js";
+import { createNemotronAdapter } from "../src/nemotron-adapter.js";
 
 const root = new URL("../../../", import.meta.url);
 const seed = SkillDefinitionSchema.parse(JSON.parse(await readFile(fileURLToPath(new URL("skills/stock-reconciliation/skill.json", root)), "utf8")));
@@ -43,6 +44,23 @@ const response = (context: SynthesisContext, wrong = false) => ({ draft: draft(c
 const run = (adapter: SynthesisAdapter, overrides: Partial<Parameters<typeof synthesizeCandidate>[0]> = {}) => synthesizeCandidate({ skillId: "synthesis-controller-check", traces, developmentCases: development.cases, adapter, policy, ...overrides });
 
 describe("bounded synthesis controller with test-only transports", () => {
+  it("constrains all candidate identity fields to the caller even when trace identities differ", async () => {
+    const context: SynthesisContext = { skillId: "new-generated-candidate", version: "0.2.0", taskFamily: "stock-reconciliation", traces, limits: { maxRows: 5000, maxRuntimeMs: 5000 }, revision: 1 };
+    const adapter = createNemotronAdapter({ baseUrl: "https://example.invalid/v1", model: "test-only", apiKey: "test-only", maxOutputTokens: 1000 }, { transport: async (_url, init) => {
+      const body = JSON.parse(String(init.body));
+      const schema = body.tools[0].function.parameters;
+      expect(schema.properties.skill.properties.id.const).toBe(context.skillId);
+      expect(schema.properties.skill.properties.version.const).toBe(context.version);
+      expect(schema.properties.contract.properties.skillId.const).toBe(context.skillId);
+      expect(schema.properties.contract.properties.skillVersion.const).toBe(context.version);
+      expect(schema.properties.contract.properties.supportedSourceModes.items.const).toBe(traces[0]!.sourceMode);
+      expect(schema.properties.contract.properties.sourceSchemaVersions.properties.orders.const).toBe(traces[0]!.sourceSchemaVersions.orders);
+      expect(schema.properties.contract.properties.maxRows.maximum).toBe(5000);
+      expect(JSON.parse(body.messages[1].content).requiredIdentity["skill.id"]).toBe(context.skillId);
+      return Response.json({ usage: { prompt_tokens: 100, completion_tokens: 200 }, choices: [{ message: { tool_calls: [{ type: "function", function: { name: "propose_candidate", arguments: JSON.stringify(draft(context)) } }] } }] });
+    } });
+    expect((await adapter.generate(context, { signal: new AbortController().signal, maxOutputTokens: 1000 })).draft).toEqual(draft(context));
+  });
   it("repairs a rejected candidate from varied trajectories that exact graph replay cannot reconcile", async () => {
     const varied = structuredClone(traces);
     const renamed = renameOperations(varied[1]!.calls.map((call) => call.operation), "alternative_");
@@ -80,6 +98,24 @@ describe("bounded synthesis controller with test-only transports", () => {
   it("rejects arbitrary draft fields, then accepts a typed repaired draft", async () => {
     const result = await run(fakeAdapter(async (context) => ({ ...response(context), draft: context.revision === 1 ? { ...draft(context), script: "untrusted code must never execute" } : draft(context) })));
     expect(result.revisions.map((revision) => revision.status)).toEqual(["static_invalid", "validated"]);
+  });
+
+  it("requires inventory to be scoped to the caller warehouse before a SKU join", async () => {
+    const contexts: SynthesisContext[] = [];
+    const result = await run(fakeAdapter(async (context) => {
+      contexts.push(structuredClone(context));
+      const generated = draft(context);
+      if (context.revision === 1) {
+        generated.skill.ir.operations = generated.skill.ir.operations.filter((operation) => operation.id !== "generated_10");
+        const inventoryJoin = generated.skill.ir.operations.find((operation) => operation.kind === "join");
+        if (inventoryJoin?.kind === "join") inventoryJoin.right = "generated_9";
+      }
+      return { ...response(context), draft: generated };
+    }));
+    expect(result.state).toBe("validated");
+    expect(result.revisions.map((revision) => revision.status)).toEqual(["static_invalid", "validated"]);
+    expect(result.revisions[0]?.feedback?.issues[0]?.message).toContain("Filter inventory by the caller's warehouseId parameter");
+    expect(contexts[1]?.feedback?.stage).toBe("static_validation");
   });
 
   it("enforces revision and call limits without relaxing failed verification", async () => {

@@ -12,6 +12,7 @@ import type { VerificationReport } from "@emberforge/compiler";
 import { exportVerifiedCandidate } from "../../../scripts/export-skill.js";
 import { registerSynthesisRoutes, type SynthesisDependencies } from "./synthesis.js";
 import { replayTraceSnapshot, SourceSnapshotSchema } from "@emberforge/compiler/trace-replay";
+import { registerAgentRoutes, assertOriginalAgentEvidence } from "./agent.js";
 
 export const SkillIdSchema = z.string().regex(/^[a-z0-9][a-z0-9-]{1,63}$/).refine(
   (value) => !/^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i.test(value), "Use a portable skill name."
@@ -34,13 +35,21 @@ export async function readCandidate(projectRoot: string, skillId: string) {
     readFile(path.join(directory, "verification.json"), "utf8").then((text) => JSON.parse(text) as VerificationReport),
     readFile(path.join(directory, "lineage.json"), "utf8").then((text) => JSON.parse(text) as TraceLineage).catch(() => undefined)
   ]);
-  const harnessChecks: Array<{ harness: "codex"; discovery: "verified"; invocation: "unverified"; execution: "unverified"; candidateHash: string }> = [];
+  const harnessChecks: Array<{ harness: "codex" | "claude"; discovery: "verified"; invocation: "verified" | "unverified"; execution: "verified" | "unverified"; candidateHash: string; providerLabel?: string }> = [];
   if (/^[a-f0-9]{64}$/.test(verification.candidateHash)) {
-    try {
-      const check = z.object({ harness: z.literal("codex"), discovery: z.literal("verified"), invocation: z.literal("unverified"), execution: z.literal("unverified"), candidateHash: z.string() }).parse(
-        JSON.parse(await readFile(path.join(projectRoot, "artifacts", "compatibility", verification.candidateHash, "codex.json"), "utf8"))
+    for (const harness of ["codex", "claude"] as const) try {
+      const check = z.object({ harness: z.enum(["codex", "claude"]), discovery: z.literal("verified"), invocation: z.enum(["verified", "unverified"]), execution: z.enum(["verified", "unverified"]), candidateHash: z.string(), providerLabel: z.string().max(100).optional(), evidenceFile: z.string().optional(), evidenceHash: z.string().optional() }).parse(
+        JSON.parse(await readFile(path.join(projectRoot, "artifacts", "compatibility", verification.candidateHash, harness + ".json"), "utf8"))
       );
-      if (check.candidateHash === verification.candidateHash) harnessChecks.push(check);
+      if (check.harness !== harness) continue;
+      if (check.execution === "verified" || check.invocation === "verified") {
+        if (!check.evidenceFile || !check.evidenceHash) continue;
+        const evidencePath = path.resolve(projectRoot, check.evidenceFile);
+        if (!evidencePath.startsWith(path.join(projectRoot, "artifacts", "host-verification") + path.sep)) continue;
+        const evidence = JSON.parse(await readFile(evidencePath, "utf8"));
+        if (canonicalHash(evidence) !== check.evidenceHash || evidence.status !== "passed" || evidence.candidateHash !== verification.candidateHash || evidence.harness !== harness || evidence.serverStopped !== true) continue;
+      }
+      if (check.candidateHash === verification.candidateHash) harnessChecks.push({ harness: check.harness, candidateHash: check.candidateHash, discovery: check.discovery, invocation: check.invocation, execution: check.execution, ...(check.providerLabel ? { providerLabel: check.providerLabel } : {}) });
     } catch { /* Unrecorded or malformed host checks remain unverified. */ }
   }
   return { skill: SkillDefinitionSchema.parse(skillInput), contract: SkillContractSchema.parse(contractInput), verification, harnessChecks, ...(lineage ? { lineage } : {}) };
@@ -103,6 +112,7 @@ export async function registerCompilationRoutes(app: FastifyInstance, projectRoo
   let importing = false;
   const readTrace = async (id: string) => SanitizedTraceSchema.parse(JSON.parse(await readFile(path.join(traceRoot, id + ".json"), "utf8")));
   await registerSynthesisRoutes(app, projectRoot, { readTrace, exportCandidate, ...dependencies.synthesis });
+  await registerAgentRoutes(app, projectRoot, dependencies.synthesis ?? {});
 
   const saveReplay = async (trace: SanitizedTrace, snapshotInput: unknown) => {
     const seed = await readCandidate(projectRoot, "stock-reconciliation");
@@ -178,11 +188,15 @@ export async function registerCompilationRoutes(app: FastifyInstance, projectRoo
     });
     return Promise.all(traces.sort((a, b) => a.recordedAt.localeCompare(b.recordedAt)).map(async (trace) => {
       let replayVerified = false;
+      let originalAgentVerified = false;
+      if (trace.agentOrigin?.mode === "nemotron") {
+        try { await assertOriginalAgentEvidence(projectRoot, [trace]); originalAgentVerified = true; } catch { /* Imported declarations remain unverified. */ }
+      }
       try {
         const proof = JSON.parse(await readFile(path.join(replayRoot, canonicalHash(trace) + ".json"), "utf8")) as { traceHash?: string; inputHash?: string; status?: string };
         replayVerified = proof.status === "verified" && proof.traceHash === canonicalHash(trace) && proof.inputHash === trace.inputHash;
       } catch { /* An imported label without replay evidence remains an assertion. */ }
-      return { ...traceSummary(trace), replayVerified };
+      return { ...traceSummary(trace), replayVerified, originalAgentVerified };
     }));
   });
 

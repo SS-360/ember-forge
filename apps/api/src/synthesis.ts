@@ -10,10 +10,13 @@ import { SkillIdSchema, saveDevelopmentSplit, writeVerificationFiles } from "./c
 import { ProviderAuthorizationSchema, assertAuthorizationCurrent, providerScopeKey, type ProviderAuthorization } from "@emberforge/contracts/provider-authorization";
 import { SynthesisJobStore, type SynthesisJob } from "./synthesis-job-store.js";
 import { canonicalHash } from "@emberforge/compiler/trace-compiler";
+import type { AgentAdapter } from "@emberforge/compiler/agent-loop";
+import { assertOriginalAgentEvidence } from "./agent.js";
 
 export interface SynthesisDependencies {
   /** Server composition only. No browser request can configure a provider, price or spending permission. */
   adapter?: SynthesisAdapter;
+  agentAdapter?: AgentAdapter;
   policy?: SynthesisPolicy;
   ledger?: SynthesisCostLedger;
   authorization?: ProviderAuthorization;
@@ -76,6 +79,11 @@ export async function registerSynthesisRoutes(app: FastifyInstance, projectRoot:
     let traces: SanitizedTrace[];
     try { traces = await Promise.all(parsed.data.traceIds.map(dependencies.readTrace)); }
     catch { return reply.code(404).send({ error: "TRACE_NOT_FOUND", message: "A selected trace is unavailable." }); }
+    if (dependencies.adapter?.mode === "nemotron" && traces.some((trace) => trace.recordingMethod !== "normalized_agent_tools" || trace.agentOrigin?.mode !== "nemotron")) return reply.code(400).send({ error: "ORIGINAL_AGENT_TRACES_REQUIRED", message: "Live synthesis requires original-agent traces. Replay assembly remains a separately labeled experiment." });
+    if (dependencies.adapter?.mode === "nemotron") {
+      try { await assertOriginalAgentEvidence(projectRoot, traces); }
+      catch { return reply.code(400).send({ error: "ORIGINAL_AGENT_PROVENANCE_UNVERIFIED", message: "Selected traces need matching original-agent run records and measured provider usage. Imported origin declarations alone are insufficient." }); }
+    }
     // Recheck after asynchronous IO to serialize job creation.
     if (active) return reply.code(409).send({ error: "COMPILER_BUSY", message: "A synthesis job is already running." });
     const now = new Date().toISOString();
@@ -109,10 +117,10 @@ export async function registerSynthesisRoutes(app: FastifyInstance, projectRoot:
       cancellationPoll.unref();
       try {
         checkpoint("preparing_development");
-        const development = buildProtocolSplit("development", "emberforge-development-v2");
+        const development = buildProtocolSplit("development", "emberforge-development-v2", traces[0]!.sourceMode === "snapshot" ? "snapshot" : "fixture");
         const result = await synthesizeCandidate({
           skillId: job.skillId, runId: job.jobId, traces, developmentCases: development.cases,
-          adapter: dependencies.adapter!, policy: dependencies.policy!,
+          adapter: dependencies.adapter!, policy: dependencies.adapter!.mode === "nemotron" ? { ...dependencies.policy!, timeoutMs: 300000, perCallTimeoutMs: 90000 } : dependencies.policy!,
           ...(dependencies.ledger ? { ledger: dependencies.ledger } : {}), signal: controller.signal,
           onEvent(event) { Object.assign(job, event); checkpoint(event.stage); }
         });

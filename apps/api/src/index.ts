@@ -17,6 +17,8 @@ import { exportFilesMatchManifest } from "./export-integrity.js";
 import { registerLibraryRoutes } from "./library.js";
 import { registerEvaluationRoutes } from "./evaluation.js";
 import { composeSynthesisProvider } from "./provider-composition.js";
+import { registerLocalZetarisRoutes } from "./local-zetaris.js";
+import { registerFulfilmentRoutes } from "./fulfilment.js";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const artifactsRoot = path.join(projectRoot, "artifacts");
@@ -165,6 +167,8 @@ const app = Fastify({ logger: true, bodyLimit: 1_000_000 });
 // The human's current authorization is $0; configuration cannot raise that ceiling.
 const synthesisProvider = await composeSynthesisProvider(projectRoot, { approvedSpendingLimitUsd: 0 });
 await registerCompilationRoutes(app, projectRoot, { synthesis: synthesisProvider.dependencies });
+await registerLocalZetarisRoutes(app, projectRoot);
+await registerFulfilmentRoutes(app, projectRoot);
 await registerLibraryRoutes(app, projectRoot);
 await registerEvaluationRoutes(app, projectRoot);
 const TaskRunRequestSchema = z.object({
@@ -180,7 +184,7 @@ app.get("/api/health", async () => ({
   mode: "fixture",
   database: "sqlite",
   nvidiaConfigured: Boolean(process.env.NVIDIA_API_KEY && process.env.NVIDIA_MODEL && process.env.NVIDIA_BASE_URL && process.env.NVIDIA_SESSION_BUDGET_USD),
-  zetarisConfigured: Boolean(process.env.ZETARIS_BASE_URL && process.env.ZETARIS_API_KEY),
+  zetarisConfigured: Boolean(process.env.ZETARIS_BASE_URL && (process.env.ZETARIS_API_KEY || (process.env.ZETARIS_USERNAME && process.env.ZETARIS_PASSWORD))),
   liveNemotronExecution: false,
   liveZetarisQueries: false
 }));

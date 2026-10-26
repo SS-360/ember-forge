@@ -40,6 +40,6 @@ export function FrozenEvaluation({ skillId, candidateHash, verified }: { skillId
       <p role="status"><strong>{report.status === "passed" ? "Passed" : "Failed"}</strong> · {report.supportedCorrect}/{report.supportedTotal} supported correct · {report.rejectedUnsupported}/{report.unsupportedTotal} unsupported rejected · {report.falseAcceptances} false acceptances.</p>
       <code className="frozen-hash">split {report.frozenSplitHash}</code>
       <details><summary>Scope, limitations and local timings</summary><ul>{report.limitations?.map((item) => <li key={item}>{item}</li>)}</ul><pre>{JSON.stringify(report.timings, null, 2)}</pre></details>
-    </> : <p className="pane-caption">No frozen result recorded. Live model baselines and token savings remain unmeasured. Evaluation makes no model calls.</p>}
+    </> : <p className="pane-caption">No frozen report is recorded in this panel. This evaluation runs only the compiled procedure and makes no model calls.</p>}
   </section>;
 }
