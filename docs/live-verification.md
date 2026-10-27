@@ -68,6 +68,6 @@ A direct standalone check from the external Codex workspace passed a fresh suppo
 
 ## Current local checks and remaining proof
 
-Historical checkpoint: `pnpm typecheck`, 69 Vitest tests across 14 files, and the Vite production build passed. The initial sandbox test run had a Windows export permission failure; the authorized elevated run passed, and later regression checks passed. The latest current-source suite and build results are recorded in [progress](progress.md).
+Historical checkpoint: `pnpm typecheck`, 69 Vitest tests across 14 files, and the Vite production build passed. The initial sandbox test run had a Windows export permission failure; the authorized elevated run passed, and later regression checks passed. Current checks and limits are recorded in the [capability report](release-readiness.md).
 
 The later user-authorized continuation verified two-host execution, real local Zetaris stock queries, a cross-source join and a controlled freshness check on synthetic data. The latest full suite now passes 85 tests across 19 files, with TypeScript and frontend production build passing. See [host/source verification](host-and-zetaris-verification.md). No deployment, marketplace publication, or event submission occurred.

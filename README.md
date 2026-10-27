@@ -259,7 +259,7 @@ For a fresh checkout, start with `.env.example` and the disabled `config/provide
 
 Run records, local snapshots, candidates, exports, and SQLite databases are stored under ignored `artifacts/`. Approval records belong under ignored `.local/`; credentials belong in ignored `.env`. Compiler inputs exclude raw rows and provider logs, but the trace schema cannot detect every secret concealed in an allowed identifier. Review imported traces before sharing them.
 
-The [rename and compatibility notes](docs/rename.md) explain how existing databases, schemas, memory records, and exported packages retain their original identities while new artifacts use Ember Forge names.
+The [compatibility guide](docs/skill-compatibility.md#existing-package-identities) explains how older packages retain their original identities while new artifacts use Ember Forge names.
 
 ## Roadmap
 
@@ -269,7 +269,7 @@ The [rename and compatibility notes](docs/rename.md) explain how existing databa
 - Broaden host-selection checks, reproduce from a clean checkout, and close remaining authorization/recovery gaps.
 - Measure generalization, compilation overhead, and costs against fair live baselines before making savings claims.
 
-The [fulfilment workflow](docs/fulfilment-workflow.md) describes the second domain and its package. The [implementation follow-up](docs/implementation-follow-up.md) tracks remaining work; the [claims ledger](docs/claims.md) distinguishes implementation from demonstrated results.
+The [fulfilment workflow](docs/fulfilment-workflow.md) describes the second domain and its package. The [capability report](docs/release-readiness.md) records current limits; the [claims ledger](docs/claims.md) connects claims to evidence.
 
 ## Documentation
 
@@ -280,8 +280,6 @@ The [fulfilment workflow](docs/fulfilment-workflow.md) describes the second doma
 | [Sponsor integration review](docs/sponsor-integration-review.md) | See what we connected, what was difficult, and what we learned |
 | [Run and evidence guide](docs/run-and-evidence.md) | Reproduce the included skill, run the local app, and inspect proof |
 | [Architecture](docs/architecture.md) | Inspect packages, data flow, and safety boundaries |
-| [Product brief](docs/product-description.md) | Read the original scope and updated implementation status |
-| [Implementation plan](docs/implementation-plan.md) | Follow the build sequence and delivery criteria |
 | [Fulfilment workflow](docs/fulfilment-workflow.md) | Inspect the second bounded workflow and portable package |
 | [Trace compilation](docs/trace-compilation.md) | Import traces, replay snapshots, or inspect API routes |
 | [Skill compatibility](docs/skill-compatibility.md) | Understand exports and host verification status |
@@ -289,7 +287,6 @@ The [fulfilment workflow](docs/fulfilment-workflow.md) describes the second doma
 | [Release readiness](docs/release-readiness.md) | Assess current capabilities and unresolved gates |
 | [Hackathon resource audit](docs/hackathon-resource-audit.md) | Review the checked hub requirements, current evidence, and sponsor gaps |
 | [Runnable demo kit](demo-kit/README.md) | Run the included verified skill and inspect sanitized agent activity |
-| [Progress](docs/progress.md) | Read dated implementation and evidence updates |
 
 ## Attribution and licensing
 

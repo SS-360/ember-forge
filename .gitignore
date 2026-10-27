@@ -6,11 +6,36 @@ coverage/
 .env.*
 !.env.example
 .local/
-artifacts/*
-!artifacts/.gitkeep
+artifacts/
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
 playwright-report/
 test-results/
+
+# Local caches and generated build metadata
+.cache/
+.vite/
+*.tsbuildinfo
+*.log
+
+# Editor, operating-system, and downloaded archive files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.bak
+*.tmp
+*~
+*.zip
+*.tgz
+*.7z
+
+# Local agent state and credentials
+.agents/
+.codex/
+.aws/
+.ssh/
+*.pem
+*.p12
+*.pfx
 

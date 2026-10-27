@@ -69,6 +69,20 @@ The narrow supported-input transfer result now covers gates 1–4 for one packag
 
 The standalone runner currently supports only the stock-reconciliation seed schema and requires JSON input. It does not report a fabricated model-call count. The bundled check disables common Node networking entry points as instrumentation; it is not an OS sandbox. Measure harness selection/invocation tokens separately from standalone runtime work. Live business-data retrieval is not part of the current seed export; a host tool/MCP or a verified data connector will be required for direct source access.
 
+## Optional host rehearsal helpers
+
+The host helpers use the installed CLI and local owner authorization. They may make model requests; the offline package verifier does not.
+
+- Prepare an isolated export workspace with `pnpm transfer:prepare` and the arguments described by that command. Keep expected answers outside each host workspace.
+- `node scripts/run-host-rehearsal.mjs <codex|claude> <prepared-rehearsal-directory>` reads the corresponding `codex-prompt.txt` or `claude-prompt.txt` in that directory. `EMBERFORGE_HOST_REHEARSAL_DIR` can supply the directory instead. Override CLI locations with `EMBERFORGE_CODEX_BINARY` or `EMBERFORGE_CLAUDE_BINARY`; otherwise the helper checks common Windows install locations and the executable search path.
+- `pnpm host:hermes-auto <checked-export-directory>` uses an isolated profile and the configured free Nemotron authorization. Override the installed executables with `EMBERFORGE_HERMES_BINARY` and `EMBERFORGE_HERMES_PYTHON_BINARY`; Windows defaults are derived from the current user's local application directory, and other platforms use `hermes` and `python3` on the search path.
+
+These helpers do not require the original developer's username or drive layout. Their recorded historical results remain scoped to the exact packages and host versions listed above.
+
+## Existing package identities
+
+The product was renamed from Pocket Forge to Ember Forge. New exports use Ember Forge names. Earlier hash-bound packages, database records, schema identifiers, and memory entries keep their recorded identities; relabeling their contents would invalidate the evidence hashes. Existing screenshots are labeled with their capture date. Compatibility handling preserves older stored records without rewriting their provenance.
+
 ## Official format references
 
 - [Agent Skills specification](https://agentskills.io/specification)

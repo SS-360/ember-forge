@@ -1,54 +1,45 @@
 # Capability and release evidence
 
-## 27 October 2026 status
+Updated 27 October 2026. Ember Forge is a working local prototype. The [product story](product-story.md) describes the problem and users; the [run guide](run-and-evidence.md) links runnable examples and the evidence behind each result.
 
-The local prototype has two distinct workflow families: a stock-reconciliation skill generated from Nemotron traces and a checked fulfilment-exceptions template with a portable `SKILL.md` package. The stock candidate `zetaris-stock-207ca2ab-retry-3` was generated from receipt-bound snapshots of actual local Zetaris reads, then passed 21 finite synthetic development checks and offline export verification. The source-to-agent-to-skill chain is documented in the [Zetaris demo guide](zetaris-demo.md) and has tracked offline inputs. The fulfilment package uses synthetic snapshots and fixed trusted logic; it does not demonstrate second-domain learning.
+## Current capabilities
 
-Explicit Codex and Claude Code execution exists for an earlier stock package. Hermes and OpenClaw automatically selected and executed the same newer package on one supported synthetic input each, providing a limited same-package two-host result. OpenClaw also rejected an unknown unit with `UNKNOWN_UNIT`, but its tool wrapper reported exit 1 while the runner's native refusal code is 2. Broader selection accuracy remains untested. Offline ClawHub staging is implemented; publication is blocked on owner approval of ClawHub's MIT-0 licensing requirement. A clean-checkout rehearsal and protected cloud deployment remain unverified. The project is a local prototype, not production-ready. H-MEM is the demonstrated Meterless Engine; the public Academy FAQ permits direct Nemotron and any cloud, so neither Nightshift nor AWS hosting blocks the current prototype. The supplied guide recommends Nightshift and unseen hub rules could add requirements. Report call/token/latency measurements with test scope and failures; no savings or break-even claim is currently supported.
-
-Historical 25 October checkpoint. The user's later authorization expanded work to free-endpoint rehearsals and testing. The details below should be read with the dated updates in [progress](progress.md) and [host/source verification](host-and-zetaris-verification.md).
-
-| Capability | Implementation | Evidence boundary |
+| Capability | Observed result | Scope |
 | --- | --- | --- |
-| Apple-style UI, Ember Forge name/pocket-and-flame mark, amber-red accents | Implemented | Prior screenshots in docs/design predate the rename; the retained SVG mark and renamed wordmark need fresh visual observation |
-| Typed IR, assembly, independent development/frozen protocol | Implemented | Historical v2 assembled candidate: 21 development and 21 frozen synthetic cases; not a fresh current-source result or learning claim |
-| Normalized traces and separate source snapshots | Implemented | Historical snapshot replay; newly added zero-operation applicability failures still need exercise |
-| Bounded synthesis/repair and typed provider adapter | Implemented | Test-only prior controller evidence; current authorization/composition integration unverified |
-| Three server-owned authorization modes | Implemented | Default disabled, current human cap $0; no confirmed free entitlement or activation |
-| Persistent request/token/cost reservations | Implemented | SQLite transaction code; concurrency, expiry, restart and ambiguous-usage scenarios not exercised |
-| Durable jobs and cancellation | Implemented | Transactional checkpoints, shared cancellation flag, owner recovery and preserved malformed legacy files; runtime scenarios unverified |
-| Candidate export completion receipt | Implemented | Downloads require a successful receipt matching candidate and verification hashes; current packages need explicit re-export/checks to acquire that receipt |
-| H-MEM library registration/retrieval/execution/invalidation | Implemented and demonstrated | Actual UI/API path; product integration suite 7/7, pinned conformance 13/13, cold/warm demo and stale-policy/schema rejection |
-| Zetaris-origin stock-to-skill path | Implemented and demonstrated | Two live local sources were captured into receipt-bound snapshots, run through the original agent and compiled into a candidate passing 21/21 checks; the exported skill runs offline against the tracked snapshot. SaaS tenant transport is unverified. |
-| Host transfer | Portable format implemented | Codex and Claude explicitly ran the same older package; Hermes and OpenClaw automatically selected and ran the same newer package on one supported synthetic case each; OpenClaw refused `UNKNOWN_UNIT` but its tool wrapper remapped native exit 2 to 1 |
-| ClawHub package preparation | Offline staging command implemented | Rechecks and stages an exact verified folder; publication has not occurred and MIT-0 rights/owner decision are pending |
-| Cloud deployment | Not deployed; not required by public FAQ | Any cloud is allowed. No authenticated hosted environment, persistent operational service or deployment rehearsal; the local demo and offline skill package need no AWS cluster or 24/7 service. |
-| Live savings / generalization | Not established | Candidate generation and comparisons use synthetic data; no representative real-data accuracy or broad savings result |
+| Local workbench | Samples, original-agent activity, skill creation, verification, export, and Skill Library implemented | Local application; no hosted production service |
+| Zetaris-origin workflow | Two source-read receipts, three original-agent jobs, four traces, and a Nemotron-generated candidate | Synthetic rows from two registered databases on one local PostgreSQL server |
+| Generated stock skill | 21/21 development cases: 7 correct supported results and 14 expected refusals | Candidate `zetaris-stock-207ca2ab-retry-3@0.1.0`; finite development evidence |
+| Portable package | Included source-derived snapshot executes offline; unapproved unit returns `UNKNOWN_UNIT` | The runner consumes JSON snapshots and makes no live Zetaris query |
+| H-MEM library | 7/7 product tests, 13/13 pinned conformance checks, warm execution, and schema-change invalidation | Pinned local reference engine; zero model calls in the reuse demo |
+| Codex and Claude Code | Explicit supported and unsupported execution of the same earlier stock export with Ember Forge stopped | Automatic selection of the newer Zetaris candidate remains unverified in these hosts |
+| Hermes and OpenClaw | Automatically selected and ran the same newer package once each on supported synthetic input | Small transfer check; broad selection accuracy is untested |
+| Unsupported OpenClaw input | Correct `UNKNOWN_UNIT` refusal | Host wrapper changed native runner exit 2 to 1 |
+| Fulfilment workflow | Separate template with one supported package case and three refusals | Configured trusted logic; not a second workflow learned from traces |
+| Project checks | Latest recorded full suite: 85 tests in 19 files; TypeScript and frontend production build passed | Re-run the commands below after implementation changes |
+| Marketplace preparation | Local ClawHub package staging implemented | Publication has not occurred; MIT-0 rights and owner metadata need review |
 
-## Current-source setup and local walkthrough
+## Reproduce the checks
 
-1. Use this working directory's current files. Run `pnpm source:state` to capture a content manifest and dirty status; it does not execute tests or model clients. An older remote clone is not evidence about this source state.
-2. Install dependencies using the lockfile and an available cache. Start `pnpm dev`; startup now starts the API/UI without automatically running export checks.
-3. Workbench: load the labeled synthetic replay examples, name a new candidate, and assemble it when compilation/verification is explicitly wanted. Compilation triggers its product verification/export checks.
-4. Verification: inspect supported/rejected examples and separate frozen results. Existing immutable candidate and frozen artifacts must not be overwritten for a rehearsal.
-5. Skill Library: register a passing candidate, inspect cold lookup/warm execution and deliberate policy drift. These are product executions; run them only when requested.
-6. For an authorized transfer rehearsal, export/check an exact candidate, install the actual package into isolated Codex and Claude workspaces, stop Ember Forge, and use new supported/unsupported JSON from an unrelated path with spaces. Record discovery, invocation and execution separately. Host model access/cost must be authorized before model-backed sessions.
+From the repository root after installing dependencies:
 
-## Short demo outline
+```sh
+pnpm test
+pnpm typecheck
+pnpm --filter @emberforge/web build
+pnpm hmem:conformance
+node demo-kit/zetaris/verify.mjs
+```
 
-Show repeated reconciliation work → explicit synthetic traces → assembly → finite development verification → separately frozen inputs → inspect/download package → use the library on a changed input → change policy and show refusal. Call the current procedure assembled seed replay throughout. Add a live model-learning segment only after genuine trajectories, generated candidate lineage and fresh evaluation are evidenced.
+For the interactive source-to-skill walkthrough and H-MEM demonstration, follow the [run and evidence guide](run-and-evidence.md). Original-agent or synthesis calls require the local [provider authorization](provider-authorization.md). Fresh clones keep provider execution disabled.
 
-## Outstanding release gates
+## Evidence and limits
 
-- Rehearse the existing live local Zetaris → receipt-bound snapshot → agent trace → skill workflow and the offline packaged reproduction.
-- Check unseen hub rule documents if available; the public FAQ permits direct Nemotron and H-MEM already meets the Engine requirement.
-- Review the hub's current Rules, Technical Execution Requirements, Submission Requirements, Disqualification Checklist, AI Usage Policy, and required setup/scoring resources.
-- Prepare the demo video, slide deck, sponsor-technology explanation, and final HackOS submission.
-- Rerun the full test suite after the current packaging edits and capture counts/failures against a named source manifest.
-- Confirm free entitlement/credentials, finite request/token authorization and the actual tenant contract before activation.
-- Resolve or document OpenClaw's exit-code remapping and broaden selection tests before making a general cross-harness accuracy claim.
-- Build a protected cloud deployment only if remote judging access is needed; the local demo and portable package do not require a 24/7 AWS cluster.
-- Resolve MIT-0 rights and owner metadata before considering ClawHub publication.
-- Broaden fair measurements before making any savings claim.
-- Rehearse current-source setup and exact-package transfer in isolated locations. Record unresolved gaps without promoting historical evidence.
-- The user authorized pushing the current essential files to the existing private GitHub repository on 25 October. This source publication does not establish that the outstanding release gates have passed. No public deployment or submission is included.
+- [Zetaris demo](zetaris-demo.md): live source reads at snapshot creation, followed by agent runs, synthesis, and portable snapshot execution.
+- [H-MEM demonstration](meterless-engine-demo.md): actual Skill Library registration, retrieval, execution, and stale-schema refusal.
+- [Host/source verification](host-and-zetaris-verification.md): exact package identities, prompts, outcomes, and host limitations.
+- [Live comparison](live-verification.md): a separate stock candidate's small synthetic repeated-run study, including failed agent runs and incomplete whole-workflow usage accounting.
+- [Sponsor integration review](sponsor-integration-review.md): what was used, integration obstacles, and engineering observations.
+
+Real warehouse accuracy, broad workflow learning, general cost savings, and production readiness are unverified. The compiled skill consumes a captured snapshot; direct live queries during each exported-skill execution are outside its current contract. Equivalent hand-written deterministic code remains a valid alternative.
+
+No cloud deployment or marketplace publication is recorded. The local demo and offline package need no AWS cluster or always-on public service. The public Academy FAQ permits direct Nemotron; H-MEM is the implemented Meterless Engine. Nightshift is a separate recommendation in the supplied solutioning guide. Full event resource obligations are discussed in the [resource audit](hackathon-resource-audit.md).

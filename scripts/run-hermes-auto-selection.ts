@@ -4,6 +4,7 @@ import { existsSync } from "node:fs";
 import { cp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import http from "node:http";
 import path from "node:path";
+import os from "node:os";
 import { fileURLToPath } from "node:url";
 import { composeSynthesisProvider } from "../apps/api/src/provider-composition.js";
 import { reconcileStock } from "../packages/evaluator/src/stock-reconciliation.js";
@@ -212,10 +213,13 @@ try {
   await writeFile(path.join(profile, "config.yaml"), config);
   await startEvidence({ schemaVersion: "emberforge.hermes-auto-selection/1", state: "running", runId, host: "Hermes Agent CLI", candidateId: JSON.parse(await readFile(path.join(packageDirectory, "skill.json"), "utf8")).id, candidateHash: JSON.parse(await readFile(path.join(packageDirectory, "verification.json"), "utf8")).candidateHash, packagePath: path.relative(root, packageDirectory), packageManifestVerified: true, inputHash, expectedOutputHash: canonicalHash(expected), promptHash, explicitSkillNameInPrompt: false, serverPorts: [3001, 5174], provider: "NVIDIA Nemotron free endpoint through local metered-limit bridge", model: providerScope.model, costCeilingUsd: 0, tokenCeiling: policy.maxTotalTokens, providerCalls, rawPromptRetained: false, rawResponseRetained: false, rawReasoningRetained: false });
   const apiPort = await isListening(3001), webPort = await isListening(5174);
-  const hermesBinary = "C:/Users/Sam/AppData/Local/hermes/hermes-agent/venv/Scripts/hermes.exe";
+  const windowsScripts = path.join(process.env.LOCALAPPDATA ?? path.join(os.homedir(), "AppData", "Local"), "hermes", "hermes-agent", "venv", "Scripts");
+  const localHermes = path.join(windowsScripts, "hermes.exe");
+  const hermesBinary = process.env.EMBERFORGE_HERMES_BINARY ?? (process.platform === "win32" && existsSync(localHermes) ? localHermes : "hermes");
   const startedAt = new Date().toISOString();
   let stdout = "", stderr = "";
-  const pythonBinary = "C:/Users/Sam/AppData/Local/hermes/hermes-agent/venv/Scripts/python.exe";
+  const localPython = path.join(windowsScripts, "python.exe");
+  const pythonBinary = process.env.EMBERFORGE_HERMES_PYTHON_BINARY ?? (process.platform === "win32" && existsSync(localPython) ? localPython : process.platform === "win32" ? "python" : "python3");
   const pythonProbe = await new Promise<{ code: number | null; stdout: string; stderr: string }>((resolve) => {
     const child = spawn(pythonBinary, ["-c", "import sys,urllib.request; request=urllib.request.Request(sys.argv[1]+'/models',headers={'Authorization':'Bearer '+sys.argv[2]}); opener=urllib.request.build_opener(urllib.request.ProxyHandler({})); response=opener.open(request,timeout=4); print(response.status)", serverAddress, nonce], { cwd: profileWork, env, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
     let probeStdout = "", probeStderr = "";

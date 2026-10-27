@@ -9,7 +9,6 @@ The original pocket-and-flame SVG mark is retained at the user's request. Only t
 - `apps/web/public/ember-forge.svg`: original white pocket-and-flame mark on a charcoal app tile. Used in the header and favicon.
 - `apps/web/public/ember-forge-symbol.svg`: original pocket-and-flame symbol with a transparent background.
 - `apps/web/public/ember-forge-lockup.svg`: icon and Ember Forge wordmark. Lettering uses the platform system font rather than embedded font outlines.
-- `docs/design/legacy-brand-preview.jpg`: historical browser-rendered preview of the retained mark with the earlier brand name.
 
 The visible adjacent brand name provides the header's accessible label; its image is decorative to avoid repeating the name. Existing screenshots remain historical captures rather than edited evidence of the renamed app.
 

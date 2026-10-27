@@ -5,6 +5,11 @@
   "sourceUrl": "https://github.com/Meterless/Meterless/tree/1742dec56a66e58eef9dda2d2b865823758ca8cd/engines/hmem",
   "license": "Apache-2.0",
   "retrieved": "2026-10-23",
-  "modified": false
+  "modified": true,
+  "sourceFilesModified": false,
+  "packagingChanges": [
+    "Retained the specification, Apache-2.0 license, reference implementation and tests, and conformance runner/vectors.",
+    "Omitted ancillary images, examples, workshops, promotional content, extended docs, and the nested npm lockfile.",
+    "Replaced the vendor and reference README files with focused package and workspace instructions."
+  ]
 }
-
