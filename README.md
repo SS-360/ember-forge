@@ -7,6 +7,7 @@
 <p align="center"><strong>Turn repeated work into reusable skills.</strong></p>
 
 <p align="center">
+  <a href="https://youtu.be/rQmETq9PCXs">Watch the video</a> ·
   <a href="#try-the-included-skill">Try the demo</a> ·
   <a href="docs/product-story.md">Product story</a> ·
   <a href="docs/sponsor-integration-review.md">Sponsor integrations</a> ·
@@ -14,10 +15,10 @@
 </p>
 
 <p align="center">
-  <img src="docs/design/ember-forge-launch-thumbnail.png" alt="Ember Forge: turn agent work into skills" width="100%">
+  <a href="https://youtu.be/rQmETq9PCXs"><img src="docs/design/ember-forge-launch-thumbnail.png" alt="Watch the Ember Forge product launch and demo" width="100%"></a>
 </p>
 
-<p align="center"><em>Product launch artwork · reusable skills built from recorded agent work</em></p>
+<p align="center"><a href="https://youtu.be/rQmETq9PCXs"><strong>Watch the product launch and demo</strong></a></p>
 
 An operations team may repeat the same reconciliation every day: read new orders, match supplier names to products, convert units, compare demand with stock, and flag shortages. The records change; the steps do not.
 
