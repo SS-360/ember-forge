@@ -9,9 +9,9 @@ Updated 27 October 2026 (Asia/Calcutta). This replaces the older setup-only snap
 | Local application workflow | **Implemented** | Workbench, original-agent runs, trace-based skill compilation, verification/export, frozen evaluation, and Skill Library. |
 | Current source quality gates | **Passed** | 85 tests across 19 files; TypeScript check and Vite production build pass. The isolated package verifier also passes for the OpenClaw-tested export. |
 | Nemotron | **Connected and exercised** | Original-agent runs and synthesis on synthetic stock data under the user's $0 NVIDIA ceiling. No real-world accuracy or savings result. |
-| Zetaris local source path | **Connected and exercised** | Read-only reads from two local synthetic PostgreSQL sources, reconciliation join, and controlled freshness check. This is a separate workbench path; the original agent/export still use fixture/JSON data. SaaS/cloud tenant transport is unverified. |
+| Zetaris-to-skill workflow | **Connected and exercised** | Two local Zetaris reads became receipt-bound snapshots for three original-agent jobs/four traces; Nemotron produced a candidate that passed 21/21 development cases. The portable skill runs against a tracked snapshot. Direct live queries at exported-skill execution and SaaS/cloud tenant transport are not implemented. |
 | Meterless H-MEM | **Integrated and demonstrated** | Actual Skill Library integration suite passes 7/7; pinned conformance passes 13/13; `pnpm memory:demo` demonstrates warm retrieval/execution and stale-schema invalidation. Reproduction steps: [Meterless H-MEM demo](meterless-engine-demo.md). This is a local reference engine. |
-| Meterless Nightshift primary runtime | **Not integrated** | The user-provided APPROACH guide and official Academy describe Nightshift as the primary AI provider/runtime layer. This is the largest sponsor integration gap. |
+| Meterless Nightshift provider layer | **Optional based on the public Academy FAQ** | The app uses Nemotron directly, which the FAQ permits. H-MEM already fulfills the Meterless Engine requirement. The supplied guide recommends Nightshift; check the full unseen hub rules if they become available. |
 | Agent activity evidence | **Available** | Original-agent runs save tool steps and outcomes. The tracked demo kit has a sanitized 14-step trace and OpenClaw activity record. Neither contains hidden/private model reasoning. |
 | Host compatibility | **Narrowly demonstrated** | Codex/Claude explicitly ran an earlier export. Hermes/OpenClaw auto-selected the same newer export once each on a supported synthetic input; OpenClaw's refusal exit code is remapped by its wrapper. |
 | Demo sample package | **Prepared** | Synthetic stock input, deterministic output, and host/workbench activity records in `demo-kit/`. |
@@ -22,10 +22,9 @@ Updated 27 October 2026 (Asia/Calcutta). This replaces the older setup-only snap
 
 ## Immediate blockers
 
-1. Integrate and verify Meterless Nightshift as the primary AI runtime; direct Nemotron API calls are not equivalent.
-2. Connect the original stock-agent task to the verified Zetaris route or clearly disclose that its run/export path still uses fixtures.
-3. Obtain and review the full current Rules, Technical Execution Requirements, Submission Requirements, Disqualification Checklist, and AI Usage Policy from the hub; verify team/HackOS eligibility.
-4. Finish the demo video, slides, repository explanation, sponsor mapping, and HackOS submission before the official deadline.
+1. Rehearse the existing Zetaris-origin snapshot-to-agent-to-skill path on the local demo stack and the portable snapshot path from a fresh clone.
+2. No AWS or public deployment is needed for the local demo or offline judge run. Consider Nightshift routing only if the unseen hub rules or sponsor strategy make it worthwhile; it is separate from the already demonstrated H-MEM Engine requirement.
+3. Broader trace-generated workflows, public deployment, and marketplace publication remain separate product-roadmap work.
 
 ## Evidence links
 

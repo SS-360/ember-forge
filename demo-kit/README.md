@@ -2,6 +2,8 @@
 
 This folder contains the exact verified stock skill folder installed in OpenClaw, a synthetic input and deterministic expected result, and sanitized OpenClaw/workbench activity. It contains no sponsor credentials or live business data. The workbench trace is a separate run from the OpenClaw input/output pair.
 
+The [Zetaris-to-skill kit](zetaris/README.md) is a separate, source-provenanced workflow: local Zetaris reads → agent traces → verified candidate → portable snapshot execution. Its bundled inputs are synthetic and make no live provider/source calls when run.
+
 ## Run the sample skill
 
 Use Node.js 24.13 or newer. The verified `zetaris-stock-207ca2ab-retry-3@0.1.0` package is included at [`skill/`](skill/), with candidate SHA-256 `efdb2a2d6e247fa03f54a984beb32bea6a16c1ce03bb66115b689fe4f41db647`. From the repository root in PowerShell:

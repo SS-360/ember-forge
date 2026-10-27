@@ -79,7 +79,7 @@ Evidence:
 - Cross-source SQL and matching result: `artifacts/zetaris/stock-live-be33034d/join-verified.json`.
 - Private local source mappings: `.local/zetaris-stock-sources.json`, containing no database password.
 
-Workbench → **Zetaris stock sources → Read Zetaris stock** invokes the real source-read route. This report uses the independent stock evaluator on live query results; it does not silently broaden the exported skill's fixture-only contract, synthesize a live-source skill, or trigger model fallback. SaaS REST pagination and the separate production tenant snapshot interface remain outside this local JDBC proof.
+Workbench → **Zetaris stock sources → Read Zetaris stock** invokes the real source-read route. The **Use snapshot for agent run** action saves a receipt-bound JSON sample and selects it in the adjacent work-sample/agent flow. The recorded `zetaris-stock-207ca2ab-retry-3` workflow used two Zetaris read receipts, three original-agent jobs and four traces; Nemotron synthesis produced the candidate, which passed all 21 finite development cases. The exact candidate is included in the demo kit and now runs against a tracked snapshot offline. The exported skill does not open a live Zetaris connection during execution. This is a coherent source-to-skill workflow on synthetic data, not a production tenant transport or real-business-accuracy result. SaaS REST pagination and the separate production tenant snapshot interface remain unverified.
 
 ## Current checks
 

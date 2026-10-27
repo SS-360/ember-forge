@@ -5,9 +5,9 @@ Updated 27 October 2026. This current status supersedes the dated checkpoints be
 | Technology | Current state | Limit |
 | --- | --- | --- |
 | NVIDIA Nemotron | Typed adapter, bounded original-agent runs, and synthesis exercised with synthetic stock data under the separately authorized $0 ceiling. | Not routed through Meterless Nightshift. No real business-data accuracy claim. |
-| Zetaris local | Read-only stock reads, cross-source reconciliation join, and controlled freshness check passed through the official local JDBC stack using two synthetic PostgreSQL databases. | Separate workbench path; the original agent and exported skill still use fixtures/JSON snapshots. Cloud/SaaS tenant transport remains unverified. |
+| Zetaris local | Read-only stock reads, cross-source reconciliation join, controlled freshness check, and a Zetaris-origin snapshot-to-agent-to-skill workflow passed on synthetic data. | The compiled skill runs on the captured JSON snapshot, not a live Zetaris connection at each execution. SaaS tenant transport remains unverified. |
 | Meterless H-MEM | Pinned local reference participates in the actual Skill Library registration, retrieval, bounded execution, and policy/schema invalidation flow. | No hosted H-MEM service is used or claimed. |
-| Meterless Nightshift | Not integrated or configured. | The official Academy describes Nightshift as the primary AI runtime layer; this is a major open sponsor gap. |
+| Meterless Nightshift | Not integrated or configured. | A separate provider-layer direction in the supplied approach guide. It is not needed to satisfy the H-MEM Meterless Engine criterion; whether the full rules require it remains unverified. |
 
 The latest full suite passes 85 tests across 19 files, with TypeScript and frontend production build passing. See [host/source evidence](host-and-zetaris-verification.md), [live workflow evidence](live-verification.md), and the [hackathon resource audit](hackathon-resource-audit.md). API keys remain in the ignored root `.env`; no secret values belong in this file or in chat.
 

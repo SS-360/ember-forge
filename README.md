@@ -18,7 +18,7 @@ Ember Forge is a local web application for turning recorded workflows into porta
 
 The main compiled domain is **stock reconciliation**: reconcile open orders against inventory using product aliases and unit-conversion rules, then report demand, stock, and shortages. A second, independently versioned **fulfilment exceptions** workflow checks incomplete shipments and overdue orders from a separate schema. It is a configured template today, not a second Nemotron-learned skill.
 
-> **Status: working local prototype.** Genuine Nemotron tool runs have produced a synthesized stock skill, which passed 21 finite development checks and standalone export checks on synthetic data. Codex and Claude Code explicitly executed an earlier export. Hermes and OpenClaw automatically selected and executed the same newer export on one supported synthetic input each. Local Zetaris stock reads and a cross-source join pass on synthetic data. Fresh clones keep provider execution disabled until local authorization is configured. General workflow learning, real warehouse accuracy, production readiness, and cost savings remain unverified.
+> **Status: working local prototype.** A stock workflow captured actual reads from two local Zetaris sources into receipt-bound snapshots, ran three original-agent jobs, assembled four traces, and generated a Nemotron skill that passed 21/21 finite development checks. The exported skill runs on the captured snapshot without Zetaris or a model call. Codex and Claude Code explicitly executed an earlier export; Hermes and OpenClaw automatically selected and executed the same newer export on one supported synthetic input each. Fresh clones keep provider execution disabled until local authorization is configured. General workflow learning, real warehouse accuracy, production readiness, and cost savings remain unverified.
 
 The workbench supports sanitized JSON/CSV samples, saved original-agent runs, trace assembly, Nemotron synthesis, local H-MEM reuse, and downloadable Agent Skills. In the first frozen four-arm comparison, the exact export passed all 27 invocations with zero model calls; instruction-only also passed all 27 using 33 model requests, while the original agent passed 24/27. These are three repeats of nine synthetic inputs. See the [host and live-source checks](docs/host-and-zetaris-verification.md), [compiler verification record](docs/live-verification.md), [agent workflow](docs/agent-workflow.md), [credential guide](docs/credentials.md), [comparison protocol](docs/comparison-protocol.md), [hackathon resource audit](docs/hackathon-resource-audit.md), and [remaining activation steps](USER_ACTIONS.md).
 
@@ -78,6 +78,8 @@ Open **[http://127.0.0.1:5174](http://127.0.0.1:5174)**. The Fastify API listens
 
 Candidate names preserve separate artifacts. The header selector reopens saved candidates. Policy or schema drift can deprecate an incompatible library entry; this path has no automatic model fallback.
 
+For the live-source workflow, see the [Zetaris-to-skill demo](docs/zetaris-demo.md). The live read runs through the local Zetaris stack, then saves a receipt-bound snapshot for agent runs and skill compilation. No AWS cluster or 24/7 public endpoint is needed. Judges can run the exported skill offline with the tracked source snapshot in [`demo-kit/zetaris/`](demo-kit/zetaris/).
+
 ## Meterless Engine: H-MEM working feature
 
 Ember Forge uses the pinned Meterless H-MEM reference in its actual **Skill Library** feature. Registration accepts only an independently verified candidate and stores its evidence references in H-MEM. Retrieval nominates a candidate; Ember Forge then checks artifact hashes and input applicability before its bounded runtime executes it. A schema or policy mismatch rejects and deprecates the stale entry. This path makes zero model calls.
@@ -92,7 +94,7 @@ pnpm memory:demo
 
 The product-level suite exercises generated-name retrieval, registration and retrieval across a service restart, bounded execution, schema/policy invalidation, and refusal of unverified or altered candidates. On 27 October 2026, it passed **7/7 tests**; the pinned H-MEM conformance suite passed **13/13 checks**. The demo returned `stock-reconciliation@0.1.0` from warm H-MEM retrieval, executed it, then refused a changed inventory schema with `SCHEMA_VERSION_MISMATCH` and marked the stale entry deprecated. Each demo writes a detailed run record under ignored `artifacts/memory-demo/`.
 
-For a UI demonstration, start `pnpm dev`, open the **Skill library** view, register the current passing candidate, load the synthetic input, and choose **Retrieve and execute**. The evidence panel shows the accepted memory ID, bounded execution, and zero model calls. Change `dataset.sourceSchemaVersions.inventory` to `inventory/v2` and run again to show the stale-schema refusal. This is synthetic local evidence; it does not demonstrate Nightshift or live Zetaris access. See the [Meterless H-MEM demo guide](docs/meterless-engine-demo.md) for the implementation and proof details.
+For a UI demonstration, start `pnpm dev`, open the **Skill library** view, register the current passing candidate, load the synthetic input, and choose **Retrieve and execute**. The evidence panel shows the accepted memory ID, bounded execution, and zero model calls. Change `dataset.sourceSchemaVersions.inventory` to `inventory/v2` and run again to show the stale-schema refusal. This H-MEM check uses synthetic data; the separate [Zetaris-to-skill demo](docs/zetaris-demo.md) covers live local reads and the agent path.
 
 For the **model-generated workflow**, import a sanitized work sample, observe original agent runs, and inspect their recorded tool steps and shortage reports. Collect two distinct successful inputs and a counterexample, select only their original-agent traces, and choose **Nemotron synthesis** in Compilation method. This path requires a configured free endpoint and local authorization; replay examples stay separately labeled. The first successful live synthesis used 13,543 input and 1,122 output tokens, after earlier failed attempts; whole-workflow usage is partially unknown and retained in the local ledger.
 
@@ -218,6 +220,7 @@ Run the checks appropriate to your change:
 | `pnpm eval:export` | Build and check the supplied skill in an isolated temporary directory |
 | `pnpm memory:demo` | Local memory demonstration |
 | `pnpm hmem:conformance` | Vendored H-MEM conformance suite |
+| `node demo-kit/zetaris/verify.mjs` | Verify the exported skill against the Zetaris-origin supported and unsupported snapshots, offline |
 | `pnpm source:state` | Record a source-content manifest without tests or provider calls |
 
 To export a specific saved candidate, use `pnpm eval:export --candidate artifacts/candidates/<skill-name>`. Export checks instrument common Node networking APIs; they are not an operating-system network sandbox. The [compatibility guide](docs/skill-compatibility.md) covers host-discovery checks separately.
@@ -226,9 +229,9 @@ To export a specific saved candidate, use `pnpm eval:export --candidate artifact
 
 ## Provider configuration and local data
 
-The server enforces a **$0 NVIDIA spending ceiling**. The configured free prototyping endpoint has been used for original stock-agent runs and skill synthesis on synthetic data; authorization remains local and fresh clones default to providers disabled. The latest automated suite, TypeScript check, and frontend build pass. Local Zetaris JDBC reads, a two-source reconciliation join, and a controlled freshness check also pass on synthetic records. These Zetaris reads are a separate workbench path: the stock agent and exported skill still use a JSON fixture/snapshot. Meterless Nightshift is not integrated, and the public Academy describes it as the primary runtime layer; see the [hackathon resource audit](docs/hackathon-resource-audit.md).
+The server enforces a **$0 NVIDIA spending ceiling**. The configured free prototyping endpoint has been used for original stock-agent runs and skill synthesis on synthetic data; authorization remains local and fresh clones default to providers disabled. The latest automated suite, TypeScript check, and frontend build pass. The Zetaris-origin workflow is verified through receipt-bound snapshots into agent runs and a validated candidate. The exported skill consumes that snapshot; it does not issue live Zetaris queries during execution. H-MEM is implemented and demonstrated as the Meterless Engine. The app connects to Nemotron directly, which the public Academy FAQ permits; that FAQ also says any cloud is allowed. Nightshift is recommended in the supplied solutioning guide, but is not a blocker under the available public requirements. No AWS cluster or 24/7 public service is needed for this local demo and offline skill evaluation. See the [hackathon resource audit](docs/hackathon-resource-audit.md).
 
-For a fresh checkout, start with `.env.example` and the disabled `config/provider-authorization.example.json`. Credentials alone do not enable calls: server-owned authorization binds the endpoint, model, account, evidence, expiry, and finite quotas. Follow [provider authorization](docs/provider-authorization.md) before activation. The verified local Zetaris JDBC setup is documented in [credentials](docs/credentials.md); SaaS tenant transport and the stock agent's connection to the Zetaris route remain unverified.
+For a fresh checkout, start with `.env.example` and the disabled `config/provider-authorization.example.json`. Credentials alone do not enable calls: server-owned authorization binds the endpoint, model, account, evidence, expiry, and finite quotas. Follow [provider authorization](docs/provider-authorization.md) before activation. The verified local Zetaris JDBC setup is documented in [credentials](docs/credentials.md); live SaaS/tenant transport is unverified.
 
 Run records, local snapshots, candidates, exports, and SQLite databases are stored under ignored `artifacts/`. Approval records belong under ignored `.local/`; credentials belong in ignored `.env`. Compiler inputs exclude raw rows and provider logs, but the trace schema cannot detect every secret concealed in an allowed identifier. Review imported traces before sharing them.
 
@@ -236,8 +239,8 @@ The [rename and compatibility notes](docs/rename.md) explain how existing databa
 
 ## Roadmap
 
-- Integrate Meterless Nightshift as the primary AI runtime, then repeat the exact supported and unsupported workflow checks through it.
-- Connect the original stock agent's data path to the verified Zetaris source route and retain query/snapshot evidence.
+- Consider Meterless Nightshift routing only if the full hub rules or sponsor strategy call for it; H-MEM already satisfies the Meterless Engine requirement, and the public Academy FAQ permits direct Nemotron.
+- Add direct Zetaris queries to the skill runtime only if live-at-execution behavior is needed; the current supported path captures a verified source snapshot, then runs the portable skill offline.
 - Finish HackOS eligibility/team checks, required resource review, sponsor explanation, demo assets, and submission package before the published deadline.
 - Broaden host-selection checks, reproduce from a clean checkout, and close remaining authorization/recovery gaps.
 - Measure generalization, compilation overhead, and costs against fair live baselines before making savings claims.

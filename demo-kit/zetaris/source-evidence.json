@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "emberforge.zetaris-to-skill-evidence/1",
+  "evidenceClass": "synthetic_fixture",
+  "workflow": {
+    "runId": "207ca2ab-ec2c-4050-a785-1854378c6365",
+    "createdAt": "2026-10-26T16:01:26.567Z",
+    "source": "Local Zetaris JDBC reads over two registered synthetic PostgreSQL sources",
+    "sourceReads": [
+      "604971c1-caa5-4e46-8cdc-89cfda694b97",
+      "b40f9762-c777-45f6-bfbb-60fd5f0ed1a4"
+    ],
+    "registeredSources": [
+      "EMBER_SQL_ORDERS_BE33034D",
+      "EMBER_SQL_WAREHOUSE_BE33034D"
+    ],
+    "sourceRestored": true,
+    "sourceModeForAgent": "snapshot",
+    "originalAgentJobs": 3,
+    "traceOutcomes": {
+      "succeeded": 2,
+      "failed": 1,
+      "unsupported": 1
+    }
+  },
+  "snapshotInputs": {
+    "input.json": {
+      "sampleId": "101e4afa-5a2f-474a-99b5-b190f20c6858",
+      "readId": "604971c1-caa5-4e46-8cdc-89cfda694b97",
+      "readHash": "9e41f3fe1209999158facbd5c92ab17fe33716b32ac05eb2db91fefbf0904286",
+      "snapshotDatasetHash": "a3ea3fad33fd2fa2673a0fa5f3f832d7b58fea793c52a77fc2fcf7cddb44b8fe"
+    },
+    "unsupported.json": {
+      "sampleId": "1c7d3579-3f0b-45ad-bfac-56359f6d856d",
+      "readId": "b40f9762-c777-45f6-bfbb-60fd5f0ed1a4",
+      "readHash": "96395b166b809c0a9ca0243520a1ff5769f7f7ee37d048e41d0de6f89cb00ee8",
+      "snapshotDatasetHash": "9c786fcc6f063d4efd0a1151e733968c2cc847061cc4940d17136cfd2225f842"
+    }
+  },
+  "candidate": {
+    "skillId": "zetaris-stock-207ca2ab-retry-3",
+    "skillVersion": "0.1.0",
+    "candidateHash": "efdb2a2d6e247fa03f54a984beb32bea6a16c1ce03bb66115b689fe4f41db647",
+    "generationMethod": "nemotron_synthesis",
+    "status": "validated",
+    "developmentCases": {
+      "total": 21,
+      "passed": 21,
+      "supported": 7,
+      "unsupported": 14
+    }
+  },
+  "offlineReproduction": {
+    "supportedInput": "input.json",
+    "unsupportedInput": "unsupported.json",
+    "command": "node demo-kit/skill/runtime/emberforge-runtime.mjs --input demo-kit/zetaris/input.json --output result.json",
+    "supportedResult": [
+      {
+        "sku": "CUP-RED",
+        "demandEach": 25,
+        "onHandEach": 15,
+        "shortageEach": 10
+      },
+      {
+        "sku": "MUG-BLUE",
+        "demandEach": 5,
+        "onHandEach": 8,
+        "shortageEach": 0
+      }
+    ],
+    "liveSourceReadResultHash": "bdc1473c86d1ebb57d7f0c6981cdf361d6db8622c5cb48f3cabae8e266498306",
+    "unsupportedReason": "UNKNOWN_UNIT",
+    "unsupportedExitCode": 2,
+    "providerCalls": 0,
+    "zetarisCalls": 0
+  },
+  "limitations": [
+    "All source rows are synthetic demonstration data.",
+    "The live Zetaris read is performed during snapshot creation; the portable skill does not query Zetaris at execution time.",
+    "The two logical source databases shared one local PostgreSQL instance; this is not evidence of heterogeneous production backends or transaction snapshot isolation.",
+    "The offline repeat proves package behavior on a source-derived snapshot, not fresh-clone access to the owner's local Zetaris service."
+  ]
+}

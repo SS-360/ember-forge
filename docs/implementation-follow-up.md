@@ -4,9 +4,13 @@ Review date: 23 October 2026; implementation update: 25 October 2026 (Asia/Calcu
 Project: independent Track 3 entry. Do not merge with VRAM Rescue or NeuroDBG.
 Decision: the primary output is a portable Agent Skills package for Codex, Claude Code, OpenClaw, Hermes, and other compatible harnesses. A standalone CLI remains a secondary interface. Skill-file generation alone is not the product differentiator; the export must carry a bounded executable procedure, applicability contract, tests, evidence, and provenance.
 
+## Status update — 27 October 2026
+
+This checklist is a historical review snapshot. Its dated status is superseded by [release readiness](release-readiness.md), [current progress](progress.md), and the [Zetaris demo evidence](zetaris-demo.md). The H-MEM feature is implemented and demonstrated; the two-source local Zetaris route has fed receipt-bound snapshots into original-agent jobs and skill synthesis; the current Zetaris-origin candidate passed 21/21 development cases; and the same newer export has automatic-selection evidence in Hermes and OpenClaw. Codex and Claude Code executed an earlier export. The public Academy FAQ permits direct Nemotron and any cloud, so neither Nightshift nor AWS deployment is a blocker to this local prototype. Re-read the current documents before using the older open checkboxes below as current status.
+
 This checklist reconciles the product decision with the inspected implementation. It is ordered by dependency and judged by evidence. A format that looks compatible is not counted as installation, discovery, invocation, or correct execution.
 
-## Review findings
+## Historical review findings (23–25 October; superseded where dated updates differ)
 
 - The local React/Fastify workbench and verification/export application, typed contracts, bounded interpreter, H-MEM integration, and portable export path exist.
 - Candidate-specific export includes contracts, finite verification, bounded runtime, examples, hashes and lineage. Historical checks passed before the latest continuation; the 45-test count is not a current-source suite result. On 25 October the user chose implementation only. See release-readiness.md for pending validation.

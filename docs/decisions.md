@@ -10,7 +10,7 @@ Node v24.13.0 is installed locally and Node 24 is listed as LTS by the official 
 
 ## D-003: Pin the actual Meterless engine source
 
-Meterless H-MEM upstream commit 1742dec56a66e58eef9dda2d2b865823758ca8cd is copied to vendor/meterless/hmem. This is a specification and deterministic reference implementation, not a production library. Preserve the Apache-2.0 license and provenance. The local skill library uses the pinned reference for provenance-aware memory, hybrid retrieval, and its trust ledger; deterministic contract checks still authorize execution. A production H-MEM engine remains outside the current demo evidence.
+Meterless H-MEM upstream commit 1742dec56a66e58eef9dda2d2b865823758ca8cd is copied to vendor/meterless/hmem. Preserve the Apache-2.0 license and provenance. The local Skill Library uses the pinned engine in a working feature for provenance-aware retrieval, verified-skill reuse, and policy/schema invalidation. Product integration and upstream conformance evidence are recorded in [readiness](readiness.md) and [release readiness](release-readiness.md); the feature is a prototype implementation, not a production deployment.
 
 ## D-004: Do not call paid providers without a budget
 
@@ -32,5 +32,5 @@ The export contains declarative skill instructions and a trusted interpreter. It
 
 Later user-authorized work superseded the setup checkpoints in D-004 and D-006: Nemotron original-agent calls and synthesis ran under a free-endpoint $0 ceiling; local Zetaris stock reads, a cross-source join and freshness check ran on synthetic sources; H-MEM is in the actual library path. See [integration evidence](integrations.md). D-005 remains in force for tenant-specific SaaS routes: use the local deployment's documented JDBC contract where already verified, and do not invent a remote endpoint.
 
-The supplied hackathon guide adds a separate requirement risk: Meterless Nightshift is not integrated as primary provider, and the original agent still reads fixture/snapshot data rather than the separate Zetaris path. See [hackathon resource audit](hackathon-resource-audit.md).
+The supplied guide describes Meterless Nightshift as a primary-provider direction. It is not integrated and remains separate from H-MEM's Meterless Engine criterion. The full official rules were not included in the supplied capture, so mandatory status is unverified. The local Zetaris path now feeds receipt-bound snapshots into the original-agent workflow; see the [hackathon resource audit](hackathon-resource-audit.md).
 

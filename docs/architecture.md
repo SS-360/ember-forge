@@ -1,6 +1,6 @@
 # Ember Forge architecture
 
-The current product is a local prototype with separate fixture-agent and local-Zetaris paths. Model, memory, host, and source evidence is synthetic and bounded; the diagram keeps those paths distinct.
+The current product is a local prototype. The Zetaris stock route reads registered local sources and can materialize a receipt-bound snapshot for the original-agent and skill-compilation flow. The exported skill then runs against that captured snapshot. Model, memory, host, and source evidence is synthetic and bounded.
 
 ```mermaid
 flowchart LR
@@ -22,7 +22,9 @@ flowchart LR
   UI --> ZROUTE[Read-only Zetaris stock route]
   ZROUTE --> ZLOCAL[Local Zetaris JDBC]
   ZLOCAL --> PG[(Two synthetic PostgreSQL sources)]
-  NIGHT[Meterless Nightshift] -. not integrated .-> AGENT
+  ZROUTE --> SNAP[Receipt-bound JSON snapshot]
+  SNAP --> AGENT
+  NIGHT[Meterless Nightshift] -. separate provider-layer direction; not integrated .-> AGENT
 ```
 
 ## Implemented boundaries
@@ -32,9 +34,9 @@ flowchart LR
 - Successful and failed traces can feed bounded skill synthesis. Candidates use a declarative instruction format interpreted by trusted code, with static checks, explicit contracts, independent development cases, and a frozen synthetic evaluation protocol.
 - The standalone exporter includes `SKILL.md`, contracts, examples, the bounded runtime, and verification evidence. Supported package inputs run without a model API call; unsupported inputs return structured reasons.
 - The local Skill Library uses the pinned Meterless H-MEM reference for verified registration, retrieval, bounded execution, and policy/schema invalidation. Deterministic hash and applicability checks authorize execution; H-MEM only nominates a candidate.
-- A separate workbench route performs actual read-only stock reads, a cross-source join, and a controlled freshness check through the local Zetaris JDBC service. It used two synthetic PostgreSQL databases. This path is not yet the source backend of the original Nemotron stock agent or the exported skill.
+- The workbench route performs read-only stock reads through local Zetaris and can pass a receipt-bound snapshot into the original-agent flow. Two source reads, three agent jobs, four traces, Nemotron synthesis, and a 21-case candidate verification are recorded. The portable skill runs on that captured snapshot; it does not query Zetaris during each later execution.
 - Codex and Claude Code explicitly executed an earlier package; Hermes and OpenClaw automatically selected and executed the same newer package on one supported synthetic case each. OpenClaw also refused an unknown unit, though its wrapper changed native exit code 2 to 1.
-- Meterless Nightshift is not integrated. The current Nemotron adapter calls NVIDIA directly. Cloud/SaaS Zetaris transport, real business data, production deployment, general workflow learning, broad host-selection accuracy, and savings remain unverified.
+- Meterless Nightshift is not integrated as the provider layer; this is separate from the implemented H-MEM Engine feature. Cloud/SaaS Zetaris transport, real business data, production deployment, general workflow learning, broad host-selection accuracy, and savings remain unverified.
 
 ## Principal packages
 
