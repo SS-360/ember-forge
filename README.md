@@ -78,6 +78,22 @@ Open **[http://127.0.0.1:5174](http://127.0.0.1:5174)**. The Fastify API listens
 
 Candidate names preserve separate artifacts. The header selector reopens saved candidates. Policy or schema drift can deprecate an incompatible library entry; this path has no automatic model fallback.
 
+## Meterless Engine: H-MEM working feature
+
+Ember Forge uses the pinned Meterless H-MEM reference in its actual **Skill Library** feature. Registration accepts only an independently verified candidate and stores its evidence references in H-MEM. Retrieval nominates a candidate; Ember Forge then checks artifact hashes and input applicability before its bounded runtime executes it. A schema or policy mismatch rejects and deprecates the stale entry. This path makes zero model calls.
+
+Reproduce the product integration proof from the repository root:
+
+```sh
+pnpm exec vitest run packages/memory/test/skill-memory.test.ts
+pnpm hmem:conformance
+pnpm memory:demo
+```
+
+The product-level suite exercises generated-name retrieval, registration and retrieval across a service restart, bounded execution, schema/policy invalidation, and refusal of unverified or altered candidates. On 27 October 2026, it passed **7/7 tests**; the pinned H-MEM conformance suite passed **13/13 checks**. The demo returned `stock-reconciliation@0.1.0` from warm H-MEM retrieval, executed it, then refused a changed inventory schema with `SCHEMA_VERSION_MISMATCH` and marked the stale entry deprecated. Each demo writes a detailed run record under ignored `artifacts/memory-demo/`.
+
+For a UI demonstration, start `pnpm dev`, open the **Skill library** view, register the current passing candidate, load the synthetic input, and choose **Retrieve and execute**. The evidence panel shows the accepted memory ID, bounded execution, and zero model calls. Change `dataset.sourceSchemaVersions.inventory` to `inventory/v2` and run again to show the stale-schema refusal. This is synthetic local evidence; it does not demonstrate Nightshift or live Zetaris access. See the [Meterless H-MEM demo guide](docs/meterless-engine-demo.md) for the implementation and proof details.
+
 For the **model-generated workflow**, import a sanitized work sample, observe original agent runs, and inspect their recorded tool steps and shortage reports. Collect two distinct successful inputs and a counterexample, select only their original-agent traces, and choose **Nemotron synthesis** in Compilation method. This path requires a configured free endpoint and local authorization; replay examples stay separately labeled. The first successful live synthesis used 13,543 input and 1,122 output tokens, after earlier failed attempts; whole-workflow usage is partially unknown and retained in the local ledger.
 
 ## What you download
