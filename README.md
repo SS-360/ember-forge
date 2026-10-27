@@ -13,6 +13,12 @@
   <a href="docs/run-and-evidence.md">Run and evidence</a>
 </p>
 
+<p align="center">
+  <img src="docs/design/ember-forge-launch-thumbnail.png" alt="Ember Forge: turn agent work into skills" width="100%">
+</p>
+
+<p align="center"><em>Product launch artwork · reusable skills built from recorded agent work</em></p>
+
 An operations team may repeat the same reconciliation every day: read new orders, match supplier names to products, convert units, compare demand with stock, and flag shortages. The records change; the steps do not.
 
 **Ember Forge turns that repeated agent work into a checked, downloadable skill.** It records how an agent handled examples, asks NVIDIA Nemotron to propose a reusable procedure, checks the result against an independent reference, and packages the passing procedure with its accepted inputs, runner, examples, and evidence.
