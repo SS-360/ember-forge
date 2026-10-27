@@ -1,6 +1,6 @@
 # Sanitized traces and deterministic compilation
 
-Implemented 23 October 2026. This is a development pipeline for the existing stock-reconciliation domain. The enabled adapter assembles a common normalized operation graph. Nemotron generation and inference of new algorithms or branches remain unfinished.
+Updated 27 October 2026. Ember Forge has two skill-creation paths for the stock-reconciliation domain: assembly of a common graph from matching traces, and a bounded Nemotron synthesis path. Nemotron generated the current Zetaris-origin candidate from original-agent traces; the candidate passed 21/21 finite development cases. This demonstrates one task family, not general learning across workflows. Start with the [plain-language workflow](how-it-works.md) and [run/evidence guide](run-and-evidence.md).
 
 ## Use the local application
 
@@ -36,7 +36,7 @@ This schema enforces structure and excludes raw payload fields. It is not a univ
 
 Replay examples retain separate local snapshots. For custom imports, POST a strict `emberforge.source-snapshot/1` object containing `inputHash`, `parameters`, and `dataset` to `/api/traces/:traceId/replay`. Content hash, source/schema/policy versions, normalized observations and the independent evaluator outcome must agree. Empty-call records now require `failureStage: "applicability"`, a recognized pre-operation rejection and no output; replay uses the trusted applicability check rather than inventing tool calls. Malformed raw inputs still cannot use the strictly typed snapshot format. Raw snapshots stay under ignored `artifacts/source-snapshots/` and outside model context. New pre-operation paths have not been exercised in this implementation-only continuation.
 
-The current evaluator accepts fixture mode only. Other source modes may be imported for inspection, but compilation rejects them until the relevant source and evaluation paths are implemented.
+Generic trace replay examples use fixture inputs. The separate Zetaris route stores read results as receipt-bound snapshots and supports the recorded original-agent and synthesis path for those snapshots. The candidate's portable runtime accepts the snapshot as JSON; live source queries occur before, not during, exported-skill execution. See the [Zetaris demo](zetaris-demo.md).
 
 ## Assembly and verification boundaries
 
@@ -48,13 +48,13 @@ The current evaluator accepts fixture mode only. Other source modes may be impor
 - Assembly has a 10-second deadline and disconnect cancellation. Package checks have a separate 30-second child-process timeout. Synthesis jobs use bounded revisions, calls, tokens, cost reservations, per-call/overall deadlines, polling, explicit cancellation and restart interruption. SSE streaming is not implemented.
 - `lineage.json` records the adapter, compiler-context hash, trace hashes/input hashes/outcomes, operation-to-trace links, and limitations. Exported provenance hashes include this file.
 
-This assembly path is a parameterized replay baseline. It is useful for validating ingestion, lineage, verification, and packaging. It does not establish model-driven workflow learning, held-out generalization, or an advantage over fresh reasoning.
+The assembly path is a parameterized replay baseline. It is useful for validating ingestion, lineage, verification, and packaging, and by itself does not establish model-driven workflow learning. The separate Nemotron path has produced a candidate from original-agent traces; its evidence and finite limits are documented in [live verification](live-verification.md) and the [Zetaris integration review](sponsor-integration-review.md).
 
 ## Bounded synthesis and evaluation
 
-The injectable controller accepts legitimate graph variations and typed candidate repairs; it does not require exact graph consensus. Independent evaluator code, development inputs/answers and frozen inputs are outside its context. Repair feedback includes development verdicts only. Candidate origins distinguish `test_synthesis`, `nemotron_synthesis`, `deterministic_trace_assembly` and the supplied seed. Only exact operation argument matches receive source-trace links.
+The injectable controller accepts legitimate graph variations and typed candidate repairs; it does not require exact graph consensus. Independent evaluator code, development inputs/answers, and frozen inputs are outside its context. Repair feedback includes development verdicts only. Candidate origins distinguish `test_synthesis`, `nemotron_synthesis`, `deterministic_trace_assembly`, and the supplied seed. Only exact operation argument matches receive source-trace links.
 
-The Nemotron adapter prepares a bounded typed tool request and response checks. Server composition now supports a reviewed zero-cost entitlement under the $0 budget, requiring exact endpoint/model/account binding, human-approved finite request/token quotas, expiry and persistent accounting. No enabled entitlement/configuration was created. Metered execution remains denied by the current ceiling. See provider-authorization.md. Injected transports retain test-only provenance. New composition, persistence and cancellation paths are unverified at runtime.
+The Nemotron adapter sends one typed candidate request and rejects malformed, truncated, multi-action, or usage-unverified responses. The local provider ledger applies a $0 ceiling and finite request/token/time limits. The free prototyping endpoint has been used for original-agent runs and skill synthesis; fresh clones still default to providers disabled. Injected transports are test-only. Historical failures and successful request details are in [live verification](live-verification.md); exact environment setup is in [provider authorization](provider-authorization.md).
 
 After a passing development result, **Freeze and evaluate** generates a new synthetic split, rejects overlap with compilation/development, and retains the first split/result for the candidate hash. Failures are not sent into repair. Shared generator and finite-domain limits remain visible. Raw local timing pairs cover up to five passing supported cases with three repetitions, without invented provider baselines or savings claims.
 

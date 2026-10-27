@@ -2,6 +2,8 @@
 
 This folder contains the exact verified stock skill folder installed in OpenClaw, a synthetic input and deterministic expected result, and sanitized OpenClaw/workbench activity. It contains no sponsor credentials or live business data. The workbench trace is a separate run from the OpenClaw input/output pair.
 
+For the product story see [`docs/product-story.md`](../docs/product-story.md); for a guided run and evidence index, see [`docs/run-and-evidence.md`](../docs/run-and-evidence.md). Sponsor integration results and limitations are in [`docs/sponsor-integration-review.md`](../docs/sponsor-integration-review.md).
+
 The [Zetaris-to-skill kit](zetaris/README.md) is a separate, source-provenanced workflow: local Zetaris reads → agent traces → verified candidate → portable snapshot execution. Its bundled inputs are synthetic and make no live provider/source calls when run.
 
 ## Run the sample skill

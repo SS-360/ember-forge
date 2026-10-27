@@ -7,20 +7,19 @@
 <p align="center"><strong>Turn repeated work into reusable skills.</strong></p>
 
 <p align="center">
-  <a href="#quick-start">Quick start</a> ·
-  <a href="#your-first-skill">First skill</a> ·
-  <a href="#what-you-download">The export</a> ·
-  <a href="#technology">Tech stack</a> ·
-  <a href="#documentation">Documentation</a>
+  <a href="#try-the-included-skill">Try the demo</a> ·
+  <a href="docs/product-story.md">Product story</a> ·
+  <a href="docs/sponsor-integration-review.md">Sponsor integrations</a> ·
+  <a href="docs/run-and-evidence.md">Run and evidence</a>
 </p>
 
-Ember Forge is a local web application for turning recorded workflows into portable, executable Agent Skills. Collect examples, compile a bounded procedure, inspect its supported inputs and verification evidence, then download it or reuse it through the local Skill Library.
+An operations team may repeat the same reconciliation every day: read new orders, match supplier names to products, convert units, compare demand with stock, and flag shortages. The records change; the steps do not.
 
-The main compiled domain is **stock reconciliation**: reconcile open orders against inventory using product aliases and unit-conversion rules, then report demand, stock, and shortages. A second, independently versioned **fulfilment exceptions** workflow checks incomplete shipments and overdue orders from a separate schema. It is a configured template today, not a second Nemotron-learned skill.
+**Ember Forge turns that repeated agent work into a checked, downloadable skill.** It records how an agent handled examples, asks NVIDIA Nemotron to propose a reusable procedure, checks the result against an independent reference, and packages the passing procedure with its accepted inputs, runner, examples, and evidence.
 
-> **Status: working local prototype.** A stock workflow captured actual reads from two local Zetaris sources into receipt-bound snapshots, ran three original-agent jobs, assembled four traces, and generated a Nemotron skill that passed 21/21 finite development checks. The exported skill runs on the captured snapshot without Zetaris or a model call. Codex and Claude Code explicitly executed an earlier export; Hermes and OpenClaw automatically selected and executed the same newer export on one supported synthetic input each. Fresh clones keep provider execution disabled until local authorization is configured. General workflow learning, real warehouse accuracy, production readiness, and cost savings remain unverified.
+> **Current evidence:** the Zetaris-origin stock skill passed 21/21 development checks (7 supported inputs, 14 explicit refusals). Its included snapshot runs offline without Zetaris or a model call. H-MEM is used in the working Skill Library. All business records are synthetic; broad workflow learning and real-warehouse accuracy remain unproven.
 
-The workbench supports sanitized JSON/CSV samples, saved original-agent runs, trace assembly, Nemotron synthesis, local H-MEM reuse, and downloadable Agent Skills. In the first frozen four-arm comparison, the exact export passed all 27 invocations with zero model calls; instruction-only also passed all 27 using 33 model requests, while the original agent passed 24/27. These are three repeats of nine synthetic inputs. See the [host and live-source checks](docs/host-and-zetaris-verification.md), [compiler verification record](docs/live-verification.md), [agent workflow](docs/agent-workflow.md), [credential guide](docs/credentials.md), [comparison protocol](docs/comparison-protocol.md), [hackathon resource audit](docs/hackathon-resource-audit.md), and [remaining activation steps](USER_ACTIONS.md).
+For the plain-language explanation, start with the [product story](docs/product-story.md). The [sponsor integration review](docs/sponsor-integration-review.md) shows what Zetaris, Nemotron, and H-MEM did in the build, including the failures and limits. The [run guide and evidence index](docs/run-and-evidence.md) links directly to the inputs, outputs, receipts, and tests.
 
 <details>
 <summary><strong>Preview the workbench</strong> — historical capture of the amber-red interface</summary>
@@ -33,18 +32,59 @@ Actual local UI capture from 24 October 2026 using synthetic data, before the Em
 
 </details>
 
-## Why Ember Forge?
+## From live data to a reusable skill
 
-A recurring task often repeats the same reads, filters, lookups, calculations, and checks. Ember Forge makes that procedure explicit and packages it with the conditions under which it can run. For supported JSON inputs, the exported runner executes without Ember Forge or a model API call. Unsupported inputs return a structured reason.
+```mermaid
+flowchart LR
+    Z[Zetaris sources] --> S[Saved, receipt-linked snapshot]
+    S --> A[Original agent works through the task]
+    N[NVIDIA Nemotron] -->|selects approved actions| A
+    A --> T[Recorded actions and outcomes]
+    T --> C[Nemotron proposes the repeatable steps]
+    C --> V[Independent checks]
+    V -->|21 of 21 pass| E[Downloadable skill]
+    E --> R[Run new supported snapshots]
+    E --> H[Store and retrieve with H-MEM]
+    H --> G[Check input and policy]
+    R --> G
+    G -->|fits| X[Calculate and report]
+    G -->|does not fit| U[Explain why it refused]
+```
 
-- **Inspect the procedure.** Review bounded operations, parameters, branches, and source-trace lineage.
-- **Keep counterexamples.** Record failures alongside successful runs to make boundaries visible.
-- **Verify before exporting.** Compare results with an independent reference on finite development cases.
-- **Preserve evaluation history.** Freeze a separate synthetic split and retain the first result for a candidate hash.
-- **Reuse from memory.** Register verified candidates in local H-MEM, then check hashes and applicability before execution.
-- **Take the skill with you.** Export instructions, a bundled Node.js runner, contracts, examples, and evidence together.
+The live Zetaris read happens when the snapshot is created. A portable execution uses that snapshot; it does not need a live database, a model endpoint, or a running Ember Forge server.
 
-## Quick start
+## Who benefits
+
+- Operations and inventory planners who repeat the same checks over new records.
+- Data teams that need to trace where a result came from and which rules were applied.
+- Agent builders who want a portable procedure that says what it accepts and when it should stop.
+
+## How it differs
+
+| Approach | What it saves | Ember Forge's addition |
+| --- | --- | --- |
+| Re-ask an agent | Flexible reasoning | A tested procedure for cases already shown to fit |
+| Save a prompt or instructions | Guidance for another model call | A runnable skill with an input contract, checks, and evidence |
+| Cache an answer | The same prior result | Recalculate from changed input records |
+| Write a one-off script | A fixed implementation | Recorded examples, explicit boundaries, and traceable verification |
+
+Ember Forge still uses Nemotron to investigate and propose the procedure. The supported exported procedure itself runs without model reasoning. A host may still spend model tokens selecting the skill; that is separate from executing its steps.
+
+## What the evidence says about impact
+
+In a separate frozen synthetic comparison, the exact executable passed 27/27 repeated invocations with zero model requests. The instruction-only version passed the same 27 invocations with 33 model requests; the original agent passed 24/27. The 27 invocations were three repeats of nine cases, not 27 independent tasks. The comparison excludes the full cost of compilation and does not establish dollars saved or real-world performance. See the [full results and limits](docs/live-verification.md).
+
+## Try the included skill
+
+With Node.js 24 installed, run the supported example and the explicit refusal:
+
+```sh
+node demo-kit/zetaris/verify.mjs
+```
+
+It checks the stock result and confirms that an unapproved unit is refused with `UNKNOWN_UNIT`. Both checks use tracked JSON snapshots and make zero model or Zetaris calls. See [the run guide](docs/run-and-evidence.md) for the expected result and evidence links.
+
+## Run the application
 
 ### Requirements
 
@@ -143,32 +183,16 @@ Unsupported inputs return structured reasons such as `UNKNOWN_UNIT`, `POLICY_VER
 | --- | --- | --- |
 | Ember Forge | Retrieve and execute a registered skill on new compatible inputs | New Nemotron candidate retrieved/executed in isolated H-MEM; schema drift rejected |
 | Standalone Node.js | Run the exported procedure from a terminal or another application | New candidate passed exact-package execution checks; frozen-input comparison recorded separately |
-| Codex | Install the Agent Skill folder in a host-supported skill location | Exact new export explicitly invoked and executed on fresh supported/unsupported inputs, with Ember Forge stopped |
-| Claude Code | Use the exported instructions and bundled runner | Explicit Skill-tool invocation and both executions verified using free Nemotron as the host backend |
-| Hermes Agent CLI | Automatically select and run the bundled procedure | One synthetic supported-input run passed on the newer export; the same package also passed one supported case in OpenClaw |
-| OpenClaw | Install the Agent Skill folder in its active workspace | Newer export automatically selected; supported case passed and unknown unit refused as `UNKNOWN_UNIT`. Wrapper reported exit 1 while the runtime returns 2 |
+| Codex | Install the Agent Skill folder in a host-supported skill location | Explicit supported and unsupported runs of `stock-nemotron-be33034d-retry-2`; automatic selection not verified |
+| Claude Code | Use the exported instructions and bundled runner | Explicit supported and unsupported runs of the same earlier export; automatic selection not verified |
+| Hermes Agent CLI | Automatically select and run the bundled procedure | Selected `zetaris-stock-207ca2ab-retry-3` without naming it; one supported synthetic run passed |
+| OpenClaw | Install the Agent Skill folder in its active workspace | Automatically selected the same newer export; supported run passed and unsupported unit returned `UNKNOWN_UNIT`. Host wrapper changed the runner exit code from 2 to 1 |
 
 The export is an **Agent Skill folder**. Codex plugin bundles and Claude marketplace packages require additional host-specific packaging. A host may still use model tokens to select and invoke a skill; the supported procedure itself runs without a model call. See the [compatibility matrix](docs/skill-compatibility.md) for the exact evidence boundaries and [marketplace packaging](docs/marketplace.md) for offline ClawHub staging and its license gate.
 
 ## How it works
 
-```mermaid
-flowchart LR
-    I[Sanitized work samples] --> O[Original bounded Nemotron agent]
-    O --> T[Checked tool trajectories]
-    T --> A[Nemotron synthesis or trace assembly]
-    A --> C[Typed candidate + contract]
-    C --> V[Independent verification]
-    V --> E[Portable skill export]
-    V --> M[Local H-MEM library]
-    E --> R[Bounded runtime]
-    M --> G[Hash + applicability checks]
-    G --> R
-```
-
-The compiler produces a bounded JSON instruction format. A trusted TypeScript interpreter executes it; arbitrary generated scripts are not accepted as skill programs. Verification cases and source snapshots stay outside the synthesis context. H-MEM nominates candidates, while deterministic checks decide whether execution is allowed.
-
-New assembled candidates use **21 development cases**. A later freeze action creates **21 separate synthetic cases**, rejects input-hash overlap, and retains the first outcome per candidate hash. These finite checks expose known boundaries; they do not establish generalization to real operational data. See [architecture](docs/architecture.md) and [evaluation results](docs/evaluation-results.md).
+Nemotron works through an original task using approved actions such as reading a source, filtering rows, joining tables, or refusing unsupported data. Ember Forge records the actions and outcomes. For skill creation, Nemotron proposes a typed procedure; independent checks decide whether it can be exported. The trusted runner executes only declared operations, and H-MEM helps the local Skill Library find a verified candidate. Read [the full workflow and agent design](docs/how-it-works.md).
 
 ## Technology
 
@@ -179,8 +203,8 @@ New assembled candidates use **21 development cases**. A later freeze action cre
 | Validation | Zod 4 | Input, trace, candidate, contract, and authorization schemas |
 | Execution | Bounded JSON instructions + TypeScript interpreter | Deterministic execution within declared limits |
 | Storage | Built-in Node SQLite + artifact files | Run history, job checkpoints, provider ledger, and versioned artifacts |
-| Memory | Vendored Meterless H-MEM reference | Local verified-skill registration and retrieval |
-| Reasoning integration | NVIDIA Nemotron adapter | Original tool runs and bounded synthesis/repair; disabled by default in fresh clones |
+| Memory | Meterless H-MEM reference integrated in the Skill Library | Store, retrieve, and invalidate verified skills locally |
+| Reasoning | NVIDIA Nemotron adapter | Original agent decisions and bounded skill proposals; disabled by default in fresh clones |
 | Data integration | Zetaris JDBC + local PostgreSQL sources | Two registered stock databases, live table reads, freshness check and cross-source reconciliation join verified on synthetic data |
 | Verification tooling | Vitest, independent evaluator, esbuild | Unit suites, reference comparisons, and portable runtime bundling |
 
@@ -251,9 +275,13 @@ The [fulfilment workflow](docs/fulfilment-workflow.md) describes the second doma
 
 | Guide | Start here when you want to… |
 | --- | --- |
-| [Product description](docs/product-description.md) | Understand the intended product and scope |
+| [Product story](docs/product-story.md) | Understand the problem, audience, benefit, and difference |
+| [How it works](docs/how-it-works.md) | Follow the agent, skill-creation flow, and actual technology stack |
+| [Sponsor integration review](docs/sponsor-integration-review.md) | See what we connected, what was difficult, and what we learned |
+| [Run and evidence guide](docs/run-and-evidence.md) | Reproduce the included skill, run the local app, and inspect proof |
+| [Architecture](docs/architecture.md) | Inspect packages, data flow, and safety boundaries |
+| [Product brief](docs/product-description.md) | Read the original scope and updated implementation status |
 | [Implementation plan](docs/implementation-plan.md) | Follow the build sequence and delivery criteria |
-| [Architecture](docs/architecture.md) | Understand packages, data flow, and trust boundaries |
 | [Fulfilment workflow](docs/fulfilment-workflow.md) | Inspect the second bounded workflow and portable package |
 | [Trace compilation](docs/trace-compilation.md) | Import traces, replay snapshots, or inspect API routes |
 | [Skill compatibility](docs/skill-compatibility.md) | Understand exports and host verification status |

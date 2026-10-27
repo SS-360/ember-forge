@@ -1,11 +1,11 @@
 # Ember Forge — Project Description
 
-Prepared: 23 October 2026. Status: product brief; see [progress](progress.md) and [claims](claims.md) for implementation and measured evidence.
+Prepared: 23 October 2026; updated 27 October 2026. For the plain-language story, current build details, sponsor review, and reproducible evidence, see [product story](product-story.md), [how it works](how-it-works.md), [sponsor integration review](sponsor-integration-review.md), and [run and evidence guide](run-and-evidence.md).
 Intended submission: Track 3 — Reasoning Architecture, Open Agent Hackathon 2026.
 
 ## The idea in one sentence
 
-Ember Forge is an agent that converts repeated reasoning into a reusable executable skill, checks when that skill is applicable, and falls back to reasoning when it is not.
+Ember Forge turns examples of repeated agent work into a reusable skill, checks whether each new input fits, and refuses cases outside the skill's rules.
 
 ## The problem
 
@@ -39,45 +39,45 @@ An agent initially investigates how these sources relate. It learns that some qu
 
 Ember Forge examines several executions and generates a procedure that accepts a date range and warehouse identifier. The procedure performs the same operations on new records without asking an LLM to reconstruct the workflow.
 
-If a new supplier introduces an unknown unit, the input contract rejects that case. In the application, the user can choose to send it back to Nemotron for investigation. In a standalone export with reasoning disabled, it returns a structured “unsupported” result. It does not guess a conversion.
+If a supplier introduces an unknown unit, the exported skill rejects it as `UNKNOWN_UNIT`. The current library path does not automatically fall back to reasoning. A person can start a separate original-agent run in the app to investigate the data.
 
-This is the target product example. The current implementation covers synthetic stock reconciliation, a hand-authored seed, strict normalized trace import, deterministic assembly of agreeing operation graphs, and standard Agent Skills export with a bounded runner and trace lineage. Its replay examples are captured from the seed interpreter. It does not yet learn a new algorithm from agent trajectories, demonstrate live Nemotron/Zetaris access, or prove installation and execution in external agent harnesses. Those remain implementation milestones.
+The stock-reconciliation path is now implemented on synthetic records. Local Zetaris reads were saved as receipt-bound snapshots, used in original Nemotron agent runs, and passed into skill creation. Nemotron generated the `zetaris-stock-207ca2ab-retry-3@0.1.0` candidate; it passed 21/21 development cases and is included in the demo kit. H-MEM is used in the Skill Library. Codex and Claude Code explicitly ran an earlier package; Hermes and OpenClaw automatically selected the same newer package once each on supported synthetic inputs. See the [proof index](run-and-evidence.md) for exactly what each result establishes.
 
 ## How the system works
 
-1. **Observe:** record real tool calls, inputs, outputs, failures, and independently checked outcomes.
-2. **Generalize:** Nemotron identifies common operations and differences that must become parameters or branches.
-3. **Compile:** express the procedure in a bounded executable representation, then package it with a runtime and standard Agent Skills entrypoint.
-4. **Verify:** test correctness on development examples, new inputs, and deliberately unsupported cases.
-5. **Reuse:** install the package into a compatible agent harness, select it only when its applicability checks pass, and run the bundled procedure. For direct deterministic operation, callers may invoke the runner without agent orchestration.
-6. **Revise:** a failure or changed assumption creates a new candidate version; it does not silently alter a validated skill.
+1. **Observe:** Nemotron chooses from a fixed list of approved data actions; Ember Forge records the action, result, and outcome.
+2. **Propose:** Nemotron turns selected successful and counterexample traces into a typed procedure candidate.
+3. **Check:** an independent stock evaluator tests the candidate. Failed revisions remain visible.
+4. **Package:** passing procedures ship with instructions, accepted inputs, runner, examples, verification, and provenance.
+5. **Reuse:** compatible hosts can select the skill and run its procedure on new supported JSON snapshots.
+6. **Refuse safely:** changed schemas, policies, or unknown values produce a stated reason instead of a guessed result.
 
 ## Why this is an agent project
 
-Nemotron decides what evidence to inspect, what reusable structure to propose, which failures need investigation, and when a candidate should be revised or rejected. The system carries out tool calls and produces executable artifacts. Deterministic checks, rather than Nemotron's own approval, determine whether a candidate qualifies for export.
+Nemotron makes one structured tool choice at a time during the original task and proposes one structured skill candidate during compilation. Ember Forge executes only approved actions and checks the result with an independent evaluator. Deterministic checks, rather than Nemotron's own approval, decide whether a candidate qualifies for export. See [how the agent is built](how-it-works.md).
 
 ## Sponsor roles
 
 | Technology | Working role |
 |---|---|
-| NVIDIA Nemotron | Investigates trajectories, generates candidate skill programs and contracts, and revises candidates using test feedback. |
-| Zetaris | Provides approved queries across separate operational data sources for the original workflow and live skill execution. |
-| Meterless H-MEM | Stores and retrieves skill records, evidence references, applicability conditions, failures, and superseded versions. |
+| NVIDIA Nemotron | Chooses original-agent actions and proposes skill candidates from selected traces. |
+| Zetaris | Reads approved local sources when Ember Forge creates the receipt-linked snapshots used in agent runs and compilation. The exported skill does not query Zetaris at runtime. |
+| Meterless H-MEM | Powers verified-skill registration, retrieval, and stale-schema/policy invalidation in the local Skill Library. |
 | Codex | Development tool used to implement and verify the product; not a required dependency of the exported skill. |
 
 H-MEM is a specified memory architecture with a reference implementation, not simply a label for a custom cache. The implementation must follow a pinned upstream version and demonstrate real use. See the [official H-MEM documentation](https://github.com/Meterless/Meterless/tree/main/engines/hmem).
 
-## What would make the demonstration convincing
+## Evidence and limits
 
-Run the original workflow with Nemotron, compile a skill, install it into a different supported harness, and execute new supported inputs without Ember Forge running. Then submit an unsupported input and show a clear refusal or an explicit reasoning fallback. Demonstrate end-to-end discovery and execution in at least two real harnesses before claiming cross-harness transfer.
+The current demo includes the local Zetaris source step, original Nemotron runs, a generated skill with 21/21 finite development checks, H-MEM reuse evidence, and host execution. The [run guide](run-and-evidence.md) links the exact inputs and records. The Zetaris-origin export runs offline from its included snapshot. Host evidence is deliberately scoped: one package has supported automatic-selection runs in Hermes and OpenClaw; Codex and Claude Code explicitly ran an earlier package.
 
-Show correctness, skill coverage, false acceptance, needless fallback, model/tool calls, compilation cost, break-even reuse count, and latency together. Report standalone runner cost separately from any agent orchestration. A system that rejects every input is not successful; neither is one that accepts everything and returns incorrect results.
+In a separate synthetic comparison, the executable passed 27/27 repeated invocations with zero model requests; the instruction-only version used 33 requests, and the original agent passed 24/27. Compilation and orchestration costs are not included in that execution comparison, so no total dollar savings or break-even point is claimed. Real-world accuracy, broad generalization, production readiness, and sponsor endorsement remain unverified. See [evaluation details](live-verification.md) and the [claims ledger](claims.md).
 
 ## Boundaries and originality
 
 Ember Forge does not train a smaller model, quantize model weights, or optimize GPU memory. It compiles a bounded procedure. Its first release supports structured, read-only data workflows, not arbitrary browser automation or unrestricted generated code.
 
-Executable skill induction has prior research, including [SKILL-DISCO](https://arxiv.org/abs/2606.26669). Our proposed contribution is a usable workflow with explicit applicability contracts, independently measured generalization, controlled fallback, and portable Agent Skills exports that carry executable bounded procedures across harnesses. Those benefits must be demonstrated; they are not established yet.
+Portable agent skills and task-specific automation already exist. Ember Forge's project aim is to join recorded tool activity, explicit input rules, independent checks, and a self-contained runnable export in one workflow. Related research includes [SKILL-DISCO](https://arxiv.org/abs/2606.26669). Our current result is limited to one learned stock-reconciliation task; broad generalization remains future work.
 
 This is an independent project, not a NeuroDBG extension. Track 3 is the intended fit because the central contribution is turning experience and reasoning into reliable execution. See the [official event tracks](https://hackathon.genai.works/event/open-agent-hackathon-2026).
 

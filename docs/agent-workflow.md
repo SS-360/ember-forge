@@ -1,10 +1,10 @@
 # Original agent to executable skill
 
-26 October 2026. Implemented preparation; no new model trajectory or runtime pass is claimed.
+Updated 27 October 2026. The local Zetaris-origin workflow has produced a Nemotron-generated candidate that passed 21/21 finite development cases. See the [plain-language workflow](how-it-works.md), [Zetaris demo](zetaris-demo.md), and [evidence index](run-and-evidence.md) for current results. This page describes the implementation contract and record format.
 
-## Audit and smallest gaps
+## What the agent does
 
-Before this continuation the repository had a trusted instruction interpreter, seed/runtime replay, sanitized trace import, bounded Nemotron synthesis/repair, independent synthetic development checks, package completion receipts and H-MEM retrieval. It lacked an original agent choosing tools, user work-sample ingestion, a paired four-arm protocol and same-package two-host preparation. Historical fixture success and Codex discovery do not prove the intended full loop.
+The original agent uses Nemotron to choose a sequence of approved actions. Ember Forge executes each action against the selected snapshot, returns observations to the agent, records the results, and checks the final report independently. The tool list includes schema inspection, paginated reads, bounded filter/lookup/convert/aggregate/join/check/emit operations, and explicit refusal. The agent cannot send arbitrary code or SQL. The final candidate is compiled from selected original-agent traces and checked before export.
 
 ## Implemented flow
 
@@ -21,7 +21,7 @@ Visible states are observing → proposing → checking → repair/refused/ready
 
 Orders are eligible only when open and within the requested warehouse/date range. Quantities and conversion factors are whole safe integers. Alias and unit maps come from the caller's versioned product rules, not embedded input answers. Inventory snapshots cannot be later than the range. Identities must be unique; missing aliases, units and inventory reject. Reserve stock is **zero**. Alternative eligibility/reserve policies and fractional quantities require a new explicit contract/primitive and independent checks; they are not silently supported.
 
-`fixture` currently identifies the enabled local table transport. Provenance separately distinguishes synthetic examples from sanitized user data. It is not a claim of a live Zetaris read or representative real-world evaluation.
+For generic examples, `sourceMode: "fixture"` identifies a local JSON/CSV sample. In the verified Zetaris-origin workflow, `sourceMode: "snapshot"` identifies data saved from a live local Zetaris read with a matching receipt. Provenance still labels the business rows synthetic. The portable skill reads the saved snapshot; it does not query Zetaris at execution time. Neither mode is evidence of real warehouse accuracy.
 
 ## Work-sample envelopes
 
@@ -55,6 +55,6 @@ Those are four separate table headers. Quoted commas/newlines and doubled quotes
 
 GET `/api/work-samples` lists saved identities/provenance. POST `/api/agent/runs` with `{ "sampleId": "<uuid>" }` starts only when provider composition permits it. GET `/api/agent/runs` lists retained runs; GET `/api/agent/runs/<jobId>` observes state; POST its `/cancel` endpoint requests cancellation. The workbench's Recorded agent run selector reopens past results without another model request. The human has now explicitly authorized local tests and the free Nemotron workflow.
 
-## Remaining proof
+## Evidence and current limits
 
-Two checked original successes and a valid unknown-unit counterexample now support a newly synthesized/exported candidate. Its 21 development checks passed. The first frozen four-arm comparison completed 108 invocations, retaining all failures. See [live verification](live-verification.md) for exact identities and results. Explicit Codex/Claude Code invocation and local Zetaris stock reads are now verified; see [host/source verification](host-and-zetaris-verification.md). Real operational datasets and relevant sponsor eligibility remain separate requirements.
+The current Zetaris-origin candidate has two source-read receipts, three original-agent jobs, four traces (two successes, one failed run, and one unsupported run), and a 21-case development report. Three earlier revisions failed with `DUPLICATE_JOIN_KEY` and are kept in the evidence history. The exact candidate has automatic-selection/execution results in Hermes and OpenClaw for one supported synthetic input each. Codex and Claude Code executed an earlier package explicitly. See [live verification](live-verification.md), [host/source verification](host-and-zetaris-verification.md), and the [sponsor integration review](sponsor-integration-review.md). Real operational data and broad workflow learning remain unproven.
